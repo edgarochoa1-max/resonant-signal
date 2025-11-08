@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Resonant — Underground Transmission</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <script src="https://w.soundcloud.com/player/api.js"></script>
+</head>
+<body>
+  <header>
+    <h1>RESONANT</h1>
+    <p class="subtitle">UNDERGROUND RADIO TRANSMISSION</p>
+    <p class="status"><span class="dot"></span> ON AIR • WORLDWIDE</p>
+  </header>
+
+  <!-- Gate -->
+  <main id="gate">
+    <h2>THE GATE</h2>
+    <p class="gate-copy">To unlock the signal, invite <strong>two</strong> listeners.</p>
+    <input type="email" id="userEmail" placeholder="Your email" autocomplete="email" />
+    <div class="invites">
+      <input type="email" id="invite1" placeholder="Invite 1 (email)" autocomplete="email" />
+      <input type="email" id="invite2" placeholder="Invite 2 (email)" autocomplete="email" />
+    </div>
+    <button id="sendInvites">Transmit Invitations</button>
+    <p id="progress">0 / 2 invitations sent</p>
+  </main>
+
+  <!-- Player -->
+  <main id="player" class="hidden">
+    <div class="cover" id="cover"></div>
+
+    <div class="meta">
+      <div id="artist" class="artist">Artist</div>
+      <div id="title" class="track">Track</div>
+      <div id="extra" class="extra"><span id="label"></span><span id="spacer" class="hidden"> · </span><span id="album"></span></div>
+    </div>
+
+    <div class="controls">
+      <button id="playPause" class="btn">Play</button>
+      <div class="progress">
+        <span id="elapsed">0:00</span>
+        <div class="bar"><div id="barFill"></div></div>
+        <span id="duration">0:00</span>
+      </div>
+    </div>
+
+    <div class="buttons">
+      <a id="bandcamp" target="_blank" rel="noopener">BUY ON BANDCAMP</a>
+      <a id="discogs" target="_blank" rel="noopener">BUY ON DISCOGS</a>
+    </div>
+
+    <!-- Hidden players for modes -->
+    <audio id="radio" crossorigin="anonymous"></audio>
+    <iframe id="scFrame" class="hidden" allow="autoplay"></iframe>
+  </main>
+
+  <footer>
+    <p>SUPPORT THE ARTIST — BUY THE RECORD</p>
+    <p>PROMOTIONAL USE ONLY • © 2025 MIDAS LABS</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
