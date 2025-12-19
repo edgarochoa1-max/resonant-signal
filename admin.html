@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Resonant · Admin · Broadcast Console</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050507" />
+
+  <!-- CSS -->
+  <link rel="stylesheet" href="style.admin.css" />
+
+  <!-- SoundCloud Widget API -->
+  <script src="https://w.soundcloud.com/player/api.js"></script>
+</head>
+
+<body class="admin-body dark">
+
+  <!-- FX -->
+  <div class="fx-noise"></div>
+  <div class="fx-gradient-top"></div>
+  <div class="fx-gradient-bottom"></div>
+
+  <div class="app-root">
+    <div class="view">
+
+      <!-- ================= TOP BAR ================= -->
+      <header class="top-bar gate-top">
+        <div class="brand">
+          <span class="brand-mark">⟁</span>
+          <div class="brand-text">
+            <h1>Resonant</h1>
+            <p>Admin · Broadcast Console</p>
+          </div>
+        </div>
+
+        <div class="top-status">
+          <span id="admin-master-status" class="pill off">OFF AIR</span>
+        </div>
+      </header>
+
+      <main class="main">
+
+        <!-- ================= LOGIN ================= -->
+        <section class="card login-card" id="admin-login">
+          <header class="card-head">
+            <p class="eyebrow">Secure access</p>
+            <h2>Enter admin PIN</h2>
+            <p class="card-copy small">
+              This panel controls the live broadcast playlist.
+            </p>
+          </header>
+
+          <div class="card-body centered">
+            <label class="field">
+              <span>PIN</span>
+              <input
+                id="admin-pin-input"
+                type="password"
+                inputmode="numeric"
+                placeholder="••••"
+                autocomplete="off"
+              />
+            </label>
+
+            <button id="admin-pin-submit" class="primary wide">
+              Enter
+            </button>
+
+            <p id="admin-pin-error" class="status-msg error"></p>
+          </div>
+        </section>
+
+        <!-- ================= ADMIN PANEL ================= -->
+        <section class="card hidden" id="admin-panel">
+
+          <!-- SYSTEM STATUS -->
+          <section class="card">
+            <header class="card-head">
+              <p class="eyebrow">System status</p>
+              <h2>Live broadcast control</h2>
+              <p class="card-copy small">
+                Changes are reflected live. Listeners sync automatically.
+              </p>
+            </header>
+          </section>
+
+  
+          <!-- ================= LIVE MONITOR ================= -->
+          <section class="card monitor-card">
+            <header class="card-head">
+              <p class="eyebrow">Live monitor</p>
+              <h3 class="monitor-title">Current playback</h3>
+            </header>
+
+            <div class="card-body centered">
+              <div class="monitor-row">
+                <div id="admin-cover" class="monitor-cover"></div>
+
+                <div class="monitor-meta">
+                  <p class="label-small">Track</p>
+                  <p id="admin-track-title" class="monitor-track">—</p>
+
+                  <p class="label-small">Artist</p>
+                  <p id="admin-track-artist" class="monitor-artist">—</p>
+                </div>
+              </div>
+
+              <div class="monitor-progress">
+                <div class="time-row">
+                  <span id="admin-elapsed">0:00</span>
+                </div>
+
+                <div class="progress-bar">
+                  <div id="admin-progress" class="progress-fill"></div>
+                </div>
+              </div>
+
+              <p class="label-small monitor-sync">
+                Status: <span id="admin-sync-indicator">Idle</span>
+              </p>
+            </div>
+          </section>
+
+          <!-- ================= PLAYBACK CONTROL ================= -->
+          <section class="card control-card">
+            <header class="card-head">
+              <p class="eyebrow">Playback control</p>
+            </header>
+
+            <div class="card-body centered">
+              <div class="actions-row">
+                <button id="admin-prev-btn" class="ghost">⏮</button>
+                <button id="admin-play-btn" class="primary">▶</button>
+                <button id="admin-stop-btn" class="ghost">⏹</button>
+                <button id="admin-next-btn" class="ghost">⏭</button>
+              </div>
+            </div>
+          </section>
+
+          <!-- ================= PLAYBACK MODE ================= -->
+          <section class="card mode-card">
+            <header class="card-head">
+              <p class="eyebrow">Playback mode</p>
+            </header>
+
+            <div class="card-body centered">
+              <label class="mode-toggle">
+                <input type="checkbox" id="admin-random-mode" />
+                <span>Random mode (no repeats)</span>
+              </label>
+            </div>
+          </section>
+
+          <!-- ================= ADD MIX ================= -->
+          <section class="card add-card">
+            <header class="card-head">
+              <p class="eyebrow">Add mix</p>
+            </header>
+
+            <div class="card-body centered">
+              <label class="field">
+                <span>SoundCloud URL</span>
+                <input
+                  id="admin-new-url"
+                  type="url"
+                  placeholder="https://soundcloud.com/…"
+                />
+              </label>
+
+              <button id="admin-add-btn" class="primary wide">
+                Add mix
+              </button>
+            </div>
+          </section>
+
+          <!-- ================= PLAYLIST ================= -->
+          <section class="card playlist-card">
+            <header class="card-head">
+              <p class="eyebrow">Playlist order</p>
+              <h3>Mixes</h3>
+            </header>
+
+            <div class="card-body centered">
+              <ul id="admin-playlist" class="playlist-list numbered"></ul>
+
+              <div class="admin-tools">
+                <button id="admin-save-btn" class="primary">Save</button>
+                <button id="admin-import-btn" class="ghost subtle">Import</button>
+                <button id="admin-reset-btn" class="ghost">Reset</button>
+                <button id="admin-shuffle-btn" class="ghost">Shuffle</button>
+                <button id="admin-export-btn" class="ghost subtle">Export</button>
+              </div>
+
+              <label class="field">
+                <span>Import / export</span>
+                <textarea
+                  id="admin-io-text"
+                  rows="4"
+                  placeholder="One SoundCloud URL per line"
+                ></textarea>
+              </label>
+
+              <p id="admin-status" class="status-msg"></p>
+            </div>
+          </section>
+
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- HIDDEN PREVIEW PLAYER -->
+  <iframe
+    id="admin-preview-frame"
+    class="admin-preview-frame"
+    allow="autoplay"
+    aria-hidden="true"
+  ></iframe>
+
+  <!-- JS -->
+  <script type="module" src="admin.js"></script>
+
+</body>
+</html>

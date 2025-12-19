@@ -1,0 +1,126 @@
+/* ============================================================
+   RESONANT · METRICS STYLES — CENTERED EDITORIAL
+============================================================ */
+
+/* DASHBOARD WRAPPER */
+.metrics-dashboard {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+}
+
+/* RANGE / CONTEXT */
+.metrics-range {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(198, 202, 222, 0.6);
+  margin-bottom: 32px;
+}
+
+/* METRICS GRID */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  justify-items: center;
+  margin-bottom: 48px;
+}
+
+/* METRIC CARD */
+.metric-card {
+  width: 100%;
+  max-width: 240px;
+  text-align: center;
+  padding: 20px 18px 22px;
+  border-radius: 16px;
+  background: var(--bg-card);
+  box-shadow: var(--shadow-soft);
+}
+
+/* METRIC TEXT */
+.metric-label {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(198, 202, 222, 0.6);
+  margin-bottom: 8px;
+}
+
+.metric-card h2 {
+  font-size: 34px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.metric-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 11px;
+  color: rgba(198, 202, 222, 0.45);
+}
+
+/* EMPTY STATE */
+.metrics-empty {
+  text-align: center;
+  margin: 48px auto;
+  font-size: 13px;
+  line-height: 1.6;
+  color: rgba(198, 202, 222, 0.6);
+}
+
+/* SECTION */
+.metrics-section {
+  max-width: 520px;
+  margin: 0 auto 56px;
+  text-align: center;
+}
+
+.metrics-section h3 {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  color: rgba(198, 202, 222, 0.8);
+}
+
+/* TIMELINE */
+.metrics-timeline {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.metrics-timeline li {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+  color: rgba(198, 202, 222, 0.75);
+}
+
+.metrics-timeline .time {
+  opacity: 0.7;
+}
+
+.metrics-timeline .detail {
+  opacity: 0.9;
+}
+
+/* EDITORIAL NOTE */
+.metrics-note {
+  max-width: 520px;
+  margin: 56px auto 0;
+  text-align: center;
+}
+
+.metrics-note p {
+  font-size: 11px;
+  line-height: 1.7;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(198, 202, 222, 0.65);
+}

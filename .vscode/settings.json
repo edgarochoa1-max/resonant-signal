@@ -1,7 +1,0 @@
-{
-  "files.autoSave": "afterDelay",
-  "files.autoSaveDelay": 500,
-  "editor.formatOnSave": true,
-  "javascript.validate.enable": true,
-  "javascript.suggest.completeFunctionCalls": true
-}

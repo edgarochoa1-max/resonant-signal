@@ -2,66 +2,284 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+
+  <title>Resonant · The Underground Music Signal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Resonant — Underground Transmission</title>
-  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#050507" />
+  <meta name="description"
+        content="Resonant is an invite-only underground transmission. Curated DJ sets synchronized with a global clock." />
+
+  <!-- SOCIAL META -->
+  <meta property="og:title" content="Resonant · The Underground Music Signal" />
+  <meta property="og:description" content="Invite-only underground transmissions. Curated DJ sets synchronized with a global clock." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image" content="icons/cover-share.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+
+  <!-- PWA APPLE SUPPORT -->
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
+
+  <!-- FAVICON -->
+  <link rel="icon" href="icons/favicon.png" />
+
+  <!-- MANIFEST + CSS -->
   <link rel="manifest" href="manifest.webmanifest" />
-  <script src="https://w.soundcloud.com/player/api.js"></script>
+  <link rel="stylesheet" href="style.index.css" />
 </head>
+
 <body>
-  <header>
-    <h1>RESONANT</h1>
-    <p class="subtitle">UNDERGROUND RADIO TRANSMISSION</p>
-    <p class="status"><span class="dot"></span> ON AIR • WORLDWIDE</p>
-  </header>
 
-  <!-- Gate -->
-  <main id="gate">
-    <h2>THE GATE</h2>
-    <p class="gate-copy">To unlock the signal, invite <strong>two</strong> listeners.</p>
-    <input type="email" id="userEmail" placeholder="Your email" autocomplete="email" />
-    <div class="invites">
-      <input type="email" id="invite1" placeholder="Invite 1 (email)" autocomplete="email" />
-      <input type="email" id="invite2" placeholder="Invite 2 (email)" autocomplete="email" />
-    </div>
-    <button id="sendInvites">Transmit Invitations</button>
-    <p id="progress">0 / 2 invitations sent</p>
-  </main>
-
-  <!-- Player -->
-  <main id="player" class="hidden">
-    <div class="cover" id="cover"></div>
-
-    <div class="meta">
-      <div id="artist" class="artist">Artist</div>
-      <div id="title" class="track">Track</div>
-      <div id="extra" class="extra"><span id="label"></span><span id="spacer" class="hidden"> · </span><span id="album"></span></div>
-    </div>
-
-    <div class="controls">
-      <button id="playPause" class="btn">Play</button>
-      <div class="progress">
-        <span id="elapsed">0:00</span>
-        <div class="bar"><div id="barFill"></div></div>
-        <span id="duration">0:00</span>
+  <!-- SPLASH -->
+  <div id="splash-screen" class="splash-screen">
+    <div class="splash-inner">
+      <div class="splash-mark">⟁</div>
+      <div class="splash-text">
+        <p class="splash-title" id="splash-title">RESONANT</p>
+        <p class="splash-tagline" id="splash-tagline">The Underground Music Signal</p>
       </div>
     </div>
+  </div>
 
-    <div class="buttons">
-      <a id="bandcamp" target="_blank" rel="noopener">BUY ON BANDCAMP</a>
-      <a id="discogs" target="_blank" rel="noopener">BUY ON DISCOGS</a>
+<!-- OFF AIR / OFFLINE -->
+<section id="offair-screen" class="offair-screen hidden">
+  <div class="offair-inner">
+    <div class="offair-mark">⟁</div>
+    <h2 class="offair-title">Off Air</h2>
+    <p class="offair-copy">
+      The signal is currently unavailable.<br />
+      Please check back later.
+    </p>
+  </div>
+</section>
+
+
+  <!-- CINEMATIC SYNCING SCREEN -->
+  <div id="sync-screen" class="sync-screen hidden">
+    <div class="sync-center">
+      <p>Connecting to broadcast…</p>
+      <p>Syncing master clock…</p>
+      <p>Loading station…</p>
     </div>
+  </div>
 
-    <!-- Hidden players for modes -->
-    <audio id="radio" crossorigin="anonymous"></audio>
-    <iframe id="scFrame" class="hidden" allow="autoplay"></iframe>
-  </main>
+  <!-- OFF AIR BANNER -->
+  <div id="offair-banner" class="offair-banner hidden">
+    <p>Signal is currently offline</p>
+  </div>
 
-  <footer>
-    <p>SUPPORT THE ARTIST — BUY THE RECORD</p>
-    <p>PROMOTIONAL USE ONLY • © 2025 MIDAS LABS</p>
-  </footer>
+  <!-- APP ROOT -->
+  <div class="app-root">
+    <div id="app-view" class="view">
 
+      <!-- TOP BAR -->
+      <header class="top-bar shared-width">
+        <div class="brand">
+          <span class="brand-mark">⟁</span>
+
+          <div class="brand-text">
+            <h1 id="brand-title" data-i18n="brand.title">Resonant</h1>
+            <p id="brand-tagline" data-i18n="brand.tagline">The Underground Music Signal</p>
+          </div>
+        </div>
+
+        <div class="top-right">
+          <div class="lang-toggle">
+            <button class="lang-btn active" data-lang="en">EN</button>
+            <button class="lang-btn" data-lang="es">ES</button>
+          </div>
+
+          <div class="live-pill off" id="live-pill">
+            <span class="dot"></span>
+            <span class="label" id="live-label" data-i18n="app.liveLabel">LIVE</span>
+          </div>
+        </div>
+      </header>
+
+      <!-- MAIN -->
+      <main class="main">
+
+        <!-- SIGNAL TAB -->
+        <section id="tab-radio" class="tab active unified-card">
+
+          <div class="mode-toggle shared-width">
+            <button class="mode-btn active" id="mode-sets-btn" data-i18n="radio.modeSets">DJ sets</button>
+            <button class="mode-btn soon" id="mode-tracks-btn" data-i18n="radio.modeTracks">Tracks · soon</button>
+          </div>
+
+          <!-- PLAYER -->
+          <section class="player-card shared-width">
+
+            <div class="cover-wrap">
+              <div class="cover" id="cover"></div>
+
+              <button class="like-btn" id="like-btn" aria-label="Like this mix">
+                <span class="heart" id="heart">♡</span>
+              </button>
+            </div>
+
+            <!-- META -->
+            <div class="meta">
+              <p class="eyebrow" id="np-eyebrow" data-i18n="radio.nowTransmitting">Now transmitting</p>
+              <h2 class="title" id="title">Loading mix…</h2>
+              <p class="artist" id="artist-name"></p>
+            </div>
+
+            <!-- ACTIONS -->
+            <div class="actions-row">
+              <button class="primary" id="play-btn">▶ Play</button>
+              <button class="ghost subtle" id="invite-btn" data-i18n="radio.inviteFriends">
+                Invite friends
+              </button>
+            </div>
+
+            <!-- PROGRESS -->
+            <div class="progress-wrap">
+              <div class="time-row">
+                <span id="elapsed">0:00</span>
+                <span id="remaining">-0:00</span>
+              </div>
+
+              <div class="bar" id="bar">
+                <div class="bar-fill" id="bar-fill"></div>
+              </div>
+            </div>
+
+            <!-- FOOTER TEXT -->
+            <div class="player-footer-note">
+              <p data-i18n="radio.promo">Promotional use only. Please support the artist.</p>
+              <p class="sub" data-i18n="radio.promoSub">Own the sound. Support the underground.</p>
+            </div>
+
+            <!-- SOUNDCLOUD FRAME -->
+            <div class="sc-frame-wrap">
+              <iframe
+                id="sc-frame"
+                class="sc-frame"
+                allow="autoplay; encrypted-media"
+                src="">
+              </iframe>
+            </div>
+
+          </section>
+        </section>
+
+        <!-- SUPPORT THE ARTIST -->
+        <section id="tab-catalog" class="tab">
+          <section class="card shared-width">
+
+            <header class="card-head">
+              <p class="eyebrow" data-i18n="catalog.eyebrow">Support the Artist</p>
+              <h2 data-i18n="catalog.title">Artist guide.</h2>
+            </header>
+
+            <p class="card-copy" data-i18n="catalog.body">
+              Resonant highlights the artists and labels behind the sound of the station.
+              Every mix and track exists to support the original creator.
+              This section shows the current artist and offers direct links to platforms where you can follow them,
+              purchase their music, and support their work.
+            </p>
+
+            <div class="catalog-artist">
+              <p class="label-small" data-i18n="catalog.currentArtistLabel">Current artist</p>
+              <p class="catalog-artist-name" id="catalog-artist-name">Loading artist…</p>
+            </div>
+
+            <div class="catalog-links">
+              <p class="label-small" data-i18n="catalog.exploreLabel">Explore this artist on</p>
+              <div class="artist-support-grid">
+                <a href="#" class="artist-support-btn" id="link-bandcamp">Bandcamp</a>
+                <a href="#" class="artist-support-btn" id="link-deejay">Deejay.de</a>
+                <a href="#" class="artist-support-btn" id="link-discogs">Discogs</a>
+                <a href="#" class="artist-support-btn" id="link-juno">Juno</a>
+                <a href="#" class="artist-support-btn" id="link-soundcloud">SoundCloud</a>
+                <a href="#" class="artist-support-btn" id="link-subwax">Subwax</a>
+              </div>
+            </div>
+
+            <p class="card-copy small" data-i18n="catalog.footer">
+              All rights belong to the artists and labels.
+              This project exists to support underground culture and those who create it.
+            </p>
+
+          </section>
+        </section>
+
+        <!-- FEEDBACK -->
+        <section id="tab-feedback" class="tab">
+          <section class="card shared-width">
+
+            <header class="card-head">
+              <p class="eyebrow" data-i18n="feedback.eyebrow">Feedback & submissions</p>
+              <h2 data-i18n="feedback.title">Help shape the station.</h2>
+            </header>
+
+            <p class="card-copy" data-i18n="feedback.body">
+              This section invites the community to participate in the evolution of Resonant.
+              You can submit ideas, suggestions, mixes, artists, or recommended labels.
+              All feedback is reviewed manually and every contribution helps shape the station.
+            </p>
+
+            <label class="field">
+              <span>Your message</span>
+              <textarea id="feedback-message" rows="5"></textarea>
+            </label>
+
+            <label class="field">
+              <span>Optional link (mix, artist, label)</span>
+              <input id="feedback-link" type="url" placeholder="https://soundcloud.com/" />
+            </label>
+
+            <button id="btn-feedback-send" class="primary wide">Send feedback</button>
+            <p id="feedback-status" class="status-msg"></p>
+
+            <p class="card-copy small">
+              Every message is reviewed manually. Resonant evolves with the people who listen to it.
+            </p>
+
+          </section>
+        </section>
+
+        <!-- DONATIONS -->
+        <section id="tab-donations" class="tab">
+          <section class="card shared-width">
+
+            <header class="card-head">
+              <p class="eyebrow" data-i18n="donations.eyebrow">Support Resonant</p>
+              <h2 data-i18n="donations.title">Donations</h2>
+            </header>
+
+            <p class="card-copy">
+              This section is dedicated to supporting the operation and growth of the station.
+              Resonant was born from the desire to share the underground music that shaped me as an artist.
+            </p>
+
+            <p class="card-copy small">
+              Thank you for supporting this project and allowing it to continue growing.
+            </p>
+
+            <div class="donation-details">
+              <p><strong>PayPal:</strong> edgarochoa1@live.com</p>
+            </div>
+
+          </section>
+        </section>
+
+      </main>
+
+      <!-- NAVIGATION -->
+      <nav class="bottom-nav shared-width">
+        <button class="nav-btn mode-btn active" data-tab="radio"><span>Signal</span></button>
+        <button class="nav-btn mode-btn" data-tab="catalog"><span>Support the Artist</span></button>
+        <button class="nav-btn mode-btn" data-tab="feedback"><span>Feedback</span></button>
+        <button class="nav-btn mode-btn" data-tab="donations"><span>Donations</span></button>
+      </nav>
+
+    </div>
+  </div>
+
+  <script src="https://w.soundcloud.com/player/api.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

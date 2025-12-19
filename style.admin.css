@@ -1,0 +1,497 @@
+/* ============================================================
+   RESONANT · ADMIN STYLE — EXTRACTED & COMPILED
+   Visual clone from shared index/admin stylesheet
+   ============================================================ */
+
+/* ===================== ROOT ===================== */
+:root {
+  --bg: #050507;
+  --bg-elevated: #0b0d10;
+  --bg-card: #101219;
+
+  --accent: #f5f5f7;
+  --accent-soft: #b0b4c4;
+  --accent-strong: #ffffff;
+
+  --line-soft: rgba(255, 255, 255, 0.06);
+
+  --accent-pill: #ff3355;
+  --accent-pill-soft: rgba(255, 51, 85, 0.15);
+
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 999px;
+
+  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.6);
+
+  --font-sans: system-ui, -apple-system, BlinkMacSystemFont,
+               "SF Pro Text", "Inter", sans-serif;
+}
+
+/* ===================== RESET ===================== */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  background: radial-gradient(circle at 10% 0%, #171a24 0, #050507 55%);
+  color: var(--accent);
+}
+
+/* ===================== ADMIN BODY ===================== */
+body.admin-body {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* ===================== APP ROOT ===================== */
+.app-root {
+  width: 100%;
+  max-width: 960px;
+  min-height: 100vh;
+  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.02), var(--shadow-soft);
+}
+
+/* ===================== VIEW ===================== */
+.view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+/* ===================== HIDDEN ===================== */
+.hidden {
+  display: none !important;
+}
+
+/* ===================== TOP BAR ===================== */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 18px 10px;
+  border-bottom: 1px solid var(--line-soft);
+  background: linear-gradient(
+    180deg,
+    rgba(10, 12, 17, 0.96),
+    rgba(5, 7, 10, 0.98)
+  );
+  backdrop-filter: blur(18px);
+}
+
+.gate-top {
+  position: static;
+}
+
+/* ===================== BRAND ===================== */
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-mark {
+  width: 30px;
+  height: 30px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.16);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  letter-spacing: 0.14em;
+}
+
+.brand-text h1 {
+  margin: 0;
+  font-size: 15px;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.brand-text p {
+  margin: 1px 0 0;
+  font-size: 11px;
+  color: var(--accent-soft);
+}
+
+/* ===================== MAIN ===================== */
+.main {
+  flex: 1;
+  padding: 24px;
+  max-width: 720px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===================== CARDS ===================== */
+.card {
+  width: 100%;
+  background: rgba(6, 8, 13, 0.98);
+  border-radius: var(--radius-lg);
+  padding: 18px;
+  border: 1px solid var(--line-soft);
+  box-shadow: var(--shadow-soft);
+  margin-bottom: 18px;
+}
+
+.card-head {
+  text-align: center;
+}
+
+.card-copy {
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--accent-soft);
+}
+
+.card-copy.small {
+  font-size: 12px;
+}
+
+/* ===================== TYPO ===================== */
+.eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+
+h2 {
+  margin: 4px 0 6px;
+  font-size: 20px;
+}
+
+/* ===================== FORMS ===================== */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+.field span {
+  color: var(--accent-soft);
+}
+
+input,
+textarea {
+  border-radius: 10px;
+  border: 1px solid var(--line-soft);
+  background: rgba(9,11,17,0.96);
+  color: var(--accent);
+  padding: 9px 10px;
+  font-size: 13px;
+  font-family: var(--font-sans);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: rgba(163,167,186,0.7);
+}
+
+/* ===================== BUTTONS ===================== */
+button {
+  font-family: var(--font-sans);
+  border: none;
+  cursor: pointer;
+}
+
+.primary {
+  background: linear-gradient(135deg, #f5f5f7, #d6dae4);
+  color: #050509;
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+}
+
+.primary.wide {
+  width: 100%;
+  margin-top: 8px;
+}
+
+.ghost {
+  background: rgba(11,14,20,0.96);
+  color: var(--accent-soft);
+  border-radius: 999px;
+  padding: 9px 14px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  border: 1px solid var(--line-soft);
+}
+
+.ghost.subtle {
+  font-size: 11px;
+  padding-inline: 10px;
+}
+
+/* ===================== STATUS ===================== */
+.status-msg {
+  min-height: 16px;
+  margin-top: 6px;
+  font-size: 12px;
+  color: var(--accent-soft);
+}
+
+.status-msg.error {
+  color: #ff5268;
+}
+
+/* ===================== ADMIN MONITOR ===================== */
+.monitor-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 12px;
+}
+
+.monitor-cover {
+  width: 64px;
+  height: 64px;
+  border-radius: 6px;
+  background: #111;
+  background-size: cover;
+  background-position: center;
+}
+
+.monitor-track {
+  font-size: 13px;
+}
+
+.monitor-artist {
+  font-size: 12px;
+  color: var(--accent-soft);
+}
+
+/* ===================== PROGRESS ===================== */
+.time-row {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--accent-soft);
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  border-radius: 5px;
+  background: #1b1b1f;
+  margin-top: 6px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #f5f5f7, #c9cedf);
+}
+
+/* ===================== PLAYLIST ===================== */
+#admin-playlist {
+  margin-top: 8px;
+  list-style: none;
+  padding: 4px 0;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.09);
+  background: radial-gradient(
+    circle at 0 0,
+    rgba(255,255,255,0.02),
+    rgba(4,6,11,0.96)
+  );
+}
+
+/* ===================== PREVIEW IFRAME ===================== */
+.admin-preview-frame {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  pointer-events: none;
+  border: 0;
+}
+.monitor-sync {
+  text-align: center;
+  margin-top: 12px;
+}
+.actions-row {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 14px;
+}
+.mode-toggle {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  text-align: center;
+}
+#admin-new-url {
+  text-align: center;
+}
+.add-card .field {
+  margin-inline: auto;
+  text-align: center;
+}
+.playlist-list {
+  margin-inline: auto;
+  text-align: center;
+}
+.admin-mix-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+  justify-items: center;
+}
+.playlist-list.numbered {
+  counter-reset: mix;
+}
+
+.playlist-list.numbered .admin-mix-row::before {
+  counter-increment: mix;
+  content: counter(mix, decimal-leading-zero);
+  opacity: 0.5;
+  font-variant-numeric: tabular-nums;
+}
+/* ============================================================
+   RESONANT ADMIN — PREMIUM BROADCAST COMPILED
+   Scope: Visual polish only · No layout changes
+============================================================ */
+
+/* ------------------------------------------------------------
+   BUTTON SYSTEM — CONSOLE FEEL
+------------------------------------------------------------ */
+button {
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(12,14,20,0.92);
+  color: var(--accent-soft);
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+button:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.16);
+  color: var(--accent-strong);
+}
+
+button:active {
+  background: rgba(255,255,255,0.08);
+}
+
+/* ------------------------------------------------------------
+   TRANSPORT CONTROLS — HARDWARE CHARACTER
+------------------------------------------------------------ */
+.actions-row button {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  font-size: 14px;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.actions-row button.primary {
+  background: linear-gradient(180deg, #f5f5f7, #d6dae4);
+  color: #050507;
+  border: none;
+}
+
+.actions-row button.primary:hover {
+  background: #ffffff;
+}
+
+/* ------------------------------------------------------------
+   PLAYLIST ROW — BROADCAST STATE (CLEAN)
+------------------------------------------------------------ */
+.admin-mix-row {
+  position: relative;
+  opacity: 0.7;
+  transition: background 0.2s ease, opacity 0.2s ease;
+}
+
+.admin-mix-row:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.03);
+}
+
+.admin-mix-row.active {
+  opacity: 1;
+  background: rgba(255,255,255,0.02);
+}
+
+/* LEFT INDICATOR — DOES NOT AFFECT GRID OR COUNTER */
+.admin-mix-row.active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background: var(--accent-pill);
+  border-radius: 1px;
+}
+
+/* ------------------------------------------------------------
+   PLAYLIST ACTION BUTTONS — EDITORIAL
+------------------------------------------------------------ */
+.admin-mix-row button {
+  background: transparent;
+  border: none;
+  color: var(--accent-soft);
+  padding: 4px 6px;
+}
+
+.admin-mix-row button:hover {
+  color: var(--accent-strong);
+}
+/* ============================================================
+   ADMIN TOOLS — FINAL ALIGNMENT POLISH
+============================================================ */
+
+/* Center Reset / Shuffle / Export buttons */
+.admin-tools {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+}
+
+/* Center Import / Export label text */
+.field span {
+  text-align: center;
+}
+
+/* Center textarea placeholder + text */
+#admin-io-text {
+  text-align: center;
+}
+
+#admin-io-text::placeholder {
+  text-align: center;
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Resonant · Listening Metrics</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050507" />
+  <meta
+    name="description"
+    content="Resonant · Cultural listening metrics and audience insights"
+  />
+
+  <!-- Base Resonant styles -->
+  <link rel="stylesheet" href="style.index.css" />
+  <!-- Metrics-only extensions -->
+  <link rel="stylesheet" href="style.metrics.css" />
+</head>
+
+<body>
+  <div class="app-root app-ready">
+
+    <!-- HEADER -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-mark">⟁</div>
+        <div class="brand-text">
+          <h1>Resonant</h1>
+          <p>Listening Metrics</p>
+        </div>
+      </div>
+
+      <div id="metrics-status" class="live-pill off">
+        <span class="dot"></span>
+        <span>OFF AIR</span>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- DASHBOARD WRAPPER -->
+      <section class="metrics-dashboard">
+
+        <!-- RANGE / CONTEXT -->
+        <p class="metrics-range">
+          Data collected since <span id="metrics-since">—</span>
+        </p>
+
+        <!-- HERO METRICS -->
+        <section class="metrics-grid">
+
+          <div class="metric-card">
+            <p class="metric-label">Total Sessions</p>
+            <h2 id="metric-sessions">—</h2>
+            <small class="metric-hint">since launch</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Active Listeners</p>
+            <h2 id="metric-active">—</h2>
+            <small class="metric-hint">last 5 minutes</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Avg. Listening Time</p>
+            <h2 id="metric-average">—</h2>
+            <small class="metric-hint">per session</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Peak Concurrent</p>
+            <h2 id="metric-peak">—</h2>
+            <small class="metric-hint">historical</small>
+          </div>
+
+        </section>
+
+        <!-- EMPTY STATE -->
+        <div id="metrics-empty" class="metrics-empty hidden">
+          <p>
+            No listening data yet.<br />
+            Metrics will appear once sessions begin.
+          </p>
+        </div>
+
+        <!-- RECENT ACTIVITY -->
+        <section class="metrics-section">
+          <h3>Recent Sessions</h3>
+
+          <ul id="metrics-timeline" class="metrics-timeline">
+            <!-- Rendered by metrics.js -->
+          </ul>
+        </section>
+
+        <!-- EDITORIAL NOTE -->
+        <section class="metrics-note">
+          <p>
+            These metrics reflect real listening sessions over time.<br />
+            No personal data is collected, tracked, or stored.<br />
+            All metrics are computed locally.<br />
+            Resonant exists to support cultural discovery and
+            direct support for artists.
+          </p>
+        </section>
+
+      </section>
+
+    </main>
+  </div>
+
+  <!-- Metrics logic -->
+  <script src="metrics.js"></script>
+</body>
+</html>
