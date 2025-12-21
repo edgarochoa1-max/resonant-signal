@@ -27,6 +27,7 @@ let startedAt = null;
 let monitorTimer = null;
 let heartbeatTimer = null;
 let currentMeta = null;
+let finishing = false;
 
 /* ------------------------------------------------------
    DOM
@@ -171,8 +172,17 @@ function normalizeMetaFromSound(soundTitle, fallbackArtist = "") {
     return { artist: fb || "Unknown Artist", title: "Untitled" };
   }
 
+  // 1) Detect guest pattern: [with X] or (with X)
+  const withMatch =
+    raw.match(/\[\s*with\s+([^\]]+)\s*\]/i) ||
+    raw.match(/\(\s*with\s+([^)]+)\s*\)/i);
+
+  const guest = withMatch?.[1]?.trim() || "";
+
+  // 2) Build working string WITHOUT guest segment
   let s = raw
-    .replace(/\[with\s+[^\]]+\]/ig, "")
+    .replace(/\[\s*with\s+[^\]]+\s*\]/ig, "")
+    .replace(/\(\s*with\s+[^)]+\s*\)/ig, "")
     .replace(/\(feat\.?\s+[^)]+\)/ig, "")
     .replace(/\bfeat\.?\s+.+$/ig, "")
     .replace(/\bby\s+(.+)$/ig, "")
@@ -184,29 +194,33 @@ function normalizeMetaFromSound(soundTitle, fallbackArtist = "") {
     .filter(Boolean);
 
   const clean = t =>
-    t
+    (t || "")
       .replace(/\b(19|20)\d{2}\b/g, "")
       .replace(/\blive\s*@.+$/i, "")
       .replace(/\s{2,}/g, " ")
       .trim();
 
+  // ✅ PRIORITY RULE: guest artist wins
+  if (guest) {
+    const baseTitle = clean(parts[0]) || clean(s) || "Live Set";
+    const artistFinal = clean(guest) || fb || "Unknown Artist";
+    return {
+      artist: artistFinal,
+      title: baseTitle
+    };
+  }
+
+  // --- fallback behavior ---
   const eq = (a, b) =>
     a && b &&
     a.toLowerCase().replace(/[^a-z0-9]/g, "") ===
     b.toLowerCase().replace(/[^a-z0-9]/g, "");
 
-  if (parts.length >= 3 && eq(parts[0], parts[parts.length - 1])) {
-    return {
-      artist: clean(parts[0]) || fb || "Unknown Artist",
-      title: clean(parts.slice(1, -1).join(" — ")) || "Live Set"
-    };
-  }
-
   if (parts.length >= 2) {
     const artist = clean(parts[0]) || fb || "Unknown Artist";
-    const title  = clean(
-      parts.slice(1).filter(p => !eq(p, artist)).join(" — ")
-    ) || "Live Set";
+    const title =
+      clean(parts.slice(1).filter(p => !eq(p, artist)).join(" — ")) ||
+      "Live Set";
     return { artist, title };
   }
 
@@ -365,10 +379,24 @@ function resolveMetadataAndBroadcast(track) {
       startHeartbeat();
 
       widget.bind(SC.Widget.Events.FINISH, () => {
-        stopHeartbeat();
-        clearMonitor();
-        setTimeout(() => randomMode ? playIndex(getRandomIndex()) : next(), 800);
-      });
+  if (finishing) return;
+  finishing = true;
+
+  stopHeartbeat();
+  clearMonitor();
+
+  publishBroadcast({
+    status: "transition",
+    url: null,
+    startedAt: null
+  });
+
+  setTimeout(() => {
+    finishing = false;
+    randomMode ? playIndex(getRandomIndex()) : next();
+  }, 300);
+});
+
     });
   });
 }
@@ -503,3 +531,23 @@ function getRandomIndex() {
 /* ============================================================
    ADMIN STATUS: FROZEN · SINGLE SOURCE OF TRUTH · V2.4
 ============================================================ */
+// 🧪 TEST: force next track (SHIFT + N)
+document.addEventListener("keydown", e => {
+  if (e.shiftKey && e.key.toLowerCase() === "n") {
+    console.log("🧪 FORCE NEXT TRACK");
+
+    finishing = false;
+    stopHeartbeat();
+    clearMonitor();
+
+    publishBroadcast({
+      status: "transition",
+      url: null,
+      startedAt: null
+    });
+
+    setTimeout(() => {
+      next();
+    }, 300);
+  }
+});

@@ -1,5 +1,5 @@
 /* ============================================================
-   RESONANT · LISTENER APP ENGINE — V2.6.1 PATCHED
+   RESONANT · LISTENER APP ENGINE — V2.6.1 PATCHED (FINAL)
    Admin-driven · Drift-safe · Audio-authoritative
    Metadata-authoritative · Support-the-Artist locked
    OFF AIR hardened · Auto-recovery · Mobile-safe
@@ -97,40 +97,49 @@ function bindUI() {
   ui.playBtn.onclick = togglePlay;
 
   ui.likeBtn.onclick = () => {
-  const key = getLikeKey();
-  if (!key) return;
+    const key = getLikeKey();
+    if (!key) return;
 
-  const liked = localStorage.getItem(key) === "1";
-  localStorage.setItem(key, liked ? "0" : "1");
-  renderLike();
-};
+    const liked = localStorage.getItem(key) === "1";
+    localStorage.setItem(key, liked ? "0" : "1");
+    renderLike();
+  };
 
-  ui.inviteBtn.onclick = async () => {
-  const url = location.href;
+  /* -------------------------------
+     INVITE FRIENDS — PATCHED
+  -------------------------------- */
+  if (ui.inviteBtn) {
+    ui.inviteBtn.addEventListener("click", async e => {
+      e.preventDefault();
+      e.stopPropagation();
 
-  // Mobile / supported share
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: "Resonant",
-        text: "The Underground Music Signal",
-        url
-      });
-      return;
-    } catch {
-      // user cancelled → fallback to copy
-    }
+      const url = location.href;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: "Resonant",
+            text: "The Underground Music Signal",
+            url
+          });
+          return;
+        } catch {
+          // user cancelled → fallback
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(url);
+        showInviteFeedback("Link copied — ready to paste ✨");
+      } catch {
+        showInviteFeedback("Copy failed — please copy manually");
+      }
+    });
+
+    ui.inviteBtn.addEventListener("contextmenu", e => {
+      e.preventDefault();
+    });
   }
-
-  // Fallback: copy to clipboard
-  try {
-    await navigator.clipboard.writeText(url);
-    showInviteFeedback("Link copied — ready to paste ✨");
-  } catch {
-    showInviteFeedback("Copy failed — please copy manually");
-  }
-};
-
 
   ui.feedbackSend.onclick = () => {
     const msg = ui.feedbackMsg.value.trim();
@@ -201,6 +210,8 @@ function syncTick() {
   let b;
   try { b = JSON.parse(raw); } catch { return guardedOffAir(); }
 
+  if (b.status === "transition") return;
+
   if (
     !b.updatedAt ||
     Date.now() - b.updatedAt > BROADCAST_TTL ||
@@ -222,17 +233,14 @@ function syncTick() {
 }
 
 /* ------------------------------------------------------------
-   OFF AIR (PATCHED)
+   OFF AIR
 ------------------------------------------------------------ */
 function guardedOffAir() {
-  if (userPaused) return; // 🔒 PATCH: pause manual ≠ off air
+  if (userPaused) return;
 
   if (widget) {
     widget.isPaused(paused => {
-      if (!paused) {
-        recoverFromAudio();
-        return;
-      }
+      if (!paused) return recoverFromAudio();
       safeGoOffAir();
     });
     return;
@@ -245,7 +253,6 @@ function safeGoOffAir() {
     state.phase === "live" &&
     Date.now() - state.lastLiveAt < LIVE_GRACE
   ) return;
-
   goOffAir();
 }
 
@@ -256,46 +263,20 @@ function goOffAir() {
 }
 
 /* ------------------------------------------------------------
-   SUPPORT THE ARTIST — LINK ENGINE
+   SUPPORT THE ARTIST
 ------------------------------------------------------------ */
 function updateArtistLinks(artist) {
   const name = artist?.trim();
   const hasArtist = Boolean(name);
   const q = hasArtist ? encodeURIComponent(name) : "";
 
-  // SEARCH-SAFE
-  setArtistLink(
-    "link-bandcamp",
-    hasArtist ? `https://bandcamp.com/search?q=${q}` : null
-  );
+  setArtistLink("link-bandcamp", hasArtist ? `https://bandcamp.com/search?q=${q}` : null);
+  setArtistLink("link-discogs", hasArtist ? `https://www.discogs.com/search/?q=${q}&type=artist` : null);
+  setArtistLink("link-soundcloud", hasArtist ? `https://soundcloud.com/search?q=${q}` : null);
 
-  setArtistLink(
-    "link-discogs",
-    hasArtist
-      ? `https://www.discogs.com/search/?q=${q}&type=artist`
-      : null
-  );
-
-  setArtistLink(
-    "link-soundcloud",
-    hasArtist ? `https://soundcloud.com/search?q=${q}` : null
-  );
-
-  // DESTINATION LINKS (no search)
-  setArtistLink(
-    "link-juno",
-    hasArtist ? "https://www.juno.co.uk/" : null
-  );
-
-  setArtistLink(
-    "link-deejay",
-    hasArtist ? "https://www.deejay.de" : null
-  );
-
-  setArtistLink(
-    "link-subwax",
-    hasArtist ? "https://subwax.es/" : null
-  );
+  setArtistLink("link-juno", hasArtist ? "https://www.juno.co.uk/" : null);
+  setArtistLink("link-deejay", hasArtist ? "https://www.deejay.de" : null);
+  setArtistLink("link-subwax", hasArtist ? "https://subwax.es/" : null);
 }
 
 function setArtistLink(id, url) {
@@ -321,7 +302,7 @@ function setArtistLink(id, url) {
 ------------------------------------------------------------ */
 function loadTrack(b) {
   state.url = b.url;
-  renderLike(); // ❤️ ACTUALIZA LIKE SEGÚN ESTE SET
+  renderLike();
 
   state.startedAt = b.startedAt;
   state.duration = null;
@@ -384,7 +365,7 @@ function recoverFromAudio() {
   state.lastLiveAt = Date.now();
   userPaused = false;
 
-  renderLike(); // ✅ FIX: fuerza estado correcto del ❤️
+  renderLike();
 
   if (state.phase !== "live") setPhase("live");
   ui.livePill.classList.remove("off");
@@ -433,12 +414,9 @@ function updateProgress(pos, dur) {
   const total = state.duration || dur;
   if (!total) return;
 
-  ui.progress.style.width =
-    `${Math.min(100, (pos / total) * 100)}%`;
-
+  ui.progress.style.width = `${Math.min(100, (pos / total) * 100)}%`;
   ui.elapsed.textContent = formatTime(pos);
-  ui.remaining.textContent =
-    "-" + formatTime(Math.max(0, total - pos));
+  ui.remaining.textContent = "-" + formatTime(Math.max(0, total - pos));
 }
 
 /* ------------------------------------------------------------
