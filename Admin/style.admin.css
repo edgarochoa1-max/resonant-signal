@@ -2,6 +2,14 @@
    RESONANT · ADMIN STYLE — EXTRACTED & COMPILED
    Visual clone from shared index/admin stylesheet
    ============================================================ */
+   
+   /*
+STATUS:
+- SCOPE: Admin Console only
+- ROLE: Visual layer
+- AFFECTS: UI only
+- SAFE: Yes (no logic / no layout)
+*/
 
 /* ===================== ROOT ===================== */
 :root {
@@ -494,4 +502,9 @@ button:active {
 
 #admin-io-text::placeholder {
   text-align: center;
+}
+.fx-noise,
+.fx-gradient-top,
+.fx-gradient-bottom {
+  pointer-events: none;
 }

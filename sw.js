@@ -1,17 +1,24 @@
 /* ============================================================
-   RESONANT · SERVICE WORKER — BROADCAST SAFE
+   RESONANT · SERVICE WORKER — V16 FINAL (COMPILED)
    UI Shell Cache · Network First HTML
    NO AUDIO CACHE · NO SC CACHE
    ============================================================ */
 
-const CACHE_VERSION = "resonant-v16-shell-v2";
+const CACHE_VERSION = "resonant-v16-shell-v3";
 
+/* ------------------------------------------------------------
+   UI SHELL (PUBLIC APP ONLY)
+------------------------------------------------------------ */
 const SHELL_CACHE = [
   "/",
-  "/index.html",
   "/style.index.css",
-  "/app.js",
-  "/manifest.webmanifest"
+  "/manifest.webmanifest",
+
+  // Public App
+  "/App/signal.html",
+  "/App/app.js",
+  "/App/playlist.official.js",
+  "/App/style.signal.css"
 ];
 
 /* ------------------------------------------------------------
@@ -19,9 +26,7 @@ const SHELL_CACHE = [
 ------------------------------------------------------------ */
 self.addEventListener("install", event => {
   event.waitUntil(
-    caches.open(CACHE_VERSION).then(cache => {
-      return cache.addAll(SHELL_CACHE);
-    })
+    caches.open(CACHE_VERSION).then(cache => cache.addAll(SHELL_CACHE))
   );
   self.skipWaiting();
 });
@@ -34,8 +39,8 @@ self.addEventListener("activate", event => {
     caches.keys().then(keys =>
       Promise.all(
         keys
-          .filter(key => key !== CACHE_VERSION)
-          .map(key => caches.delete(key))
+          .filter(k => k !== CACHE_VERSION)
+          .map(k => caches.delete(k))
       )
     )
   );
@@ -49,7 +54,9 @@ self.addEventListener("fetch", event => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // 🚫 Never touch SoundCloud or external audio
+  /* ------------------------------------------
+     🚫 NEVER TOUCH AUDIO / SOUNDCLOUD
+  ------------------------------------------ */
   if (
     url.hostname.includes("soundcloud.com") ||
     url.hostname.includes("sndcdn.com") ||
@@ -59,21 +66,35 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // HTML → network first (always fresh broadcast)
-  if (req.mode === "navigate") {
-    event.respondWith(
-      fetch(req)
-        .then(res => {
-          const clone = res.clone();
-          caches.open(CACHE_VERSION).then(cache => cache.put(req, clone));
-          return res;
-        })
-        .catch(() => caches.match(req))
-    );
+  /* ------------------------------------------
+     🚫 NEVER CACHE CONTROL SURFACES
+  ------------------------------------------ */
+  if (
+    url.pathname.startsWith("/Admin") ||
+    url.pathname.startsWith("/Metrics") ||
+    url.pathname.startsWith("/Gate")
+  ) {
+    event.respondWith(fetch(req));
     return;
   }
 
-  // CSS / JS / Images → cache first
+  /* ------------------------------------------
+     HTML → NETWORK FIRST (PUBLIC APP ONLY)
+  ------------------------------------------ */
+  if (req.mode === "navigate") {
+    if (url.pathname.startsWith("/App") || url.pathname === "/") {
+      event.respondWith(
+        fetch(req).catch(() => caches.match(req))
+      );
+    } else {
+      event.respondWith(fetch(req));
+    }
+    return;
+  }
+
+  /* ------------------------------------------
+     CSS / JS / IMAGES → CACHE FIRST
+  ------------------------------------------ */
   if (
     req.destination === "style" ||
     req.destination === "script" ||
@@ -81,19 +102,22 @@ self.addEventListener("fetch", event => {
   ) {
     event.respondWith(
       caches.match(req).then(cached => {
-        return (
-          cached ||
-          fetch(req).then(res => {
-            const clone = res.clone();
-            caches.open(CACHE_VERSION).then(cache => cache.put(req, clone));
-            return res;
-          })
-        );
+        if (cached) return cached;
+
+        return fetch(req).then(res => {
+          const clone = res.clone();
+          caches.open(CACHE_VERSION).then(cache => {
+            cache.put(req, clone);
+          });
+          return res;
+        });
       })
     );
     return;
   }
 
-  // Default → passthrough
+  /* ------------------------------------------
+     DEFAULT → NETWORK
+  ------------------------------------------ */
   event.respondWith(fetch(req));
 });

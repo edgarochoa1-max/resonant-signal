@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Resonant · The Underground Music Signal</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050507" />
+  <meta
+    name="description"
+    content="Resonant is a cultural music tool for discovering electronic underground sound through curated transmissions and intentional listening."
+  />
+
+  <!-- Gate-only styles -->
+  <link rel="stylesheet" href="./style.gate.css" />
+</head>
+
+<body>
+
+  <div class="gate-root" id="gate">
+    <div class="gate-inner">
+
+      <div class="gate-mark-wrap">
+        <div class="gate-mark">⟁</div>
+      </div>
+
+      <h1 class="gate-title">Resonant</h1>
+      <p class="gate-subtitle">The Underground Music Signal</p>
+
+      <p class="gate-copy">
+        A cultural music tool<br />
+        for discovering electronic underground sound.
+      </p>
+
+      <p class="gate-copy small">
+        Curated transmissions.<br />
+        Shared time.<br />
+        Intentional listening.
+      </p>
+
+      <p class="gate-copy small">
+        Resonant exists to move sound<br />
+        beyond scenes, borders, and algorithms.
+      </p>
+
+      <p class="gate-copy small">
+        Not to monetize attention,<br />
+        but to guide listeners toward artists,<br />
+        labels, and the music itself.
+      </p>
+
+      <div class="gate-actions">
+        <a href="../App/signal.html" class="gate-enter" id="enter-btn">
+          Enter the signal
+        </a>
+      </div>
+
+      <div class="gate-footer">
+        Promotional use only · No tracking · Support the artists
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const gate = document.getElementById("gate");
+    const enter = document.getElementById("enter-btn");
+
+    enter.addEventListener("click", e => {
+      e.preventDefault();
+      gate.classList.add("gate-exit");
+      setTimeout(() => {
+        window.location.href = enter.getAttribute("href");
+      }, 700);
+    });
+  </script>
+
+</body>
+</html>

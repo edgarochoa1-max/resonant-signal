@@ -1,31 +1,29 @@
 /* ============================================================
-   RESONANT · METRICS ENGINE — V2.2 FINAL (COMPILED)
+   RESONANT · METRICS ENGINE — V3.1 FINAL (PRESENCE CORE)
    Read-only · Ethical · Pitch-safe · Context-aware
 ============================================================ */
+/*
+  Metrics Philosophy:
+  Resonant measures presence, not clicks.
+  Sessions are counted only after intentional listening.
+  No personal data is collected or tracked.
+*/
 
 const SESSIONS_KEY = "resonant_sessions_v2";
 const BROADCAST_KEY = "resonant_broadcast_state_v2";
 
-const ACTIVE_WINDOW = 5 * 60 * 1000; // 5 minutes
-const MIN_ACTIVE_MS = 15000;         // 15s threshold
-const LIVE_FRESHNESS = 10000;        // 10s heartbeat window
+const ACTIVE_WINDOW = 20 * 1000; // 20s → presencia real
+const MIN_ACTIVE_MS = 15000;
+const LIVE_FRESHNESS = 10000;
 
 /* ------------------------------------------------------------
-   INIT
+   PUBLIC API
 ------------------------------------------------------------ */
-document.addEventListener("DOMContentLoaded", () => {
-  renderMetrics();
-  renderLiveStatus();
-  setInterval(renderLiveStatus, 3000); // keep pill honest
-});
 
-/* ------------------------------------------------------------
-   CORE
------------------------------------------------------------- */
 function renderMetrics() {
   const sessions = loadSessions();
 
-  if (!sessions.length) {
+if (!sessions.some(isIntentional)) {
     showEmptyState();
     return;
   }
@@ -40,9 +38,30 @@ function renderMetrics() {
   renderSince(sessions);
 }
 
+function renderLiveStatus() {
+  try {
+    const raw = localStorage.getItem(BROADCAST_KEY);
+    const el = document.getElementById("metrics-status");
+    if (!raw || !el) return;
+
+    const b = JSON.parse(raw);
+    const now = Date.now();
+
+    const isLive =
+      b.status === "live" &&
+      typeof b.updatedAt === "number" &&
+      now - b.updatedAt < LIVE_FRESHNESS;
+
+    el.classList.toggle("off", !isLive);
+    el.querySelector("span:last-child").textContent =
+      isLive ? "LIVE" : "OFF AIR";
+  } catch {}
+}
+
 /* ------------------------------------------------------------
    LOAD
 ------------------------------------------------------------ */
+
 function loadSessions() {
   try {
     const raw = localStorage.getItem(SESSIONS_KEY);
@@ -54,51 +73,72 @@ function loadSessions() {
 }
 
 /* ------------------------------------------------------------
+   SOURCE HELPERS
+------------------------------------------------------------ */
+
+function isIntentional(s) {
+  return typeof s.listenedMs === "number" && s.listenedMs >= MIN_ACTIVE_MS;
+}
+
+function isBroadcast(s) {
+  return s.source === "broadcast";
+}
+
+function isAutoDJ(s) {
+  return s.source === "autodj";
+}
+
+/* ------------------------------------------------------------
    METRICS
 ------------------------------------------------------------ */
-function renderTotals(sessions) {
-  setText("metric-sessions", sessions.length);
-}
 
 function renderActive(sessions) {
   const now = Date.now();
 
   const active = sessions.filter(s => {
-    const end = s.endedAt || now;
-    return (
-      now - end <= ACTIVE_WINDOW &&
-      s.listenedMs >= MIN_ACTIVE_MS
-    );
-  }).length;
+    if (!isIntentional(s)) return false;
 
-  setText("metric-active", active);
+    // sesión aún abierta
+    if (!s.endedAt) return true;
+
+    // terminó recientemente
+    return now - s.endedAt <= ACTIVE_WINDOW;
+  });
+
+  setText(
+    "metric-active",
+    active.length ? active.length : "—"
+  );
 }
 
 function renderAverage(sessions) {
-  const closed = sessions.filter(
-    s => s.endedAt && s.listenedMs > 0
+  const intentional = sessions.filter(
+    s => s.endedAt && isIntentional(s)
   );
 
-  if (!closed.length) {
+  if (!intentional.length) {
     setText("metric-average", "—");
     return;
   }
 
-  const totalMs = closed.reduce((sum, s) => sum + s.listenedMs, 0);
-  setText("metric-average", formatDuration(totalMs / closed.length));
+  const totalMs = intentional.reduce(
+    (sum, s) => sum + s.listenedMs,
+    0
+  );
+
+  setText(
+    "metric-average",
+    formatDuration(totalMs / intentional.length)
+  );
 }
 
 function renderPeak(sessions) {
   const events = [];
 
   sessions.forEach(s => {
-    if (!s.startedAt) return;
-
-    const end =
-      s.endedAt ||
-      (s.startedAt + (s.listenedMs || 0));
-
-    events.push({ t: s.startedAt, d: +1 });
+    if (!s.startedAt || !isIntentional(s)) return;
+    const end = s.endedAt || (s.startedAt + s.listenedMs);
+    events.push({ t: s.startedAt, d: 1 });
     events.push({ t: end, d: -1 });
   });
 
@@ -118,6 +158,7 @@ function renderPeak(sessions) {
 /* ------------------------------------------------------------
    TIMELINE
 ------------------------------------------------------------ */
+
 function renderTimeline(sessions) {
   const ul = document.getElementById("metrics-timeline");
   if (!ul) return;
@@ -126,7 +167,8 @@ function renderTimeline(sessions) {
 
   sessions
     .slice()
-    .sort((a, b) => b.startedAt - a.startedAt)
+    .sort((a, b) => (b.startedAt || 0) - (a.startedAt || 0))
+    .filter(s => isIntentional(s) && s.startedAt)
     .slice(0, 8)
     .forEach(s => {
       const li = document.createElement("li");
@@ -141,43 +183,28 @@ function renderTimeline(sessions) {
 /* ------------------------------------------------------------
    RANGE
 ------------------------------------------------------------ */
+
 function renderSince(sessions) {
   const first = sessions.reduce(
-    (min, s) => Math.min(min, s.startedAt || Infinity),
+    (min, s) =>
+      typeof s.startedAt === "number"
+        ? Math.min(min, s.startedAt)
+        : min,
     Infinity
   );
 
   if (first !== Infinity) {
-    setText("metrics-since", new Date(first).toLocaleDateString());
+    setText(
+      "metrics-since",
+      new Date(first).toLocaleDateString()
+    );
   }
-}
-
-/* ------------------------------------------------------------
-   LIVE STATUS (EDITORIAL · HEARTBEAT-BASED)
------------------------------------------------------------- */
-function renderLiveStatus() {
-  try {
-    const raw = localStorage.getItem(BROADCAST_KEY);
-    const el = document.getElementById("metrics-status");
-    if (!raw || !el) return;
-
-    const b = JSON.parse(raw);
-    const now = Date.now();
-
-    const isLive =
-      b.status === "live" &&
-      b.updatedAt &&
-      now - b.updatedAt < LIVE_FRESHNESS;
-
-    el.classList.toggle("off", !isLive);
-    el.querySelector("span:last-child").textContent =
-      isLive ? "LIVE" : "OFF AIR";
-  } catch {}
 }
 
 /* ------------------------------------------------------------
    UI HELPERS
 ------------------------------------------------------------ */
+
 function setText(id, value) {
   const el = document.getElementById(id);
   if (el) el.textContent = value;
@@ -201,6 +228,7 @@ function toggle(id, show) {
 /* ------------------------------------------------------------
    FORMAT
 ------------------------------------------------------------ */
+
 function formatDuration(ms = 0) {
   const m = Math.floor(ms / 60000);
   const s = Math.floor((ms % 60000) / 1000);
@@ -214,3 +242,25 @@ function formatDate(ts) {
     minute: "2-digit"
   })}`;
 }
+
+/* ------------------------------------------------------------
+   INTERNAL BREAKDOWN (NOT DISPLAYED)
+------------------------------------------------------------ */
+
+function getPresenceBreakdown(sessions) {
+  const intentional = sessions.filter(isIntentional);
+  return {
+    total: intentional.length,
+    broadcast: intentional.filter(isBroadcast).length,
+    autodj: intentional.filter(isAutoDJ).length
+  };
+}
+
+/* ------------------------------------------------------------
+   SAFE PUBLIC EXPORT
+------------------------------------------------------------ */
+
+window.ResonantMetrics = {
+  renderMetrics,
+  renderLiveStatus
+};

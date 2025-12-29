@@ -2,31 +2,29 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Resonant · Listening Metrics</title>
+  <title>Resonant · Public Listening Metrics</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#050507" />
   <meta
     name="description"
-    content="Resonant · Cultural listening metrics and audience insights"
+    content="Resonant · Public listening metrics and cultural audience insight"
   />
 
-  <!-- Base Resonant styles -->
-  <link rel="stylesheet" href="style.index.css" />
-  <!-- Metrics-only extensions -->
-  <link rel="stylesheet" href="style.metrics.css" />
+  <link rel="stylesheet" href="../App/style.signal.css" />
+  <link rel="stylesheet" href="./style.metrics.css" />
+
 </head>
 
 <body>
   <div class="app-root app-ready">
 
-    <!-- HEADER -->
     <header class="top-bar">
       <div class="brand">
         <div class="brand-mark">⟁</div>
         <div class="brand-text">
           <h1>Resonant</h1>
-          <p>Listening Metrics</p>
+          <p>Public Metrics</p>
         </div>
       </div>
 
@@ -36,47 +34,47 @@
       </div>
     </header>
 
-    <!-- MAIN -->
     <main class="main">
-
-      <!-- DASHBOARD WRAPPER -->
       <section class="metrics-dashboard">
 
-        <!-- RANGE / CONTEXT -->
         <p class="metrics-range">
           Data collected since <span id="metrics-since">—</span>
         </p>
 
-        <!-- HERO METRICS -->
         <section class="metrics-grid">
 
           <div class="metric-card">
-            <p class="metric-label">Total Sessions</p>
+            <p class="metric-label">Listening Sessions</p>
             <h2 id="metric-sessions">—</h2>
-            <small class="metric-hint">since launch</small>
+            <small class="metric-hint">intentional sessions</small>
           </div>
 
           <div class="metric-card">
             <p class="metric-label">Active Listeners</p>
             <h2 id="metric-active">—</h2>
-            <small class="metric-hint">last 5 minutes</small>
+            <small class="metric-hint">present now</small>
           </div>
 
           <div class="metric-card">
-            <p class="metric-label">Avg. Listening Time</p>
+            <p class="metric-label">Average Presence</p>
             <h2 id="metric-average">—</h2>
-            <small class="metric-hint">per session</small>
+            <small class="metric-hint">intentional listening</small>
           </div>
 
           <div class="metric-card">
-            <p class="metric-label">Peak Concurrent</p>
+            <p class="metric-label">Real Listening Time</p>
+            <h2 id="metric-total-time">—</h2>
+            <small class="metric-hint">total presence accumulated</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Peak Presence</p>
             <h2 id="metric-peak">—</h2>
-            <small class="metric-hint">historical</small>
+            <small class="metric-hint">historical moment</small>
           </div>
 
         </section>
 
-        <!-- EMPTY STATE -->
         <div id="metrics-empty" class="metrics-empty hidden">
           <p>
             No listening data yet.<br />
@@ -84,32 +82,34 @@
           </p>
         </div>
 
-        <!-- RECENT ACTIVITY -->
         <section class="metrics-section">
           <h3>Recent Sessions</h3>
-
-          <ul id="metrics-timeline" class="metrics-timeline">
-            <!-- Rendered by metrics.js -->
-          </ul>
+          <ul id="metrics-timeline" class="metrics-timeline"></ul>
         </section>
 
-        <!-- EDITORIAL NOTE -->
+        <section class="metrics-section">
+  <h3>What counts as listening?</h3>
+  <p class="metrics-copy">
+    Resonant measures presence, not clicks.<br />
+    A listening session is counted only after intentional listening time.<br />
+    No personal data is collected or tracked.
+  </p>
+</section>
+
         <section class="metrics-note">
           <p>
             These metrics reflect real listening sessions over time.<br />
             No personal data is collected, tracked, or stored.<br />
             All metrics are computed locally.<br />
-            Resonant exists to support cultural discovery and
-            direct support for artists.
+            Resonant exists to support cultural discovery and artists.
           </p>
         </section>
 
       </section>
-
     </main>
   </div>
 
-  <!-- Metrics logic -->
-  <script src="metrics.js"></script>
+  <script src="core/metrics-core.js"></script>
+  <script src="views/public.view.js"></script>
 </body>
 </html>

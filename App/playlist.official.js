@@ -1,13 +1,15 @@
 /* ===================================================================
-   RESONANT · OFFICIAL PLAYLIST V60.2 — 30 MIXES EDITION
-   FINAL CLEAN BUILD — Edgar Ochoa · 2025
+   RESONANT · OFFICIAL PLAYLIST V60.4 — CLEAN EDITION
+   32 MIXES · CURATED · EDITORIAL SAFE
+   Limited artist repetition for narrative flow
+   Edgar Ochoa · 2025
 =================================================================== */
 
 export const PLAYLIST = [
 
   /* 1 */
   {
-    title: "ADOTCAST 003 — Andrew Lace",
+    title: "ADOTCAST 003",
     artist: "Andrew Lace",
     url: "https://soundcloud.com/address-of-time-records/adotcast-andrew-lace-003",
     cover: null
@@ -15,15 +17,15 @@ export const PLAYLIST = [
 
   /* 2 */
   {
-    title: "8A — The Experiment",
-    artist: "Edgar Ochoa (8A)",
+    title: "The Experiment",
+    artist: "Oh_M",
     url: "https://soundcloud.com/edgar-ochoa/8a-the-experiment",
     cover: null
   },
 
   /* 3 */
   {
-    title: "ADOTCAST 004 — Zaleski",
+    title: "ADOTCAST 004",
     artist: "Zaleski",
     url: "https://soundcloud.com/address-of-time-records/adotcast-zaleski-004",
     cover: null
@@ -31,7 +33,7 @@ export const PLAYLIST = [
 
   /* 4 */
   {
-    title: "Santiago Uribe — Live @ Phonotheque",
+    title: "Live @ Phonotheque",
     artist: "Santiago Uribe",
     url: "https://soundcloud.com/user899295882/podcast-003-santiago-uribe-set-live-phonotheque",
     cover: null
@@ -39,7 +41,7 @@ export const PLAYLIST = [
 
   /* 5 */
   {
-    title: "ADOTCAST 005 — Matteo Point",
+    title: "ADOTCAST 005",
     artist: "Matteo Point",
     url: "https://soundcloud.com/address-of-time-records/adotcast-matteo-point-005-2",
     cover: null
@@ -47,7 +49,7 @@ export const PLAYLIST = [
 
   /* 6 */
   {
-    title: "FDG b2b Smagghe — GoaUltraBeat",
+    title: "Goa Ultra Beat",
     artist: "Francesco Del Garda & Ivan Smagghe",
     url: "https://soundcloud.com/goaultrabeat/francesco-del-garda-b2b-ivan-smagghe-goaultrabeat-curated-by-fdg",
     cover: null
@@ -55,7 +57,7 @@ export const PLAYLIST = [
 
   /* 7 */
   {
-    title: "SLAPCAST 090 — Cristian Sarde",
+    title: "SLAPCAST 090",
     artist: "Cristian Sarde",
     url: "https://soundcloud.com/slapfunk-records/cristian-sarde-slapcast090",
     cover: null
@@ -63,7 +65,7 @@ export const PLAYLIST = [
 
   /* 8 */
   {
-    title: "Dresden — Adriatic Live 2025",
+    title: "Adriatic Live 2025",
     artist: "Dresden",
     url: "https://soundcloud.com/loveintfestival/live-from-the-adriatic-2025-dresden",
     cover: null
@@ -71,7 +73,7 @@ export const PLAYLIST = [
 
   /* 9 */
   {
-    title: "Timeless Series 49 — Cristian Sarde",
+    title: "Timeless Series 49",
     artist: "Cristian Sarde",
     url: "https://soundcloud.com/timelesseries/cristian-sarde-podcast-timeless-series-49",
     cover: null
@@ -79,7 +81,7 @@ export const PLAYLIST = [
 
   /* 10 */
   {
-    title: "FABRIC 027 — Nicolas Lutz",
+    title: "FABRIC 027",
     artist: "Nicolas Lutz",
     url: "https://soundcloud.com/fabric/027-nicolas-lutz-recorded-live-from-fabric",
     cover: null
@@ -87,7 +89,7 @@ export const PLAYLIST = [
 
   /* 11 */
   {
-    title: "Exarde Cast 01 — Riccardo",
+    title: "Exarde Cast 01",
     artist: "Riccardo",
     url: "https://soundcloud.com/exarde-music/exarde-cast-01-riccardo",
     cover: null
@@ -95,7 +97,7 @@ export const PLAYLIST = [
 
   /* 12 */
   {
-    title: "RA 989 — Binh",
+    title: "RA 989",
     artist: "Binh",
     url: "https://soundcloud.com/resident-advisor/ra-989-binh",
     cover: null
@@ -103,7 +105,7 @@ export const PLAYLIST = [
 
   /* 13 */
   {
-    title: "Trommel InSession 147 — Samuel Jabba",
+    title: "Trommel InSession 147",
     artist: "Samuel Jabba",
     url: "https://soundcloud.com/trommelmusic/samuel-jabba-trommel-insession-147",
     cover: null
@@ -111,7 +113,7 @@ export const PLAYLIST = [
 
   /* 14 */
   {
-    title: "Alquimic — Live Set (Vacuity)",
+    title: "Live Set (Vacuity)",
     artist: "Alquimic",
     url: "https://soundcloud.com/vacuity-records/alquimic-live-set-vacuity",
     cover: null
@@ -119,7 +121,7 @@ export const PLAYLIST = [
 
   /* 15 */
   {
-    title: "Unsounds Radio 005 — Nicolas Longo",
+    title: "Unsounds Radio 005",
     artist: "Nicolas Longo",
     url: "https://soundcloud.com/unsounds-records/nicolas-longo-unsounds-radio-005",
     cover: null
@@ -127,7 +129,7 @@ export const PLAYLIST = [
 
   /* 16 */
   {
-    title: "HW Podcast 03 — Buraye (Live)",
+    title: "HW Podcast 03",
     artist: "Buraye",
     url: "https://soundcloud.com/hypnotic-wonk/hw-podcast-03-buraye-live",
     cover: null
@@ -135,7 +137,7 @@ export const PLAYLIST = [
 
   /* 17 */
   {
-    title: "Giroscopio 006 — Adrian Alessandro",
+    title: "Giroscopio 006",
     artist: "Adrian Alessandro",
     url: "https://soundcloud.com/komunal_radio/giroscopio-006-w-adrian-alessandro",
     cover: null
@@ -143,7 +145,7 @@ export const PLAYLIST = [
 
   /* 18 */
   {
-    title: "Alien Series 001 — Juaan",
+    title: "Alien Series 001",
     artist: "Juaan",
     url: "https://soundcloud.com/lesenfantsclub/alien-series-001-juaan",
     cover: null
@@ -151,7 +153,7 @@ export const PLAYLIST = [
 
   /* 19 */
   {
-    title: "Unsounds Radio 002 — Gastón Cabrera",
+    title: "Unsounds Radio 002",
     artist: "Gaston Cabrera",
     url: "https://soundcloud.com/unsounds-records/gaston-cabrera-unsounds-radio-002",
     cover: null
@@ -159,7 +161,7 @@ export const PLAYLIST = [
 
   /* 20 */
   {
-    title: "Subwax Podcast 35 — Stefano Andriezzi",
+    title: "Subwax Podcast 35",
     artist: "Stefano Andriezzi",
     url: "https://soundcloud.com/subwax-bcn-distribution/subwax-distribution-podcast-35-stefano-andriezzi",
     cover: null
@@ -167,7 +169,7 @@ export const PLAYLIST = [
 
   /* 21 */
   {
-    title: "ANAH Live Set — Cymatix 2022",
+    title: "Live Set @ Cymatix 2022",
     artist: "ANAH",
     url: "https://soundcloud.com/anah_music/anah-live-set-cymatix-030322",
     cover: null
@@ -175,7 +177,7 @@ export const PLAYLIST = [
 
   /* 22 */
   {
-    title: "Trommel InSession 124 — Elias Sternin",
+    title: "Trommel InSession 124",
     artist: "Elias Sternin",
     url: "https://soundcloud.com/trommelmusic/elias-sternin-trommel-insession-124",
     cover: null
@@ -183,7 +185,7 @@ export const PLAYLIST = [
 
   /* 23 */
   {
-    title: "Trommel 151 — Liquid Earth",
+    title: "Trommel 151",
     artist: "Liquid Earth",
     url: "https://soundcloud.com/trommelmusic/trommel-151-liquid-earth?in=trommelmusic/sets/trommel-podcast",
     cover: null
@@ -191,7 +193,7 @@ export const PLAYLIST = [
 
   /* 24 */
   {
-    title: "DJKoolt — Live @ Dekmantel 2025",
+    title: "Live @ Dekmantel 2025",
     artist: "DJKoolt",
     url: "https://soundcloud.com/dkmntl/djkoolt-at-dekmantel-festival-2025",
     cover: null
@@ -199,7 +201,7 @@ export const PLAYLIST = [
 
   /* 25 */
   {
-    title: "Francesco Del Garda — Live @ Dimensions 2022",
+    title: "Live @ Dimensions 2022",
     artist: "Francesco Del Garda",
     url: "https://soundcloud.com/dimensionsfestival/francesco-del-garda-live-dimesions-2022",
     cover: null
@@ -207,7 +209,7 @@ export const PLAYLIST = [
 
   /* 26 */
   {
-    title: "Santiago Uribe — Cartulis Podcast 037",
+    title: "Cartulis Podcast 037",
     artist: "Santiago Uribe",
     url: "https://soundcloud.com/cartulisday/santiago-uribe-cartulis-podcast-037",
     cover: null
@@ -215,7 +217,7 @@ export const PLAYLIST = [
 
   /* 27 */
   {
-    title: "Trommel InSession 144 — Trajano",
+    title: "Trommel InSession 144",
     artist: "Trajano",
     url: "https://soundcloud.com/trommelmusic/trajano-trommel-insession-144",
     cover: null
@@ -223,7 +225,7 @@ export const PLAYLIST = [
 
   /* 28 */
   {
-    title: "GOP Cast 097 — Trajano",
+    title: "GOP Cast 097",
     artist: "Trajano",
     url: "https://soundcloud.com/goptun/gop-cast-097-trajano-1",
     cover: null
@@ -231,7 +233,7 @@ export const PLAYLIST = [
 
   /* 29 */
   {
-    title: "Raphaël Carrau — Live @ Waking Life 2023",
+    title: "Live @ Waking Life 2023",
     artist: "Raphaël Carrau",
     url: "https://soundcloud.com/wakinglifeportugal/raphael-carrau-at-floresta-waking-life-23",
     cover: null
@@ -239,9 +241,25 @@ export const PLAYLIST = [
 
   /* 30 */
   {
-    title: "Olga Korol — Live @ Dimensions",
+    title: "Live @ Dimensions",
     artist: "Olga Korol",
     url: "https://soundcloud.com/dimensionsfestival/olga-korol-live-from",
+    cover: null
+  },
+
+  /* 31 */
+  {
+    title: "Crafted To Make You Move 02",
+    artist: "Stella Fiore",
+    url: "https://soundcloud.com/openlabradio/crafted-to-make-you-move-02-chat-noir-with-stella-fiore",
+    cover: null
+  },
+
+  /* 32 */
+  {
+    title: "Limitless 15",
+    artist: "Stella Fiore",
+    url: "https://soundcloud.com/limitless_dublin/limitless-15-stella-fiore",
     cover: null
   }
 ];

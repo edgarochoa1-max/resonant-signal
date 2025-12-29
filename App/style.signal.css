@@ -1,5 +1,5 @@
 /* ============================================================
-   RESONANT · INDEX CSS CLEAN BUILD V2.2 — FINAL COMPILADO
+   RESONANT · SIGNAL CSS CLEAN BUILD V2.2 — FINAL COMPILADO
 ============================================================ */
 
 /* ROOT VARIABLES ===================================== */
@@ -14,7 +14,7 @@
 
   --line-soft: rgba(255, 255, 255, 0.06);
 
-  --accent-pill: #ff3355;
+  --accent-pill: #e53a5c;
   --accent-pill-soft: rgba(255, 51, 85, 0.16);
 
   --radius-lg: 20px;
@@ -48,24 +48,37 @@ html, body {
 }
 
 body {
+  min-height: 100dvh;
   display: flex;
-  align-items: stretch;
   justify-content: center;
+  align-items: stretch;
+  overflow-x: hidden;
 }
 
 /* APP ROOT =========================================== */
 .app-root {
   width: 100%;
   max-width: 420px;
-  min-height: 100vh;
+
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.01),
+    transparent
+  );
+
   opacity: 0;
   transform: translateY(10px);
   transition: opacity .45s ease-out, transform .45s ease-out;
-  box-shadow: var(--shadow-soft), 0 0 0 1px rgba(255,255,255,0.02);
+
+  box-shadow:
+    var(--shadow-soft),
+    0 0 0 1px rgba(255,255,255,0.02);
 }
+
 
 .app-root.app-ready {
   opacity: 1;
@@ -74,6 +87,7 @@ body {
 
 .view {
   flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
 }
@@ -202,14 +216,12 @@ body {
 /* SOUNDLOUD FRAME (HIDDEN) ============================ */
 
 .sc-frame-wrap {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 90px;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
   opacity: 0;
-  pointer-events: auto;
-  z-index: -1;
+  pointer-events: none;
 }
 
 /* TOP BAR ============================================= */
@@ -221,7 +233,7 @@ body {
   border-bottom: 1px solid var(--line-soft);
   background: linear-gradient(180deg, rgba(12,14,18,0.96), rgba(5,7,10,0.98));
   backdrop-filter: blur(20px);
-  position: sticky;
+  position: relative;
   top: 0;
   z-index: 10;
 }
@@ -317,14 +329,20 @@ body {
 }
 
 /* MAIN + TABS ========================================= */
+
 .main {
   flex: 1;
-  padding: 14px 14px 80px;
+  min-height: 0;
+  padding: 14px;
   display: flex;
   flex-direction: column;
   max-width: 900px;
   margin: 0 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
+
+
 
 .tab {
   display: none;
@@ -334,12 +352,22 @@ body {
   display: block;
 }
 
+#tab-radio {
+  display: block;
+}
+
+.player-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
 /* MODE TOGGLE ========================================= */
 .mode-toggle {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin: 6px auto 14px;
+  margin: 4px auto 10px;
 }
 
 .mode-btn {
@@ -358,38 +386,59 @@ body {
   color: #ffffff;
 }
 
-/* PLAYER CARD ========================================= */
+/* PLAYER CARD — SINGLE VIEW LOCK */
 .player-card {
   width: 100%;
   max-width: 720px;
   margin: 0 auto;
-  padding: 16px 14px 14px;
+
+  padding: 14px;
   border-radius: var(--radius-lg);
-  background: radial-gradient(circle at 20% 0%, #191d29 0, #090b13 52%, #05060a 100%);
+  background: radial-gradient(
+    circle at 20% 0%,
+    #191d29 0%,
+    #090b13 52%,
+    #05060a 100%
+  );
+
   border: 1px solid rgba(255,255,255,0.07);
   box-shadow: var(--shadow-soft);
+
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  justify-content: space-between; /* 🔑 CLAVE */
+
+  /* 🔑 CLAVES */
+  flex: 0 0 auto;   /* ← CLAVE */
+  max-height: none;
+  min-height: 0;
+  gap: 8px;
 }
 
 /* COVER =============================================== */
+
 .cover-wrap {
   position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin: 0 auto;
+
+  aspect-ratio: 1 / 1;        /* 🔑 AUTORIDAD TOTAL */
   border-radius: 18px;
   overflow: hidden;
-  box-shadow: 0 24px 42px rgba(0,0,0,0.85);
+
 }
 
 .cover {
   width: 100%;
-  padding-bottom: 100%;
-  background: radial-gradient(circle at 20% 0%, #555bff 0, #080913 52%, #020208 100%);
+  height: 100%;
+
   background-size: cover;
   background-position: center;
 }
 
 /* LIKE ================================================ */
+
 .like-btn {
   position: absolute;
   right: 10px;
@@ -397,23 +446,46 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.45) !important;
+  border: 1px solid rgba(255,255,255,0.45);
   background: rgba(5,5,9,0.85);
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+}
+
+/* Fondo del botón en su estado normal (sin cambios) */
+.like-btn {
+  background: rgba(5,5,9,0.85);  /* Fondo original (sin cambios) */
 }
 
 .heart {
-  font-size: 16px;
-  transition: .18s ease;
-  color: #ffffff;
-  text-shadow: 0 0 4px rgba(255,255,255,0.6);
+  font-size: 18px;
+  line-height: 1;
+  font-weight: 700;
+
+  color: transparent;
+  -webkit-text-stroke: 1.4px #ffffff;
+  text-shadow: 0 0 6px rgba(255,255,255,0.45);
+
+  width: 18px;
+  height: 18px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  transition:
+    -webkit-text-stroke 0.18s ease,
+    text-shadow 0.18s ease;
 }
 
 .like-btn.liked .heart {
-  color: #ff4b6a;
-  transform: scale(1.2);
+  color: transparent;
+  -webkit-text-stroke: 1.4px var(--accent-pill);
+  text-shadow:
+    0 0 4px rgba(229,58,92,0.6),
+    0 0 10px rgba(229,58,92,0.35);
 }
 
 /* META ================================================ */
@@ -441,7 +513,7 @@ body {
   display: flex;
   justify-content: center;
   gap: 8px;
-  margin-top: 6px;
+  margin-top: 4px;
 }
 
 .primary {
@@ -468,7 +540,7 @@ body {
 
 /* PROGRESS ============================================ */
 .progress-wrap {
-  margin-top: 8px;
+  margin-top: 6px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -501,11 +573,12 @@ body {
   transition: width .18s linear;
 }
 
-/* FOOTER NOTE ======================================== */
 .player-footer-note {
   text-align: center;
   width: 100%;
+  margin-top: auto; /* 🔑 */
 }
+
 
 .player-footer-note p {
   margin-left: auto;
@@ -558,19 +631,26 @@ input {
 
 /* BOTTOM NAV ========================================= */
 .bottom-nav {
-  position: fixed;
+  position: relative;
   bottom: 0;
   inset-inline: 0;
   margin: 0 auto;
   max-width: 420px;
   padding: 8px 10px 10px;
+  padding-bottom: calc(10px + env(safe-area-inset-bottom));
   display: flex;
   justify-content: space-around;
   gap: 8px;
-  background: radial-gradient(circle at 50% -20%, rgba(255,255,255,0.08), rgba(0,0,0,0.98));
+  background: radial-gradient(
+    circle at 50% -20%,
+    rgba(255,255,255,0.08),
+    rgba(0,0,0,0.98)
+  );
   border-top: 1px solid var(--line-soft);
   backdrop-filter: blur(20px);
+  z-index: 5;
 }
+
 
 .nav-btn {
   flex: 1;
@@ -667,5 +747,248 @@ input {
 
   cursor: pointer;
   -webkit-tap-highlight-color: transparent;
+}
+/* ============================================================
+   DONATIONS — HUMAN / EDITORIAL FINISH
+============================================================ */
+
+.donations-main {
+  max-width: 560px;
+  margin: 10px auto 22px;
+  text-align: center;
+  line-height: 1.7;
+  font-size: 14px;
+  color: rgba(220, 224, 240, 0.92);
+}
+
+.donations-sub {
+  max-width: 520px;
+  margin: 0 auto 34px;
+  text-align: center;
+  font-size: 12px;
+  line-height: 1.6;
+  color: rgba(180, 185, 205, 0.8);
+}
+
+.donations-action {
+  text-align: center;
+  margin-top: 20px; /* Aumentamos el margen superior para dar más espacio */
+}
+
+.donate-btn {
+  display: inline-block;
+  padding: 14px 40px; /* Ajustamos el padding para que respire mejor */
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.35);
+  color: #ffffff;
+  text-decoration: none;
+  letter-spacing: var(--trk-xs);
+  font-size: 14px; /* Aumentamos el tamaño de fuente */
+  transition: all 0.28s ease;
+}
+
+.donate-btn:hover {
+  border-color: #ffffff;
+  box-shadow: 0 0 25px rgba(255,255,255,0.35); /* Sombra más fuerte para efecto */
+  transform: translateY(-2px); /* Movimiento ligeramente mayor en hover */
+}
+
+.donate-btn:active {
+  transform: scale(0.95); /* Aseguramos una reducción al presionar */
+}
+
+.donations-note {
+  display: block;
+  margin-top: 20px; /* Más espacio para el texto */
+  font-size: 12px; /* Aumentamos el tamaño del texto */
+  letter-spacing: var(--trk-xxs);
+  color: rgba(180, 185, 205, 0.6);
+}
+
+/* ============================================================
+   OPTIONAL POLISH — SHADOW CONSISTENCY
+   Scope: Visual only · Safe override
+============================================================ */
+
+.splash-mark,
+.offair-mark,
+.cover-wrap {
+  box-shadow: var(--shadow-soft);
+}
+
+/* ============================================================
+   DESKTOP TALL SCREENS — CENTER SOFT ADJUST
+============================================================ */
+
+@media (min-height: 1000px) {
+  body {
+    align-items: flex-start;
+    padding-top: 6vh;
+  }
+}
+
+
+/* 5️⃣ SEGURIDAD — NAV NO CLIPA */
+.bottom-nav {
+  flex-shrink: 0;
+}
+
+/* ============================================================
+   TAB INTERACTION FIX — RELEASE POINTER EVENTS
+   Scope: UI only · Engine untouched
+============================================================ */
+
+/* Cuando NO estamos en radio:
+   - el player no existe visualmente
+   - ni puede capturar clicks
+*/
+body[data-active-tab]:not([data-active-tab="radio"]) .player-card {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+/* Asegurar que los tabs SI reciban interacción */
+.tab.active {
+  pointer-events: auto;
+}
+
+/* Asegurar que la navegación siempre sea clickable */
+.bottom-nav,
+.bottom-nav * {
+  pointer-events: auto;
+}
+/* Asegurar que el tab activo recibe interacción */
+.tab.active {
+  pointer-events: auto;
+}
+
+/* Asegurar que la navegación siempre es clickeable */
+.bottom-nav,
+.bottom-nav * {
+  pointer-events: auto;
+}
+/* Ajustar la sección de META (artista, título) */
+.meta {
+  display: flex;
+  flex-direction: column; /* Apilar los elementos */
+  align-items: center;
+  text-align: center;
+  gap: 6px; /* Menos espacio entre el artista y el título */
+  margin-top: 16px; /* Menos espacio superior */
+}
+
+/* TÍTULO - tamaño moderado */
+.meta .title {
+  order: 3;
+  font-size: 20px; /* Un tamaño moderado */
+  font-weight: 500;
+  opacity: 0.8; /* Un toque de prominencia */
+  letter-spacing: 0.1em;
+  text-transform: none; /* Elimina las mayúsculas */
+  color: var(--accent-soft); /* Color suave para el título */
+}
+
+
+/* ARTISTA - tamaño más grande, pero no excesivo */
+.meta .artist {
+  order: 2;
+  font-size: 24px; /* Tamaño más moderado */
+  font-weight: 600; /* Leveo énfasis en el nombre */
+  letter-spacing: 0.08em;
+  color: var(--accent-strong); /* Color más fuerte para el artista */
+  text-transform: none; /* Elimina las mayúsculas */
+}
+
+/* EYEBROW (texto que dice 'Now transmitting') */
+.meta .eyebrow {
+  order: 1;
+  font-size: 14px;
+  opacity: 0.6;
+  letter-spacing: 0.12em;
+  margin-bottom: 6px; /* Añadir un pequeño margen */
+}
+/* ARTISTA - Protagonista, pero sin robar la atención */
+.artist-primary {
+  font-size: 1.35rem;  /* Un tamaño más reducido */
+  font-weight: 700;    /* Peso seminegrita */
+  letter-spacing: 0.03em;
+  margin: 4px 0;
+}
+
+/* TÍTULO DEL SET - Atractivo pero con jerarquía */
+.title-secondary {
+  font-size: 1.1rem;  /* Reducido, para balancear */
+  opacity: 0.85;
+  letter-spacing: 0.04em;
+  margin: 0;
+  text-transform: none;
+  font-weight: 500; /* Ligeramente más fino para no quitar protagonismo */
+}
+
+/* Alineación coherente */
+.meta {
+  text-align: center;
+  margin-top: 10px;   /* Alineación más equilibrada */
+}
+/* Ajustes Responsivos */
+@media (max-width: 480px) {
+  .meta .artist {
+    font-size: 18px;  /* Reducir el tamaño en pantallas más pequeñas */
+  }
+
+  .meta .title {
+    font-size: 16px; /* Ajuste de tamaño */
+  }
+
+  .meta .eyebrow {
+    font-size: 12px; /* Ajuste más pequeño para el texto 'Now Transmitting' */
+  }
+}
+/* Estilo general */
+.support-section {
+  padding: 30px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  background: rgba(5, 5, 7, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+.support-section h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.support-section p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.support-button {
+  background: #ff3355;
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 15px 30px;
+  border-radius: 50px;
+  text-align: center;
+  width: 100%;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
+}
+
+.support-button:hover {
+  background: #e42948;
+  transform: scale(1.05);
+}
+
+/* Espaciado adicional para que "Any amount is appreciated..." respire más */
+.support-note {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  margin-top: 20px;
 }
 

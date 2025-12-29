@@ -1,3 +1,13 @@
+<!--
+============================================================
+RESONANT · ADMIN CONSOLE — V2.4 (FROZEN)
+Single Authority · Playlist Source of Truth
+------------------------------------------------------------
+This file defines the Admin Broadcast Console UI.
+Structure is frozen and aligned with admin.js V2.4.
+Do not modify without bumping version.
+============================================================
+-->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,9 +16,10 @@
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#050507" />
+  <meta name="color-scheme" content="dark" />
 
   <!-- CSS -->
-  <link rel="stylesheet" href="style.admin.css" />
+  <link rel="stylesheet" href="./style.admin.css" />
 
   <!-- SoundCloud Widget API -->
   <script src="https://w.soundcloud.com/player/api.js"></script>
@@ -27,7 +38,7 @@
       <!-- ================= TOP BAR ================= -->
       <header class="top-bar gate-top">
         <div class="brand">
-          <span class="brand-mark">⟁</span>
+          <span class="brand-mark" aria-hidden="true">⟁</span>
           <div class="brand-text">
             <h1>Resonant</h1>
             <p>Admin · Broadcast Console</p>
@@ -35,7 +46,14 @@
         </div>
 
         <div class="top-status">
-          <span id="admin-master-status" class="pill off">OFF AIR</span>
+          <span
+            id="admin-master-status"
+            class="pill off"
+            role="status"
+            aria-live="polite"
+          >
+            OFF AIR
+          </span>
         </div>
       </header>
 
@@ -59,7 +77,9 @@
                 type="password"
                 inputmode="numeric"
                 placeholder="••••"
-                autocomplete="off"
+                autocomplete="one-time-code"
+                autocapitalize="off"
+                spellcheck="false"
               />
             </label>
 
@@ -67,7 +87,12 @@
               Enter
             </button>
 
-            <p id="admin-pin-error" class="status-msg error"></p>
+            <p
+              id="admin-pin-error"
+              class="status-msg error"
+              role="alert"
+              aria-live="polite"
+            ></p>
           </div>
         </section>
 
@@ -85,7 +110,6 @@
             </header>
           </section>
 
-  
           <!-- ================= LIVE MONITOR ================= -->
           <section class="card monitor-card">
             <header class="card-head">
@@ -117,7 +141,8 @@
               </div>
 
               <p class="label-small monitor-sync">
-                Status: <span id="admin-sync-indicator">Idle</span>
+                Status:
+                <span id="admin-sync-indicator" aria-live="polite">Idle</span>
               </p>
             </div>
           </section>
@@ -130,10 +155,10 @@
 
             <div class="card-body centered">
               <div class="actions-row">
-                <button id="admin-prev-btn" class="ghost">⏮</button>
-                <button id="admin-play-btn" class="primary">▶</button>
-                <button id="admin-stop-btn" class="ghost">⏹</button>
-                <button id="admin-next-btn" class="ghost">⏭</button>
+                <button id="admin-prev-btn" class="ghost" aria-label="Previous mix">⏮</button>
+                <button id="admin-play-btn" class="primary" aria-label="Play or pause">▶</button>
+                <button id="admin-stop-btn" class="ghost" aria-label="Stop playback">⏹</button>
+                <button id="admin-next-btn" class="ghost" aria-label="Next mix">⏭</button>
               </div>
             </div>
           </section>
@@ -165,6 +190,8 @@
                   id="admin-new-url"
                   type="url"
                   placeholder="https://soundcloud.com/…"
+                  autocapitalize="off"
+                  spellcheck="false"
                 />
               </label>
 
@@ -198,10 +225,16 @@
                   id="admin-io-text"
                   rows="4"
                   placeholder="One SoundCloud URL per line"
+                  spellcheck="false"
                 ></textarea>
               </label>
 
-              <p id="admin-status" class="status-msg"></p>
+              <p
+                id="admin-status"
+                class="status-msg"
+                role="status"
+                aria-live="polite"
+              ></p>
             </div>
           </section>
 
@@ -214,12 +247,14 @@
   <iframe
     id="admin-preview-frame"
     class="admin-preview-frame"
+    title="Admin preview player"
     allow="autoplay"
+    loading="lazy"
     aria-hidden="true"
   ></iframe>
 
   <!-- JS -->
-  <script type="module" src="admin.js"></script>
+<script type="module" src="./admin.js"></script>
 
 </body>
 </html>
