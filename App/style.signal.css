@@ -342,8 +342,6 @@ body {
   overflow-x: hidden;
 }
 
-
-
 .tab {
   display: none;
 }
@@ -488,25 +486,6 @@ body {
     0 0 10px rgba(229,58,92,0.35);
 }
 
-/* META ================================================ */
-.meta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  align-items: center;
-  text-align: center;
-}
-
-.title {
-  margin: 4px 0 0;
-  font-size: 18px;
-}
-
-.artist {
-  margin: 0;
-  font-size: 13px;
-  color: var(--accent-soft);
-}
 
 /* ACTIONS ============================================= */
 .actions-row {
@@ -728,26 +707,7 @@ input {
 .sync-screen {
   display: none !important;
 }
-/* ---------------------------------------------
-   INVITE BUTTON FEEDBACK
---------------------------------------------- */
-#invite-btn.copied {
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-}
-#invite-btn.copied::after {
-  content: " ✓";
-}
 
-#invite-btn {
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  touch-action: manipulation;
-
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-}
 /* ============================================================
    DONATIONS — HUMAN / EDITORIAL FINISH
 ============================================================ */
@@ -847,16 +807,6 @@ body[data-active-tab]:not([data-active-tab="radio"]) .player-card {
   pointer-events: none !important;
 }
 
-/* Asegurar que los tabs SI reciban interacción */
-.tab.active {
-  pointer-events: auto;
-}
-
-/* Asegurar que la navegación siempre sea clickable */
-.bottom-nav,
-.bottom-nav * {
-  pointer-events: auto;
-}
 /* Asegurar que el tab activo recibe interacción */
 .tab.active {
   pointer-events: auto;
@@ -867,46 +817,7 @@ body[data-active-tab]:not([data-active-tab="radio"]) .player-card {
 .bottom-nav * {
   pointer-events: auto;
 }
-/* Ajustar la sección de META (artista, título) */
-.meta {
-  display: flex;
-  flex-direction: column; /* Apilar los elementos */
-  align-items: center;
-  text-align: center;
-  gap: 6px; /* Menos espacio entre el artista y el título */
-  margin-top: 16px; /* Menos espacio superior */
-}
 
-/* TÍTULO - tamaño moderado */
-.meta .title {
-  order: 3;
-  font-size: 20px; /* Un tamaño moderado */
-  font-weight: 500;
-  opacity: 0.8; /* Un toque de prominencia */
-  letter-spacing: 0.1em;
-  text-transform: none; /* Elimina las mayúsculas */
-  color: var(--accent-soft); /* Color suave para el título */
-}
-
-
-/* ARTISTA - tamaño más grande, pero no excesivo */
-.meta .artist {
-  order: 2;
-  font-size: 24px; /* Tamaño más moderado */
-  font-weight: 600; /* Leveo énfasis en el nombre */
-  letter-spacing: 0.08em;
-  color: var(--accent-strong); /* Color más fuerte para el artista */
-  text-transform: none; /* Elimina las mayúsculas */
-}
-
-/* EYEBROW (texto que dice 'Now transmitting') */
-.meta .eyebrow {
-  order: 1;
-  font-size: 14px;
-  opacity: 0.6;
-  letter-spacing: 0.12em;
-  margin-bottom: 6px; /* Añadir un pequeño margen */
-}
 /* ARTISTA - Protagonista, pero sin robar la atención */
 .artist-primary {
   font-size: 1.35rem;  /* Un tamaño más reducido */
@@ -925,70 +836,113 @@ body[data-active-tab]:not([data-active-tab="radio"]) .player-card {
   font-weight: 500; /* Ligeramente más fino para no quitar protagonismo */
 }
 
-/* Alineación coherente */
+/* ============================================================
+   RESONANT · SUPPORT THE ARTIST — ARTIST HIERARCHY (FINAL)
+============================================================ */
+
+/* Label: "Current artist" */
+.label-small {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  margin-bottom: 6px;
+}
+
+/* 👑 ARTIST NAME — PROTAGONISTA */
+.catalog-artist-name {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--accent-strong);
+  margin: 6px 0 16px;
+  line-height: 1.25;
+  text-transform: none;
+}
+/* ============================================================
+   RESONANT · META HIERARCHY — FINAL AUTHORITY
+============================================================ */
+
 .meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   text-align: center;
-  margin-top: 10px;   /* Alineación más equilibrada */
-}
-/* Ajustes Responsivos */
-@media (max-width: 480px) {
-  .meta .artist {
-    font-size: 18px;  /* Reducir el tamaño en pantallas más pequeñas */
-  }
-
-  .meta .title {
-    font-size: 16px; /* Ajuste de tamaño */
-  }
-
-  .meta .eyebrow {
-    font-size: 12px; /* Ajuste más pequeño para el texto 'Now Transmitting' */
-  }
-}
-/* Estilo general */
-.support-section {
-  padding: 30px 20px;
-  max-width: 600px;
-  margin: 0 auto;
-  background: rgba(5, 5, 7, 0.8);
-  border-radius: 16px;
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.6);
-  color: #fff;
+  gap: 6px;
+  margin-top: 14px;
 }
 
-.support-section h2 {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 20px;
+/* EYEBROW — "Now transmitting" */
+.meta .eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.65;
+  margin-bottom: 4px;
 }
 
-.support-section p {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  margin-bottom: 20px;
+/* ARTIST — PROTAGONISTA */
+.meta .artist {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: 0.045em;
+  line-height: 1.25;
+  color: var(--accent-strong);
+  margin: 0;
+  margin-top: 2px;
+
 }
 
-.support-button {
-  background: #ff3355;
-  color: #fff;
-  font-size: 1.2rem;
-  padding: 15px 30px;
-  border-radius: 50px;
+/* SESSION TITLE */
+.meta .title {
+  font-size: 15.5px;
+  font-weight: 400;
+  letter-spacing: 0.025em;
+  line-height: 1.35;
+  opacity: 0.74;
+  color: var(--accent-soft);
+  margin: 0;
+  margin-top: 2px;
+
+}
+/* ---------------------------------------------
+   INVITE BUTTON — CLEAN FEEDBACK (FINAL)
+--------------------------------------------- */
+
+#invite-btn {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+
+  position: relative;
+  min-width: 160px;            /* 🔒 evita cambio de tamaño */
   text-align: center;
-  width: 100%;
-  margin-bottom: 30px;
-  transition: all 0.3s ease;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  transition:
+    opacity 0.18s ease,
+    transform 0.18s ease;
 }
 
-.support-button:hover {
-  background: #e42948;
-  transform: scale(1.05);
+/* Estado “copied” — feedback humano */
+#invite-btn.copied {
+  opacity: 0.85;
+  transform: scale(0.98);
 }
 
-/* Espaciado adicional para que "Any amount is appreciated..." respire más */
-.support-note {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.6);
-  text-align: center;
-  margin-top: 20px;
+/* Blindar estados feos del navegador */
+#invite-btn:focus,
+#invite-btn:focus-visible,
+#invite-btn:active {
+  outline: none;
+  box-shadow: none;
 }
 
+/* Feedback físico al tap */
+#invite-btn:active {
+  transform: scale(0.97);
+  opacity: 0.9;
+}

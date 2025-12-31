@@ -1,5 +1,5 @@
 /* ============================================================
-   RESONANT · LISTENER APP ENGINE — 👉 V2.6.2
++ RESONANT · LISTENER APP ENGINE — 👉 V2.6.3
    FULL COMPILED · DOM-SAFE · FINAL
    Admin-driven · Drift-safe · Audio-authoritative
    Metadata-authoritative · Support-the-Artist locked
@@ -12,17 +12,19 @@ STATUS:
 - ROLE: Passive Listener
 - AUTHORITY: Admin only
 - MODIFICATIONS REQUIRE VERSION BUMP
+- LivePill authority restored (audio-driven)
+- Invite micro-feedback refined
 
 FREEZE:
-- VERSION: v2.6.2
-- STATE: FROZEN
-- DATE: 2025-12-29
-- POLICY:
-  * No logic changes
-  * No refactors
-  * No hotfixes
-  * New features require new file or version bump
-*/
++ VERSION: v2.6.3
++ STATE: FROZEN (post UI patch)
+
+POLICY:
+- Core engine logic frozen
+- No refactors
+- No hotfixes
+- UI-only logic allowed with version bump
+- New features require new file or version bump
 
 /* ------------------------------------------------------------
    CONFIG
@@ -247,28 +249,21 @@ function bindUI() {
   });
 
   if (ui.inviteBtn) {
-    ui.inviteBtn.addEventListener("click", async e => {
-      e.preventDefault();
-      e.stopPropagation();
-      const url = location.href;
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: "Resonant",
-            text: "The Underground Music Signal",
-            url
-          });
-          return;
-        } catch {}
-      }
-      try {
-        await navigator.clipboard.writeText(url);
-        showInviteFeedback("Link copied — ready to paste ✨");
-      } catch {
-        showInviteFeedback("Copy failed — please copy manually");
-      }
-    });
-  }
+  ui.inviteBtn.addEventListener("click", async e => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    const url = location.href;
+
+    try {
+      await navigator.clipboard.writeText(url);
+      inviteMicroFeedback();
+    } catch {
+      // silencio editorial: no mostrar error
+    }
+  });
+}
+
 
   if (ui.feedbackSend) {
     ui.feedbackSend.onclick = () => {
@@ -476,13 +471,20 @@ if (Date.now() - lastAudioAt >= SILENCE_TIMEOUT) return goOffAir();
   }
 
   if (widget) {
-    widget.isPaused(paused => {
-      if (!paused) recoverFromAudio();
-      else safeGoOffAir();
-    });
-    return;
-  }
-  safeGoOffAir();
+  widget.isPaused(paused => {
+    if (!paused) {
+      recoverFromAudio();
+    } else {
+      safeGoOffAir();
+    }
+    updateLivePill();
+  });
+  return;
+}
+
+safeGoOffAir();
+updateLivePill();
+
 }
 
 function safeGoOffAir() {
@@ -762,6 +764,48 @@ function showHandoffNotice() {
   ui.livePill.textContent = "SYNCED";
   ui.livePill.classList.remove("off");
   setTimeout(() => ui.livePill && (ui.livePill.textContent = "LIVE"), 2000);
+}
+
+function inviteMicroFeedback() {
+  if (!ui.inviteBtn) return;
+
+  const originalText = ui.inviteBtn.textContent;
+
+  ui.inviteBtn.classList.add("copied");
+  ui.inviteBtn.textContent = "Link copied";
+
+  setTimeout(() => {
+    ui.inviteBtn.classList.remove("copied");
+    ui.inviteBtn.textContent = originalText;
+  }, 1600);
+}
+
+function updateLivePill() {
+  if (!ui.livePill) return;
+
+  // 🔒 Regla absoluta: sin widget o sin interacción → OFF
+  if (!widget || state.phase !== "live") {
+    ui.livePill.classList.add("off");
+    return;
+  }
+
+  // 🔒 Si el usuario pausó o nunca activó audio → OFF
+  if (userPaused || !state.startedAt) {
+    ui.livePill.classList.add("off");
+    return;
+  }
+
+  // ⏳ Hay sesión live pero audio aún no confirmado
+  const silence = Date.now() - lastAudioAt;
+  if (silence > 1200) {
+    ui.livePill.textContent = "SYNCING";
+    ui.livePill.classList.remove("off");
+    return;
+  }
+
+  // 🔴 Audio real confirmado
+  ui.livePill.textContent = "LIVE";
+  ui.livePill.classList.remove("off");
 }
 
 /* ------------------------------------------------------------

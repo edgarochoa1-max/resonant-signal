@@ -1,16 +1,15 @@
 /* ============================================================
-   🔒 RESONANT V16 — FROZEN BUILD
-   STATUS: STABLE · SEALED · PRODUCTION READY
-   RULE:
-   - No behavior changes without version bump
-   - No silent patches
-   - All fixes require V17+
+   🔒 RESONANT V17 — PATCH 17.0.1
+   STATUS: STABLE · SEALED
+   CHANGELOG:
+   - Fix addMix metadata resolution (DJ / Podcast safe)
+   - Fix malformed function block
 ============================================================ */
 
 /* ------------------------------------------------------
    IMPORTS
 ------------------------------------------------------ */
-import { PLAYLIST } from "/App/playlist.official.js";
+import { PLAYLIST } from "./playlist.official.js";
 console.log("🧠 Admin JS parsed & loaded (v2.4.1)");
 /* ------------------------------------------------------
    BOOT SAFETY CHECK
@@ -446,20 +445,32 @@ function clearMonitor() {
 ------------------------------------------------------ */
 function renderPlaylist() {
   playlistEl.innerHTML = "";
+
   playlist.forEach((track, i) => {
     const li = document.createElement("li");
     li.className = "admin-mix-row" + (i === currentIndex ? " active" : "");
+
     li.innerHTML = `
       <span>
-        <strong>${track.artist}</strong>
-        <small> — ${track.title}</small>
+        <strong
+          contenteditable="true"
+          data-field="artist"
+          data-index="${i}"
+        >${track.artist}</strong>
+        <small
+          contenteditable="true"
+          data-field="title"
+          data-index="${i}"
+        > — ${track.title}</small>
       </span>
       <div class="row-actions">
         <button data-play="${i}">▶</button>
         <button data-up="${i}">↑</button>
         <button data-down="${i}">↓</button>
         <button data-delete="${i}">✕</button>
-      </div>`;
+      </div>
+    `;
+
     playlistEl.appendChild(li);
   });
 }
@@ -492,6 +503,25 @@ function bindControls() {
   saveBtn.onclick    = savePlaylist;
   addBtn.onclick     = addMix;
 }
+playlistEl.addEventListener("blur", e => {
+  const field = e.target.dataset.field;
+  const index = e.target.dataset.index;
+
+  if (!field || index === undefined) return;
+  const track = playlist[index];
+  if (!track) return;
+
+  let value = e.target.textContent.trim();
+
+  if (field === "title") {
+    value = value.replace(/^—/, "").trim();
+  }
+
+  if (!value) return;
+
+  track[field] = value;
+  savePlaylist();
+}, true);
 
 /* ------------------------------------------------------
    SAFETY STUBS (ANTI-CRASH)
@@ -505,15 +535,35 @@ function addMix() {
   const url = newUrlInput.value.trim();
   if (!url) return;
 
-  playlist.push({
-    url,
-    title: "New Mix",
-    artist: "Unknown"
+  const iframe = document.createElement("iframe");
+  iframe.style.display = "none";
+  iframe.src =
+    "https://w.soundcloud.com/player/?url=" +
+    encodeURIComponent(url);
+
+  document.body.appendChild(iframe);
+  const widget = SC.Widget(iframe);
+
+  let done = false;
+
+  widget.bind(SC.Widget.Events.READY, () => {
+    widget.getCurrentSound(sound => {
+      if (!sound || done) return;
+      done = true;
+
+      playlist.push({
+        url,
+        artist: sound.user?.username || "Unknown Artist",
+        title: sound.title || "Untitled"
+      });
+
+      savePlaylist();
+      renderPlaylist();
+      iframe.remove();
+    });
   });
 
   newUrlInput.value = "";
-  savePlaylist();
-  renderPlaylist();
 }
 
 function deleteTrack(index) {
