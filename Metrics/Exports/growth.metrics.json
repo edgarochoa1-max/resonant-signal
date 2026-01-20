@@ -1,0 +1,47 @@
+{
+  "_comment_start": "RESONANT · GROWTH METRICS EXPORT — v1.0 | Aggregated · Read-only · Pitch-safe",
+
+  "meta": {
+    "product": "Resonant",
+    "layer": "Metrics",
+    "scope": "Growth",
+    "version": "1.0",
+    "generatedAt": "2026-01-11T00:00:00.000Z",
+    "ethics": {
+      "personalDataCollected": false,
+      "tracking": false,
+      "fingerprinting": false,
+      "individualListenersIdentifiable": false
+    },
+    "description": "Aggregated growth metrics derived from intentional listening sessions over time."
+  },
+
+  "summary": {
+    "growthRate": 0,
+    "averageDailySessions": 0,
+    "momentum": "flat"
+  },
+
+  "timeline": [
+    {
+      "day": "2026-01-01",
+      "sessions": 0
+    }
+  ],
+
+  "methodology": {
+    "growthDefinition": "Growth is measured as relative change between the first and last active days.",
+    "momentumDefinition": "Momentum reflects consistency across recent days, not isolated spikes.",
+    "sessionQualification": "Only intentional listening sessions are counted.",
+    "timeStandard": "All days are expressed in UTC (YYYY-MM-DD)."
+  },
+
+  "notes": [
+    "This file contains no executable logic.",
+    "Metrics are derived from aggregated session data only.",
+    "Safe for sponsors, partners, and public sharing.",
+    "Designed to be backend-, BI-, and dashboard-compatible."
+  ],
+
+  "_comment_end": "END OF FILE — RESONANT GROWTH METRICS · FREEZE LOCKED"
+}

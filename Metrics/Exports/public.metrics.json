@@ -1,0 +1,48 @@
+{
+  "_comment_start": "RESONANT · PUBLIC METRICS EXPORT — v1.0 | Aggregated · Read-only · Pitch-safe",
+
+  "meta": {
+    "product": "Resonant",
+    "layer": "Metrics",
+    "scope": "Public",
+    "version": "1.0",
+    "generatedAt": "2026-01-11T00:00:00.000Z",
+    "ethics": {
+      "personalDataCollected": false,
+      "tracking": false,
+      "fingerprinting": false,
+      "individualListenersIdentifiable": false
+    },
+    "description": "High-level public metrics derived exclusively from intentional listening sessions."
+  },
+
+  "summary": {
+    "totalSessions": 0,
+    "activeListeners": 0,
+    "totalListeningMs": 0,
+    "averageListeningMs": 0,
+    "peakConcurrentListeners": 0,
+    "completionRate": 0,
+    "longestListeningStreakMs": 0,
+    "timeOfDayResonance": "night",
+    "newArtistExposure": 0,
+    "liveStatus": "off"
+  },
+
+  "methodology": {
+    "sessionQualification": "Only sessions that meet intentional listening thresholds are included.",
+    "activityWindow": "Active listeners are determined using a rolling activity window.",
+    "aggregationLevel": "Collective behavior only (no individual or device-level data).",
+    "timeStandard": "Durations are expressed in milliseconds; dates follow ISO-8601.",
+    "statusDefinition": "Live status reflects freshness of the broadcast state signal."
+  },
+
+  "notes": [
+    "This file contains no executable logic.",
+    "Metrics are aggregated locally and exported as a public snapshot.",
+    "Safe for public sharing, press, and partner previews.",
+    "Designed to be backend-, BI-, and dashboard-compatible."
+  ],
+
+  "_comment_end": "END OF FILE — RESONANT PUBLIC METRICS · FREEZE LOCKED"
+}

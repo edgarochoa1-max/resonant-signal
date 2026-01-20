@@ -1,0 +1,53 @@
+{
+  "_comment_start": "RESONANT · ARTIST METRICS EXPORT — v1.0 | Aggregated · Read-only · Pitch-safe",
+
+  "meta": {
+    "product": "Resonant",
+    "layer": "Metrics",
+    "scope": "Artist",
+    "version": "1.0",
+    "generatedAt": "2026-01-11T00:00:00.000Z",
+    "ethics": {
+      "personalDataCollected": false,
+      "tracking": false,
+      "fingerprinting": false,
+      "individualListenersIdentifiable": false
+    },
+    "description": "Aggregated artist-level listening metrics derived exclusively from intentional listening sessions."
+  },
+
+  "summary": {
+    "totalArtists": 0,
+    "totalSessions": 0,
+    "totalListeningMs": 0,
+    "averageListeningMsPerArtist": 0
+  },
+
+  "artists": [
+    {
+      "artistId": "artist_name_or_id",
+      "totalSessions": 0,
+      "totalListeningMs": 0,
+      "averageListeningMs": 0,
+      "completionRate": 0,
+      "longestListeningStreakMs": 0,
+      "timeOfDayResonance": "night"
+    }
+  ],
+
+  "methodology": {
+    "sessionQualification": "Sessions are included only if intentional listening thresholds are met.",
+    "aggregationLevel": "Artist-only (no listener-level data).",
+    "timeNormalization": "All durations are expressed in milliseconds.",
+    "resonanceDefinition": "Dominant listening time band for the artist."
+  },
+
+  "notes": [
+    "This file contains no executable logic.",
+    "All values are aggregated locally.",
+    "Safe for sponsors, partners, and public sharing.",
+    "Designed to be backend- and BI-compatible."
+  ],
+
+  "_comment_end": "END OF FILE — RESONANT ARTIST METRICS · FREEZE LOCKED"
+}

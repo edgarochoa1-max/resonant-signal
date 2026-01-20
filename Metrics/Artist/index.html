@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ======================================================
+       RESONANT · ARTIST METRICS
+       Read-only · Aggregated · Artist-facing
+  ======================================================= -->
+
+  <meta charset="UTF-8" />
+  <title>Resonant · Artist Metrics</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050507" />
+  <meta name="description" content="Aggregated listening insights by artist. No tracking. No ads. Shared time only." />
+
+  <!-- STYLES -->
+  <link rel="stylesheet" href="../style.metrics.css" />
+</head>
+
+<body class="metrics-body" data-metrics="artist">
+
+  <!-- ======================================================
+       HEADER
+  ======================================================= -->
+  <header class="metrics-header">
+
+    <h1>Artist Metrics</h1>
+
+    <p class="metrics-subtitle">
+      Aggregated listening insights per artist.
+      <br />
+      No personal data. No individual listeners.
+    </p>
+
+    <!-- METRICS NAV -->
+    <nav class="metrics-nav" aria-label="Metrics navigation">
+      <a href="../public.html" data-nav="public">Public</a>
+      <a href="./index.html" data-nav="artist" aria-current="page">Artist</a>
+      <a href="../Growth/index.html" data-nav="growth">Growth</a>
+      <a href="../Retention/index.html" data-nav="retention">Retention</a>
+    </nav>
+
+  </header>
+
+  <!-- ======================================================
+       ARTIST OVERVIEW
+  ======================================================= -->
+  <main class="metrics-main">
+
+    <section
+      id="artist-overview"
+      class="metrics-section"
+      aria-labelledby="artist-overview-title"
+    >
+      <h2 id="artist-overview-title">Top Artists</h2>
+
+      <table class="metrics-table" role="table">
+        <thead>
+          <tr>
+            <th scope="col">Artist</th>
+            <th scope="col">Sessions</th>
+            <th scope="col">Total listening</th>
+          </tr>
+        </thead>
+        <tbody id="artist-table-body">
+          <!-- Injected by artist.view.js -->
+        </tbody>
+      </table>
+
+      <p class="metrics-hint">
+        Click an artist to view detailed listening patterns.
+      </p>
+    </section>
+
+    <!-- ======================================================
+         ARTIST PROFILE (DETAIL VIEW)
+    ======================================================= -->
+    <section
+      id="artist-profile"
+      class="metrics-section hidden"
+      aria-labelledby="artist-profile-name"
+    >
+
+      <button
+        id="artist-back-btn"
+        class="back-btn"
+        type="button"
+        aria-label="Back to artist overview"
+      >
+        ← Back to overview
+      </button>
+
+      <h2 id="artist-profile-name">Artist</h2>
+
+      <!-- METRIC CARDS -->
+      <div class="metrics-cards">
+
+        <div class="metric-card">
+          <span class="label">Sessions</span>
+          <span id="artist-profile-sessions" class="value">—</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="label">Total listening</span>
+          <span id="artist-profile-total" class="value">—</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="label">Average session</span>
+          <span id="artist-profile-average" class="value">—</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="label">Completion rate</span>
+          <span id="artist-profile-completion" class="value">—</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="label">Longest session</span>
+          <span id="artist-profile-longest" class="value">—</span>
+        </div>
+
+        <div class="metric-card">
+          <span class="label">Peak listening time</span>
+          <span id="artist-profile-timeband" class="value">—</span>
+        </div>
+
+      </div>
+
+      <!-- TIMELINE -->
+      <section class="metrics-subsection">
+        <h3>Recent listening sessions</h3>
+
+        <ul
+          id="artist-timeline"
+          class="metrics-timeline"
+          aria-live="polite"
+        >
+          <!-- Injected by artist.view.js -->
+        </ul>
+      </section>
+
+    </section>
+
+  </main>
+
+  <!-- ======================================================
+       SCRIPTS
+  ======================================================= -->
+  <script type="module" src="../View/artist.view.js"></script>
+  <script src="../View/metrics-nav.js"></script>
+
+</body>
+</html>

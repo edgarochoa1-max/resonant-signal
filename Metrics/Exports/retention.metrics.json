@@ -1,0 +1,55 @@
+{
+  "_comment_start": "RESONANT · RETENTION METRICS EXPORT — v1.0 | Aggregated · Read-only · Pitch-safe",
+
+  "meta": {
+    "product": "Resonant",
+    "layer": "Metrics",
+    "scope": "Retention",
+    "version": "1.0",
+    "generatedAt": "2026-01-11T00:00:00.000Z",
+    "ethics": {
+      "personalDataCollected": false,
+      "tracking": false,
+      "fingerprinting": false,
+      "individualListenersIdentifiable": false
+    },
+    "description": "Retention metrics derived from intentional listening sessions, grouped by listening duration buckets."
+  },
+
+  "summary": {
+    "totalSessions": 0,
+    "retainedSessions": 0,
+    "retentionRate": 0
+  },
+
+  "buckets": [
+    {
+      "label": "0–5m",
+      "count": 0
+    },
+    {
+      "label": "5–15m",
+      "count": 0
+    },
+    {
+      "label": "15m+",
+      "count": 0
+    }
+  ],
+
+  "methodology": {
+    "retentionDefinition": "A session is considered retained if listening duration meets or exceeds 15 minutes.",
+    "bucketLogic": "Sessions are grouped into duration ranges to illustrate listening depth distribution.",
+    "sessionQualification": "Only intentional listening sessions are included.",
+    "aggregationLevel": "Collective retention behavior only (no individual tracking)."
+  },
+
+  "notes": [
+    "This file contains no executable logic.",
+    "All values are aggregated locally.",
+    "Designed for sponsor decks, retention analysis, and BI ingestion.",
+    "Safe for public and partner sharing."
+  ],
+
+  "_comment_end": "END OF FILE — RESONANT RETENTION METRICS · FREEZE LOCKED"
+}

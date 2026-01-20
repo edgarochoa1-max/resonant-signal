@@ -1,260 +1,319 @@
-<!--
-============================================================
-RESONANT · ADMIN CONSOLE — V2.4 (FROZEN)
-Single Authority · Playlist Source of Truth
-------------------------------------------------------------
-This file defines the Admin Broadcast Console UI.
-Structure is frozen and aligned with admin.js V2.4.
-Do not modify without bumping version.
-============================================================
--->
+<!-- ============================================================
+     RESONANT · ADMIN BROADCAST CONSOLE
+     FILE: admin.html
+     VERSION: v20.2.1-DOM-CANON
+     STATUS: STABLE · SET · PRODUCTION READY
+     MODE: UI SHELL ONLY
+============================================================ -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Resonant · Admin · Broadcast Console</title>
-
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <meta name="theme-color" content="#050507" />
   <meta name="color-scheme" content="dark" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta
+    name="description"
+    content="Admin panel for controlling live broadcasts on Resonant Radio."
+  />
 
-  <!-- CSS -->
-  <link rel="stylesheet" href="./style.admin.css" />
+  <!-- Open Graph -->
+  <meta property="og:title" content="Resonant · Admin · Broadcast Console" />
+  <meta
+    property="og:description"
+    content="Admin panel for controlling live broadcasts on Resonant Radio."
+  />
+  <meta property="og:type" content="website" />
 
-  <!-- SoundCloud Widget API -->
-  <script src="https://w.soundcloud.com/player/api.js"></script>
+  <!-- Content Security Policy -->
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval'
+        https://w.soundcloud.com
+        https://connect.soundcloud.com;
+      style-src 'self' 'unsafe-inline';
+      frame-src https://w.soundcloud.com;
+      connect-src 'self'
+        https://api.soundcloud.com
+        https://w.soundcloud.com;
+      img-src 'self' data:
+        https://i1.sndcdn.com
+        https://i.sndcdn.com;
+    "
+  />
+
+  <!-- Styles -->
+  <link
+    rel="preload"
+    as="style"
+    href="./style.admin.css"
+    onload="this.rel='stylesheet'"
+  />
+  <noscript>
+    <link rel="stylesheet" href="./style.admin.css" />
+  </noscript>
+
+  <!-- SoundCloud API -->
+  <script defer src="https://w.soundcloud.com/player/api.js"></script>
+
+  <title>Resonant · Admin · Broadcast Console</title>
 </head>
 
 <body class="admin-body dark">
 
-  <!-- FX -->
+  <!-- FX LAYERS -->
   <div class="fx-noise"></div>
   <div class="fx-gradient-top"></div>
   <div class="fx-gradient-bottom"></div>
 
   <div class="app-root">
-    <div class="view">
 
-      <!-- ================= TOP BAR ================= -->
-      <header class="top-bar gate-top">
-        <div class="brand">
-          <span class="brand-mark" aria-hidden="true">⟁</span>
-          <div class="brand-text">
-            <h1>Resonant</h1>
-            <p>Admin · Broadcast Console</p>
-          </div>
+    <!-- TOP BAR -->
+    <header class="top-bar gate-top">
+      <div class="brand">
+        <span class="brand-mark">⟁</span>
+        <div class="brand-text">
+          <h1>Resonant</h1>
+          <p>Admin · Broadcast Console</p>
         </div>
+      </div>
 
-        <div class="top-status">
-          <span
-            id="admin-master-status"
-            class="pill off"
-            role="status"
-            aria-live="polite"
-          >
-            OFF AIR
-          </span>
-        </div>
-      </header>
+      <div class="top-status">
+        <span id="admin-master-status" class="pill off">OFF AIR</span>
+      </div>
+    </header>
 
-      <main class="main">
+    <!-- MAIN -->
+    <main class="main">
+      <div class="admin-shell">
+        <div class="admin-stack">
 
-        <!-- ================= LOGIN ================= -->
-        <section class="card login-card" id="admin-login">
-          <header class="card-head">
-            <p class="eyebrow">Secure access</p>
-            <h2>Enter admin PIN</h2>
-            <p class="card-copy small">
-              This panel controls the live broadcast playlist.
-            </p>
-          </header>
-
-          <div class="card-body centered">
-            <label class="field">
-              <span>PIN</span>
-              <input
-                id="admin-pin-input"
-                type="password"
-                inputmode="numeric"
-                placeholder="••••"
-                autocomplete="one-time-code"
-                autocapitalize="off"
-                spellcheck="false"
-              />
-            </label>
-
-            <button id="admin-pin-submit" class="primary wide">
-              Enter
-            </button>
-
-            <p
-              id="admin-pin-error"
-              class="status-msg error"
-              role="alert"
-              aria-live="polite"
-            ></p>
-          </div>
-        </section>
-
-        <!-- ================= ADMIN PANEL ================= -->
-        <section class="card hidden" id="admin-panel">
-
-          <!-- SYSTEM STATUS -->
-          <section class="card">
-            <header class="card-head">
-              <p class="eyebrow">System status</p>
-              <h2>Live broadcast control</h2>
+          <!-- LOGIN -->
+          <section class="card login-card" id="admin-login">
+            <header class="card-head centered">
+              <p class="eyebrow">Secure access</p>
+              <h2>Enter admin PIN</h2>
               <p class="card-copy small">
-                Changes are reflected live. Listeners sync automatically.
+                This panel controls the live broadcast playlist.
               </p>
             </header>
-          </section>
-
-          <!-- ================= LIVE MONITOR ================= -->
-          <section class="card monitor-card">
-            <header class="card-head">
-              <p class="eyebrow">Live monitor</p>
-              <h3 class="monitor-title">Current playback</h3>
-            </header>
 
             <div class="card-body centered">
-              <div class="monitor-row">
-                <div id="admin-cover" class="monitor-cover"></div>
-
-                <div class="monitor-meta">
-                  <p class="label-small">Track</p>
-                  <p id="admin-track-title" class="monitor-track">—</p>
-
-                  <p class="label-small">Artist</p>
-                  <p id="admin-track-artist" class="monitor-artist">—</p>
-                </div>
-              </div>
-
-              <div class="monitor-progress">
-                <div class="time-row">
-                  <span id="admin-elapsed">0:00</span>
-                </div>
-
-                <div class="progress-bar">
-                  <div id="admin-progress" class="progress-fill"></div>
-                </div>
-              </div>
-
-              <p class="label-small monitor-sync">
-                Status:
-                <span id="admin-sync-indicator" aria-live="polite">Idle</span>
-              </p>
-            </div>
-          </section>
-
-          <!-- ================= PLAYBACK CONTROL ================= -->
-          <section class="card control-card">
-            <header class="card-head">
-              <p class="eyebrow">Playback control</p>
-            </header>
-
-            <div class="card-body centered">
-              <div class="actions-row">
-                <button id="admin-prev-btn" class="ghost" aria-label="Previous mix">⏮</button>
-                <button id="admin-play-btn" class="primary" aria-label="Play or pause">▶</button>
-                <button id="admin-stop-btn" class="ghost" aria-label="Stop playback">⏹</button>
-                <button id="admin-next-btn" class="ghost" aria-label="Next mix">⏭</button>
-              </div>
-            </div>
-          </section>
-
-          <!-- ================= PLAYBACK MODE ================= -->
-          <section class="card mode-card">
-            <header class="card-head">
-              <p class="eyebrow">Playback mode</p>
-            </header>
-
-            <div class="card-body centered">
-              <label class="mode-toggle">
-                <input type="checkbox" id="admin-random-mode" />
-                <span>Random mode (no repeats)</span>
-              </label>
-            </div>
-          </section>
-
-          <!-- ================= ADD MIX ================= -->
-          <section class="card add-card">
-            <header class="card-head">
-              <p class="eyebrow">Add mix</p>
-            </header>
-
-            <div class="card-body centered">
-              <label class="field">
-                <span>SoundCloud URL</span>
+              <label class="field field-wide">
+                <span>PIN</span>
                 <input
-                  id="admin-new-url"
-                  type="url"
-                  placeholder="https://soundcloud.com/…"
-                  autocapitalize="off"
-                  spellcheck="false"
+                  id="admin-pin"
+                  type="password"
+                  inputmode="numeric"
+                  autocomplete="off"
+                  aria-label="Admin PIN"
+                  required
                 />
               </label>
 
-              <button id="admin-add-btn" class="primary wide">
-                Add mix
+              <button
+                id="admin-login-btn"
+                class="primary wide"
+                type="button"
+                aria-label="Submit PIN"
+              >
+                Enter
               </button>
-            </div>
-          </section>
 
-          <!-- ================= PLAYLIST ================= -->
-          <section class="card playlist-card">
-            <header class="card-head">
-              <p class="eyebrow">Playlist order</p>
-              <h3>Mixes</h3>
-            </header>
-
-            <div class="card-body centered">
-              <ul id="admin-playlist" class="playlist-list numbered"></ul>
-
-              <div class="admin-tools">
-                <button id="admin-save-btn" class="primary">Save</button>
-                <button id="admin-import-btn" class="ghost subtle">Import</button>
-                <button id="admin-reset-btn" class="ghost">Reset</button>
-                <button id="admin-shuffle-btn" class="ghost">Shuffle</button>
-                <button id="admin-export-btn" class="ghost subtle">Export</button>
+              <div id="loading-spinner" class="spinner hidden">
+                <span>Loading…</span>
               </div>
 
-              <label class="field">
-                <span>Import / export</span>
-                <textarea
-                  id="admin-io-text"
-                  rows="4"
-                  placeholder="One SoundCloud URL per line"
-                  spellcheck="false"
-                ></textarea>
-              </label>
-
               <p
-                id="admin-status"
-                class="status-msg"
-                role="status"
+                id="admin-login-msg"
+                class="status-msg error hidden"
                 aria-live="polite"
               ></p>
             </div>
           </section>
 
-        </section>
-      </main>
+          <!-- ADMIN PANEL -->
+          <section id="admin-panel">
+
+            <!-- SYSTEM STATUS -->
+            <section class="card admin-section">
+              <header class="card-head centered">
+                <p class="eyebrow">System status</p>
+                <h2>Live broadcast control</h2>
+                <p class="card-copy small">
+                  Changes are reflected live. Listeners sync automatically.
+                </p>
+              </header>
+            </section>
+
+            <!-- ADMIN HEALTH -->
+            <section class="card admin-health-card admin-section">
+              <header class="card-head centered">
+                <p class="eyebrow">Admin health</p>
+                <h3>System diagnostics</h3>
+              </header>
+
+              <div class="card-body">
+                <div><span>MODE</span><strong id="health-mode">—</strong></div>
+                <div><span>OWNER</span><strong id="health-owner">—</strong></div>
+                <div><span>LEASE</span><strong id="health-lease">—</strong></div>
+                <div><span>HEARTBEAT</span><strong id="health-heartbeat">—</strong></div>
+                <div class="health-status">
+                  <span>STATUS</span>
+                  <strong id="health-status">—</strong>
+                </div>
+              </div>
+            </section>
+
+            <!-- LIVE MONITOR -->
+            <section class="card monitor-card admin-section">
+              <header class="card-head centered">
+                <p class="eyebrow">Live monitor</p>
+                <h3>Current playback</h3>
+              </header>
+
+              <div class="card-body centered">
+                <p class="label-small">Artist</p>
+                <p id="admin-track-artist">—</p>
+
+                <p class="label-small">Track</p>
+                <p id="admin-track-title">—</p>
+
+                <p class="label-small">Contributor</p>
+                <p id="admin-track-contributor">—</p>
+
+                <div class="monitor-progress">
+                  <span id="admin-elapsed">0:00</span>
+                  <div class="progress-bar">
+                    <div id="admin-progress" class="progress-fill"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- PLAYBACK CONTROL -->
+<section class="card admin-transport-card admin-section">
+  <header class="card-head centered">
+    <p class="eyebrow">Transport control</p>
+  </header>
+
+  <div class="card-body centered">
+
+    <!-- TRANSPORT BUTTONS -->
+    <div class="transport-row">
+      <button
+  id="admin-stop-btn"
+  class="danger"
+  aria-label="Stop broadcast"
+  type="button"
+>
+  ⏹
+</button>
+
+      <button
+        id="admin-next-btn"
+        class="ghost"
+        aria-label="Next"
+        type="button"
+      >
+        ⏭
+      </button>
     </div>
+
+    <!-- OPTIONS -->
+    <div class="playback-options">
+      <label class="admin-random">
+        <input type="checkbox" id="admin-random-mode" />
+        <span>Random Order</span>
+      </label>
+    </div>
+
+  </div>
+</section>
+
+            <!-- ADD MIX -->
+            <section class="card add-card admin-section">
+              <div class="card-body centered">
+                <label class="field field-wide">
+                  <span>SoundCloud URL</span>
+                  <input
+                    id="admin-add-url"
+                    type="url"
+                    placeholder="https://soundcloud.com/..."
+                  />
+                </label>
+                <button id="admin-add-mix-btn" class="primary wide">
+                  Add mix
+                </button>
+              </div>
+            </section>
+
+            <!-- PLAYLIST -->
+            <section class="card playlist-card admin-section">
+              <header class="card-head centered">
+                <p class="eyebrow">Playlist order</p>
+                <h3>Mixes</h3>
+              </header>
+
+              <div class="card-body centered">
+                <ul
+                  id="admin-playlist"
+                  class="playlist-list numbered"
+                  role="list"
+                  aria-label="Broadcast playlist"
+                >
+                  <!-- Rows injected by admin.ui.js -->
+                </ul>
+
+                <div class="admin-tools centered">
+  <button id="admin-save-btn" class="primary">Save</button>
+  <button id="admin-undo-playlist-btn" class="ghost">Undo</button>
+  <button id="admin-import-playlist-btn" class="ghost">Import</button>
+  <button id="admin-reset-btn" class="ghost">Reset</button>
+  <button id="admin-shuffle-btn" class="ghost">Shuffle</button>
+  <button id="admin-export-btn" class="ghost">Export</button>
+</div>
+
+<input
+  type="file"
+  id="admin-import-file"
+  accept="application/json"
+  hidden
+/>
+                <label class="field field-wide">
+                  <span>Import / export</span>
+                  <textarea id="admin-playlist-io" rows="5"></textarea>
+                </label>
+              </div>
+            </section>
+
+          </section>
+        </div>
+      </div>
+    </main>
   </div>
 
-  <!-- HIDDEN PREVIEW PLAYER -->
+  <!-- SOUNDCLOUD PREVIEW (HIDDEN) -->
   <iframe
     id="admin-preview-frame"
     class="admin-preview-frame"
-    title="Admin preview player"
-    allow="autoplay"
-    loading="lazy"
+    src="https://w.soundcloud.com/player/?url=https://soundcloud.com"
+    sandbox="allow-scripts allow-same-origin"
     aria-hidden="true"
   ></iframe>
 
-  <!-- JS -->
-<script type="module" src="./admin.js"></script>
+  <!-- SCRIPTS -->
+  <script src="./playlist.official.js"></script>
+  <script type="module" src="./admin.boot.js"></script>
 
 </body>
 </html>
+
+<!-- ============================================================
+     END admin.html
+============================================================ -->

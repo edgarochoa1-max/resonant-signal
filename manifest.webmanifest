@@ -1,0 +1,22 @@
+{
+  "name": "Resonant · The Underground Music Signal",
+  "short_name": "Resonant",
+  "description": "Curated underground transmissions. Intentional listening, cultural discovery.",
+
+  "lang": "en",
+  "dir": "ltr",
+
+  "start_url": "/App/signal.html",
+  "scope": "/",
+
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#050507",
+  "theme_color": "#050507",
+
+  "categories": [
+    "music",
+    "entertainment",
+    "radio"
+  ]
+}

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ===============================
+       META
+  =============================== -->
+  <meta charset="UTF-8" />
+  <title>Resonant · Sponsor Metrics</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050507" />
+
+  <!-- ===============================
+       STYLES
+  =============================== -->
+  <link rel="stylesheet" href="../style.metrics.css" />
+</head>
+
+<body class="metrics-body" data-metrics="sponsor">
+
+  <!-- ===============================
+       HEADER
+  =============================== -->
+  <header class="metrics-header">
+    <h1>Sponsor</h1>
+
+    <p class="metrics-subtitle">
+      High-level listening metrics for partners.
+    </p>
+
+    <!-- METRICS NAV -->
+    <nav class="metrics-nav">
+      <a href="../public.html" data-nav="public">Public</a>
+      <a href="../Artist/index.html" data-nav="artist">Artist</a>
+      <a href="../Growth/index.html" data-nav="growth">Growth</a>
+      <a href="../Retention/index.html" data-nav="retention">Retention</a>
+      <a href="./index.html" data-nav="sponsor">Sponsor</a>
+    </nav>
+  </header>
+
+  <!-- ===============================
+       SPONSOR SUMMARY
+  =============================== -->
+  <section class="metrics-section metrics-cards">
+
+    <div class="metric-card metric-primary">
+      <span class="label">Total sessions</span>
+      <span id="sponsor-total-sessions" class="value">—</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="label">Total listening time</span>
+      <span id="sponsor-total-time" class="value">—</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="label">Average session</span>
+      <span id="sponsor-average" class="value">—</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="label">Retention rate</span>
+      <span id="sponsor-retention" class="value">—</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="label">Peak listeners</span>
+      <span id="sponsor-peak" class="value">—</span>
+    </div>
+
+  </section>
+
+  <!-- ===============================
+       NOTE
+  =============================== -->
+  <section class="metrics-note">
+    <p>
+      Metrics are aggregated and anonymized.<br />
+      No personal data is collected or shared.
+    </p>
+  </section>
+
+  <!-- ===============================
+       SCRIPTS
+  =============================== -->
+  <script type="module" src="../View/sponsor.view.js"></script>
+  <script src="../View/metrics-nav.js"></script>
+
+</body>
+</html>

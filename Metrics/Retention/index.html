@@ -1,0 +1,102 @@
+<!-- ============================================================
+     RESONANT · RETENTION METRICS
+     View: Retention
+     Role: Analytics · Read-only
+     Status: WORLD-CLASS · FREEZE-READY
+============================================================ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ===============================
+       META
+  =============================== -->
+  <meta charset="UTF-8" />
+  <title>Resonant · Retention Metrics</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050507" />
+
+  <!-- ===============================
+       STYLES
+  =============================== -->
+  <link rel="stylesheet" href="../style.metrics.css" />
+</head>
+
+<body class="metrics-body" data-metrics="retention">
+
+  <!-- ===============================
+       HEADER
+  =============================== -->
+  <header class="metrics-header">
+    <h1>Retention</h1>
+
+    <p class="metrics-subtitle">
+      How long listeners stay connected.
+    </p>
+
+    <!-- METRICS NAV -->
+    <nav class="metrics-nav" aria-label="Metrics navigation">
+      <a href="../public.html" data-nav="public">Public</a>
+      <a href="../Artist/index.html" data-nav="artist">Artist</a>
+      <a href="../Growth/index.html" data-nav="growth">Growth</a>
+      <a href="./index.html" data-nav="retention">Retention</a>
+    </nav>
+  </header>
+
+  <!-- ===============================
+       RETENTION SUMMARY
+  =============================== -->
+  <section
+    class="metrics-section metrics-cards"
+    aria-label="Retention summary"
+  >
+
+    <div class="metric-card">
+      <span class="label">Total sessions</span>
+      <span id="retention-total" class="value">—</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="label">Retained sessions</span>
+      <span id="retention-retained" class="value">—</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="label">Retention rate</span>
+      <span id="retention-rate" class="value">—</span>
+    </div>
+
+  </section>
+
+  <!-- ===============================
+       RETENTION BUCKETS
+  =============================== -->
+  <section
+    class="metrics-section"
+    aria-label="Listening duration buckets"
+  >
+    <h2>Listening duration</h2>
+
+    <ul
+      id="retention-buckets"
+      class="metrics-timeline"
+      role="list"
+      aria-live="polite"
+    >
+      <!-- retention.view.js injects items -->
+    </ul>
+  </section>
+
+  <!-- ===============================
+       SCRIPTS
+  =============================== -->
+  <script type="module" src="../View/retention.view.js"></script>
+  <script src="../View/metrics-nav.js"></script>
+
+</body>
+</html>
+
+<!-- ============================================================
+     END · RESONANT · RETENTION METRICS
+============================================================ -->

@@ -1,0 +1,198 @@
+<!-- ============================================================
+     RESONANT · PUBLIC METRICS (INDEX)
+     Role: Live Analytics · Read-only
+     Philosophy: Presence over clicks
+     Status: WORLD-CLASS · FREEZE-READY
+============================================================ -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ===============================
+       META
+  =============================== -->
+  <meta charset="UTF-8" />
+  <title>Resonant · Public Listening Metrics</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050507" />
+  <meta
+    name="description"
+    content="Resonant · Public listening metrics based on real presence and intentional listening."
+  />
+
+  <!-- ===============================
+       STYLES
+  =============================== -->
+  <link rel="stylesheet" href="../App/style.signal.css" />
+  <link rel="stylesheet" href="./style.metrics.css" />
+</head>
+
+<body data-metrics="public">
+  <div class="app-root app-ready">
+
+    <!-- ===============================
+         HEADER / LIVE STATUS
+    =============================== -->
+    <header class="top-bar">
+      <div class="brand">
+        <div class="brand-mark">⟁</div>
+        <div class="brand-text">
+          <h1>Resonant</h1>
+          <p>Public Metrics</p>
+        </div>
+      </div>
+
+      <div id="metrics-status" class="live-pill off">
+        <span class="dot"></span>
+        <span>OFF AIR</span>
+      </div>
+    </header>
+
+    <!-- ===============================
+         MAIN
+    =============================== -->
+    <main class="main">
+
+      <!-- METRICS NAV -->
+      <nav class="metrics-nav" aria-label="Metrics navigation">
+        <a href="./index.html" data-nav="public">Public</a>
+        <a href="./Artist/index.html" data-nav="artist">Artist</a>
+        <a href="./Growth/index.html" data-nav="growth">Growth</a>
+        <a href="./Retention/index.html" data-nav="retention">Retention</a>
+      </nav>
+
+      <section class="metrics-dashboard">
+
+        <!-- ===============================
+             RANGE / CONTEXT
+        =============================== -->
+        <p class="metrics-range">
+          Listening data collected since <span id="metrics-since">—</span>
+        </p>
+
+        <!-- ===============================
+             CORE METRICS GRID
+        =============================== -->
+        <section class="metrics-grid">
+
+          <div class="metric-card">
+            <p class="metric-label">New Artist Exposure</p>
+            <h2 id="metric-new-artists">—</h2>
+            <small class="metric-hint">first-time discoveries</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Active Listeners</p>
+            <h2 id="metric-active">—</h2>
+            <small class="metric-hint">present now</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Average Presence</p>
+            <h2 id="metric-average">—</h2>
+            <small class="metric-hint">intentional listening</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Completion Rate</p>
+            <h2 id="metric-completion">—</h2>
+            <small class="metric-hint">average session depth</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Longest Listening Streak</p>
+            <h2 id="metric-longest">—</h2>
+            <small class="metric-hint">continuous presence</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Total Listening Time</p>
+            <h2 id="metric-total-time">—</h2>
+            <small class="metric-hint">accumulated presence</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Peak Presence</p>
+            <h2 id="metric-peak">—</h2>
+            <small class="metric-hint">historical moment</small>
+          </div>
+
+          <div class="metric-card">
+            <p class="metric-label">Time-of-Day Resonance</p>
+            <h2 id="metric-timeband">—</h2>
+            <small class="metric-hint">strongest listening window</small>
+          </div>
+
+        </section>
+
+        <!-- ===============================
+             INSIGHT
+        =============================== -->
+        <p id="metrics-insight" class="metrics-insight">
+          These metrics reflect how people truly listen.
+          Resonant measures presence, not clicks —
+          moments where sound holds attention and creates connection.
+        </p>
+
+        <!-- ===============================
+             EMPTY STATE
+        =============================== -->
+        <div id="metrics-empty" class="metrics-empty hidden">
+          <p>
+            No listening data available yet.<br />
+            Metrics appear once sessions begin.
+          </p>
+        </div>
+
+        <!-- ===============================
+             RECENT SESSIONS
+        =============================== -->
+        <section class="metrics-section">
+          <h3>Recent Sessions</h3>
+          <ul
+            id="metrics-timeline"
+            class="metrics-timeline"
+            role="list"
+            aria-live="polite"
+          ></ul>
+        </section>
+
+        <!-- ===============================
+             DEFINITIONS
+        =============================== -->
+        <section class="metrics-section">
+          <h3>What counts as listening?</h3>
+          <p class="metrics-copy">
+            A session is recorded only after intentional listening time.
+            Passive loads, skips, and background activity are ignored.
+          </p>
+        </section>
+
+        <!-- ===============================
+             ETHICAL NOTE
+        =============================== -->
+        <section class="metrics-note">
+          <p>
+            No personal data is collected or tracked.<br />
+            All metrics are computed locally.<br />
+            Resonant exists to support artists and cultural discovery.
+          </p>
+        </section>
+
+      </section>
+    </main>
+  </div>
+
+  <!-- ===============================
+       SCRIPTS
+  =============================== -->
+  <script type="module" src="View/public.view.js"></script>
+  <script src="View/metrics-nav.js"></script>
+
+</body>
+</html>
+
+<!-- ============================================================
+     END · RESONANT · PUBLIC METRICS (INDEX)
+============================================================ -->

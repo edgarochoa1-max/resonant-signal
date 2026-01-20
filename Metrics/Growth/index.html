@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- ===============================
+       META
+  =============================== -->
+  <meta charset="UTF-8" />
+  <title>Resonant · Growth Metrics</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#050507" />
+
+  <!-- ===============================
+       STYLES
+  =============================== -->
+  <link rel="stylesheet" href="../style.metrics.css" />
+</head>
+
+<body class="metrics-body" data-metrics="growth">
+
+  <!-- ===============================
+       HEADER
+  =============================== -->
+  <header class="metrics-header">
+    <h1>Growth</h1>
+
+    <p class="metrics-subtitle">
+      Listening growth over time.
+    </p>
+
+    <!-- METRICS NAV -->
+    <nav class="metrics-nav" aria-label="Metrics navigation">
+      <a href="../public.html" data-nav="public">Public</a>
+      <a href="../Artist/index.html" data-nav="artist">Artist</a>
+      <a href="./index.html" data-nav="growth">Growth</a>
+      <a href="../Retention/index.html" data-nav="retention">Retention</a>
+    </nav>
+  </header>
+
+  <!-- ===============================
+       GROWTH SUMMARY
+  =============================== -->
+  <section class="metrics-section metrics-cards" aria-label="Growth summary">
+
+    <div class="metric-card">
+      <span class="label">Growth rate</span>
+      <span id="growth-rate" class="value">—</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="label">Avg sessions / day</span>
+      <span id="growth-average" class="value">—</span>
+    </div>
+
+    <div class="metric-card">
+      <span class="label">Momentum</span>
+      <span id="growth-momentum" class="value">—</span>
+    </div>
+
+  </section>
+
+  <!-- ===============================
+       GROWTH TIMELINE
+  =============================== -->
+  <section class="metrics-section" aria-label="Daily growth timeline">
+    <h2>Daily listening sessions</h2>
+
+    <ul
+      id="growth-timeline"
+      class="metrics-timeline"
+      role="list"
+      aria-live="polite"
+    >
+      <!-- growth.view.js injects items -->
+    </ul>
+  </section>
+
+  <!-- ===============================
+       SCRIPTS
+  =============================== -->
+  <script type="module" src="../View/growth.view.js"></script>
+  <script src="../View/metrics-nav.js"></script>
+
+</body>
+</html>

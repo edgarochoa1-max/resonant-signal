@@ -2,78 +2,107 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Resonant · The Underground Music Signal</title>
+  <title>Resonant</title>
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#050507" />
-  <meta
-    name="description"
-    content="Resonant is a cultural music tool for discovering electronic underground sound through curated transmissions and intentional listening."
-  />
+  <meta name="description" content="Live underground music signal. Shared time." />
 
-  <!-- Gate-only styles -->
   <link rel="stylesheet" href="./style.gate.css" />
 </head>
 
 <body>
 
-  <div class="gate-root" id="gate">
-    <div class="gate-inner">
+<main class="gate-root" id="gate">
 
-      <div class="gate-mark-wrap">
-        <div class="gate-mark">⟁</div>
+  <!-- SIGNAL STATE -->
+  <div class="gate-status">
+    <span class="status-dot"></span>
+    <span class="status-label">LIVE SIGNAL</span>
+  </div>
+
+  <!-- CORE -->
+  <section class="gate-core">
+    <div class="gate-symbol" aria-hidden="true">⟁</div>
+
+    <div class="gate-copy">
+      <p class="gate-line">UNDERGROUND TRANSMISSION</p>
+      <p class="gate-line muted">NO ARCHIVE · SHARED TIME</p>
+    </div>
+  </section>
+
+  <!-- ENTRY -->
+  <div class="gate-entry">
+    <div
+      class="hold-indicator"
+      id="hold"
+      role="button"
+      aria-label="Hold to enter Resonant"
+    >
+      <span class="hold-label">HOLD TO ENTER</span>
+      <div class="hold-bar">
+        <div class="hold-fill" id="hold-fill"></div>
       </div>
-
-      <h1 class="gate-title">Resonant</h1>
-      <p class="gate-subtitle">The Underground Music Signal</p>
-
-      <p class="gate-copy">
-        A cultural music tool<br />
-        for discovering electronic underground sound.
-      </p>
-
-      <p class="gate-copy small">
-        Curated transmissions.<br />
-        Shared time.<br />
-        Intentional listening.
-      </p>
-
-      <p class="gate-copy small">
-        Resonant exists to move sound<br />
-        beyond scenes, borders, and algorithms.
-      </p>
-
-      <p class="gate-copy small">
-        Not to monetize attention,<br />
-        but to guide listeners toward artists,<br />
-        labels, and the music itself.
-      </p>
-
-      <div class="gate-actions">
-        <a href="../App/signal.html" class="gate-enter" id="enter-btn">
-          Enter the signal
-        </a>
-      </div>
-
-      <div class="gate-footer">
-        Promotional use only · No tracking · Support the artists
-      </div>
-
     </div>
   </div>
 
-  <script>
-    const gate = document.getElementById("gate");
-    const enter = document.getElementById("enter-btn");
+</main>
 
-    enter.addEventListener("click", e => {
-      e.preventDefault();
-      gate.classList.add("gate-exit");
-      setTimeout(() => {
-        window.location.href = enter.getAttribute("href");
-      }, 700);
-    });
-  </script>
+<script>
+  const gate = document.getElementById("gate");
+  const hold = document.getElementById("hold");
+  const fill = document.getElementById("hold-fill");
+
+  let holding = false;
+  let progress = 0;
+  let raf = null;
+  let entered = false;
+
+  function startHold(e) {
+    e.preventDefault();
+    if (holding || entered) return;
+
+    holding = true;
+
+    function step() {
+      progress += 0.015;
+      fill.style.transform = `scaleX(${Math.min(progress, 1)})`;
+
+      if (progress >= 1 && !entered) {
+        entered = true;
+        gate.classList.add("gate-exit");
+
+        setTimeout(() => {
+          window.location.href = "../App/signal.html";
+        }, 600);
+
+        return;
+      }
+
+      raf = requestAnimationFrame(step);
+    }
+
+    raf = requestAnimationFrame(step);
+  }
+
+  function stopHold() {
+    if (!holding || entered) return;
+
+    holding = false;
+    cancelAnimationFrame(raf);
+    progress = 0;
+    fill.style.transform = "scaleX(0)";
+  }
+
+  /* Pointer / touch handlers */
+  hold.addEventListener("mousedown", startHold);
+  hold.addEventListener("touchstart", startHold, { passive: false });
+
+  document.addEventListener("mouseup", stopHold);
+  document.addEventListener("touchend", stopHold);
+  document.addEventListener("touchcancel", stopHold);
+  hold.addEventListener("mouseleave", stopHold);
+</script>
 
 </body>
 </html>

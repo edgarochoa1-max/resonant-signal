@@ -1,0 +1,57 @@
+{
+  "_comment_start": "RESONANT · SPONSOR METRICS EXPORT — v1.0 | Aggregated · Pitch-safe · Sponsor-ready",
+
+  "meta": {
+    "product": "Resonant",
+    "layer": "Metrics",
+    "scope": "Sponsor",
+    "version": "1.0",
+    "generatedAt": "2026-01-11T00:00:00.000Z",
+    "ethics": {
+      "personalDataCollected": false,
+      "tracking": false,
+      "fingerprinting": false,
+      "individualListenersIdentifiable": false
+    },
+    "description": "High-level sponsor metrics focused on audience attention, listening depth, and consistency, derived exclusively from intentional listening sessions."
+  },
+
+  "summary": {
+    "totalSessions": 0,
+    "peakListeners": 0,
+    "totalListeningMs": 0,
+    "averageListeningMs": 0,
+    "averageListeningMinutes": 0,
+    "retentionRate": 0,
+    "audienceQuality": "low",
+    "listeningDepth": "low"
+  },
+
+  "scores": {
+    "retentionScore": 0,
+    "depthScore": 0,
+    "peakScore": 0
+  },
+
+  "signal": {
+    "signalStrength": 0,
+    "interpretation": "low"
+  },
+
+  "methodology": {
+    "attentionDefinition": "Listening sessions of 15 minutes or more are considered meaningful attention.",
+    "audienceQualityDefinition": "Audience quality is classified using retention rate thresholds.",
+    "listeningDepthDefinition": "Listening depth reflects average session duration.",
+    "scoringModel": "Signal strength is a weighted combination of retention, depth, and peak concurrency.",
+    "aggregationLevel": "Collective behavior only; no listener- or device-level data."
+  },
+
+  "notes": [
+    "This file contains no executable logic.",
+    "All metrics are aggregated locally from intentional sessions only.",
+    "Designed for sponsor evaluation, media planning, and pitch decks.",
+    "Safe for sharing with brands, agencies, and partners."
+  ],
+
+  "_comment_end": "END OF FILE — RESONANT SPONSOR METRICS · FREEZE LOCKED"
+}

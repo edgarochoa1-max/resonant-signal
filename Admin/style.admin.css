@@ -1,109 +1,243 @@
 /* ============================================================
-   RESONANT · ADMIN STYLE — EXTRACTED & COMPILED
-   Visual clone from shared index/admin stylesheet
-   ============================================================ */
-   
-   /*
-STATUS:
-- SCOPE: Admin Console only
-- ROLE: Visual layer
-- AFFECTS: UI only
-- SAFE: Yes (no logic / no layout)
-*/
+   RESONANT · ADMIN CONSOLE — CSS MASTER FREEZE
+   FILE: style.admin.css
+   VERSION: v18.8.2-freeze-alignment-fix
+   STATUS: SEALED · BROADCAST GRADE
 
-/* ===================== ROOT ===================== */
+   ROLE
+   - Live broadcast control surface
+   - Playlist = source of truth
+   - Operator / Observer visual authority
+
+   DESIGN PHILOSOPHY
+   - This is a broadcast console, not a web dashboard
+   - Hierarchy over decoration
+   - State clarity over animation
+   - Readable under fatigue & low-light conditions
+
+   VISUAL CONTRACT (LOCKED)
+   - No layout refactors
+   - No spacing tweaks
+   - No color experiments
+   - No decorative motion
+   - UI reflects system state only
+
+   ALLOWED CHANGES
+   - Critical readability fixes
+   - State ambiguity removal
+   - Accessibility corrections
+   (Must be documented inline)
+
+   OWNERSHIP
+   - admin.js       → login, boot, UI state toggles
+   - admin-core.js  → authority, broadcast state, transitions
+
+   DATE: 2026
+============================================================ */
+/* ============================================================
+   01 · ROOT TOKENS — DESIGN CONTRACT (LOCKED)
+   Scope: Global visual constants
+   Rule: Values define the entire UI language
+   Do not override outside :root
+============================================================ */
+
 :root {
-  --bg: #050507;
-  --bg-elevated: #0b0d10;
-  --bg-card: #101219;
+  /* ------------------------------------------------------------
+     COLOR · BACKGROUND LAYERS
+     Purpose: depth, separation, fatigue-safe contrast
+  ------------------------------------------------------------ */
+  --bg: #050507;                 /* Base void */
+  --bg-elevated: #0b0d10;        /* Elevated surfaces */
+  --bg-card: #101219;            /* Primary cards */
 
-  --accent: #f5f5f7;
-  --accent-soft: #b0b4c4;
-  --accent-strong: #ffffff;
+  /* ------------------------------------------------------------
+     COLOR · TEXT & ACCENTS
+     Purpose: hierarchy without color noise
+  ------------------------------------------------------------ */
+  --accent: #f5f5f7;             /* Primary text */
+  --accent-soft: #b0b4c4;        /* Secondary / meta */
+  --accent-strong: #ffffff;      /* Emphasis / live */
 
-  --line-soft: rgba(255, 255, 255, 0.06);
+  /* ------------------------------------------------------------
+     COLOR · LINES & DIVIDERS
+     Purpose: structure without grid feel
+  ------------------------------------------------------------ */
+  --line-soft: rgba(255,255,255,0.06);
+  --line-strong: rgba(255,255,255,0.14);
 
-  --accent-pill: #ff3355;
-  --accent-pill-soft: rgba(255, 51, 85, 0.15);
+  /* ------------------------------------------------------------
+     COLOR · STATUS / PILLS
+     Purpose: broadcast state signaling
+  ------------------------------------------------------------ */
+  --accent-pill: #ff3355;        /* Live / off-air */
+  --accent-pill-soft: rgba(255,51,85,0.15);
 
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 999px;
+  /* ------------------------------------------------------------
+     SHAPE · RADIUS SYSTEM
+     Purpose: tactile consistency
+  ------------------------------------------------------------ */
+  --radius-lg: 20px;             /* Cards */
+  --radius-md: 14px;             /* Panels / lists */
+  --radius-sm: 999px;            /* Pills */
 
-  --shadow-soft: 0 18px 40px rgba(0, 0, 0, 0.6);
+  /* ------------------------------------------------------------
+     ELEVATION · SHADOWS
+     Purpose: depth without glow
+  ------------------------------------------------------------ */
+  --shadow-soft: 0 18px 40px rgba(0,0,0,0.6);
 
+  /* ------------------------------------------------------------
+     TYPOGRAPHY · SYSTEM STACK
+     Purpose: OS-native, fatigue-safe
+  ------------------------------------------------------------ */
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont,
                "SF Pro Text", "Inter", sans-serif;
 }
 
-/* ===================== RESET ===================== */
+/* ============================================================
+   02 · RESET & BASE (LOCKED)
+   Scope: Global normalization & base rendering
+   Rule: No visual identity here
+============================================================ */
+
+/* --- Box model ------------------------------------------------ */
 *,
 *::before,
 *::after {
   box-sizing: border-box;
 }
 
+/* --- Root document ------------------------------------------- */
 html,
 body {
   margin: 0;
   padding: 0;
   min-height: 100%;
+
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
-  background: radial-gradient(circle at 10% 0%, #171a24 0, #050507 55%);
+  -moz-osx-font-smoothing: grayscale;
+
+  background:
+    radial-gradient(
+      circle at 10% 0%,
+      #171a24 0%,
+      #050507 55%
+    );
+
   color: var(--accent);
 }
 
-/* ===================== ADMIN BODY ===================== */
+/* --- Media & form elements ----------------------------------- */
+img,
+svg,
+video,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+/* --- Buttons & inputs inherit typography --------------------- */
+button,
+input,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+/* ============================================================
+   03 · APP LAYOUT & CONTAINERS (LOCKED)
+   Scope: Global structural layout
+   Rule: One column, centered, broadcast-safe
+============================================================ */
+
+/* --- Body container ------------------------------------------ */
 body.admin-body {
   display: flex;
   justify-content: center;
   width: 100%;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* ===================== APP ROOT ===================== */
+/* --- App root ------------------------------------------------ */
 .app-root {
   width: 100%;
   max-width: 960px;
   min-height: 100vh;
-  background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+
   display: flex;
   flex-direction: column;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.02), var(--shadow-soft);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.01),
+      transparent
+    );
+
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.02),
+    var(--shadow-soft);
 }
 
-/* ===================== VIEW ===================== */
-.view {
+/* --- Main content -------------------------------------------- */
+.main {
   flex: 1;
+  padding: 24px;
+
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+
   display: flex;
   flex-direction: column;
+  align-items: center;
 }
 
-/* ===================== HIDDEN ===================== */
-.hidden {
-  display: none !important;
-}
+/* ============================================================
+   04 · TOP BAR / SIGNAL HEADER (LOCKED)
+   Scope: Global status, brand anchor, live signal
+   Rule: Always readable at a glance
+============================================================ */
 
-/* ===================== TOP BAR ===================== */
 .top-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
+
   padding: 14px 18px 10px;
   border-bottom: 1px solid var(--line-soft);
-  background: linear-gradient(
-    180deg,
-    rgba(10, 12, 17, 0.96),
-    rgba(5, 7, 10, 0.98)
-  );
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10,12,17,0.96),
+      rgba(5,7,10,0.98)
+    );
+
   backdrop-filter: blur(18px);
 }
 
-.gate-top {
-  position: static;
+/* ON AIR — LIVE (GREEN) */
+.top-status .pill.on {
+  background: rgba(40,180,99,0.15);
+  border-color: rgba(40,180,99,0.6);
+  color: #7dffb3;
 }
 
-/* ===================== BRAND ===================== */
+body.mode-live .top-status .pill.on {
+  background: linear-gradient(
+    180deg,
+    rgba(40,180,99,0.95),
+    rgba(40,180,99,0.75)
+  );
+  border-color: #28b463;
+  color: #050507;
+  box-shadow: 0 0 18px rgba(40,180,99,0.6);
+}
+
+/* --- Brand block --------------------------------------------- */
 .brand {
   display: flex;
   align-items: center;
@@ -113,11 +247,14 @@ body.admin-body {
 .brand-mark {
   width: 30px;
   height: 30px;
-  border-radius: 12px;
-  border: 1px solid rgba(255,255,255,0.16);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.16);
+
   font-size: 15px;
   letter-spacing: 0.14em;
 }
@@ -135,32 +272,93 @@ body.admin-body {
   color: var(--accent-soft);
 }
 
-/* ===================== MAIN ===================== */
-.main {
-  flex: 1;
-  padding: 24px;
-  max-width: 720px;
-  margin: 0 auto;
+/* --- Status area --------------------------------------------- */
+.top-status {
   display: flex;
-  flex-direction: column;
   align-items: center;
+  gap: 10px;
 }
 
-/* ===================== CARDS ===================== */
+/* Base pill --------------------------------------------------- */
+.top-status .pill {
+  padding: 6px 10px;
+
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,0.12);
+
+  background: rgba(12,14,20,0.9);
+  color: var(--accent-soft);
+}
+
+/* OFF AIR / LIVE ---------------------------------------------- */
+.top-status .pill.off {
+  background: rgba(255,51,85,0.12);
+  border-color: rgba(255,51,85,0.45);
+  color: #ff9aa8;
+}
+
+body.mode-live .top-status .pill.off {
+  background: linear-gradient(
+    180deg,
+    rgba(255,51,85,0.95),
+    rgba(255,51,85,0.75)
+  );
+  border-color: #ff3355;
+  color: #050507;
+  box-shadow: 0 0 18px rgba(255,51,85,0.6);
+}
+
+/* Secondary pills --------------------------------------------- */
+.top-status .pill.ghost {
+  opacity: 0.75;
+}
+
+.top-status .pill.ghost:hover {
+  opacity: 1;
+}
+
+/* ============================================================
+   05 · CARD SYSTEM / SURFACES (LOCKED)
+   Scope: Primary UI surfaces
+   Rule: Content-first, no decoration
+============================================================ */
+
 .card {
   width: 100%;
-  background: rgba(6, 8, 13, 0.98);
-  border-radius: var(--radius-lg);
-  padding: 18px;
-  border: 1px solid var(--line-soft);
-  box-shadow: var(--shadow-soft);
   margin-bottom: 18px;
+
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line-soft);
+
+  background: rgba(6,8,13,0.98);
+  box-shadow: var(--shadow-soft);
 }
 
+/* --- Card header -------------------------------------------- */
 .card-head {
   text-align: center;
 }
 
+.card-head .eyebrow {
+  margin: 0;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+}
+
+.card-head h2,
+.card-head h3 {
+  margin: 4px 0 6px;
+  font-size: 20px;
+}
+
+/* --- Card copy ---------------------------------------------- */
 .card-copy {
   margin-top: 8px;
   font-size: 13px;
@@ -172,339 +370,1025 @@ body.admin-body {
   font-size: 12px;
 }
 
-/* ===================== TYPO ===================== */
-.eyebrow {
-  margin: 0;
-  font-size: 11px;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--accent-soft);
+/* --- Card body ---------------------------------------------- */
+.card-body {
+  margin-top: 14px;
+}
+
+.card-body.centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+/* ============================================================
+   06 · TYPOGRAPHY HIERARCHY (LOCKED)
+   Scope: Text hierarchy & readability
+   Rule: Weight > size > color
+============================================================ */
+
+/* --- Headings ----------------------------------------------- */
+h1, h2, h3 {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+h1 {
+  font-size: 16px;   
 }
 
 h2 {
-  margin: 4px 0 6px;
-  font-size: 20px;
+  font-size: 20px;   
 }
 
-/* ===================== FORMS ===================== */
+h3 {
+  font-size: 16px;   
+}
+
+/* --- Body text ---------------------------------------------- */
+p,
+.card-copy,
+.status-msg {
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* --- Meta / secondary --------------------------------------- */
+.small,
+.card-copy.small,
+.eyebrow,
+.row-contributor {
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* --- Numeric clarity ---------------------------------------- */
+.timecode,
+#admin-elapsed {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+}
+
+/* --- Text smoothing ----------------------------------------- */
+body {
+  text-rendering: optimizeLegibility;
+}
+
+/* ============================================================
+   07 · FORMS & INPUTS (LOCKED)
+   Scope: Data entry & authentication
+   Rule: Neutral, centered, distraction-free
+============================================================ */
+
+/* --- Field wrapper ------------------------------------------ */
 .field {
+  width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 6px;
-  margin-top: 6px;
+
   font-size: 13px;
 }
 
 .field span {
+  text-align: center;
   color: var(--accent-soft);
 }
 
+/* --- Inputs ------------------------------------------------- */
 input,
 textarea {
+  width: 100%;
+  max-width: 640px;
+
+  padding: 10px 12px;
+
   border-radius: 10px;
   border: 1px solid var(--line-soft);
+
   background: rgba(9,11,17,0.96);
   color: var(--accent);
-  padding: 9px 10px;
+
   font-size: 13px;
   font-family: var(--font-sans);
+  text-align: center;
 }
 
+/* --- Textarea specifics ------------------------------------ */
+textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* --- Placeholder ------------------------------------------- */
 input::placeholder,
 textarea::placeholder {
   color: rgba(163,167,186,0.7);
 }
 
-/* ===================== BUTTONS ===================== */
+/* --- Focus (login / critical entry only) -------------------- */
+#admin-login input:focus {
+  outline: none;
+  border-color: var(--accent-strong);
+  box-shadow: 0 0 0 1px rgba(255,255,255,0.2);
+}
+/* ============================================================
+   08 · BUTTONS & CONTROLS (LOCKED)
+   Scope: All interactive controls
+   Rule: Tactile, deliberate, broadcast-safe
+============================================================ */
+
+/* --- Base button -------------------------------------------- */
 button {
   font-family: var(--font-sans);
-  border: none;
   cursor: pointer;
-}
 
-.primary {
-  background: linear-gradient(135deg, #f5f5f7, #d6dae4);
-  color: #050509;
-  border-radius: 999px;
-  padding: 10px 18px;
-  font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  box-shadow: 0 12px 30px rgba(0,0,0,0.7);
-}
+  padding: 10px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,0.08);
 
-.primary.wide {
-  width: 100%;
-  margin-top: 8px;
-}
-
-.ghost {
-  background: rgba(11,14,20,0.96);
+  background: rgba(12,14,20,0.92);
   color: var(--accent-soft);
-  border-radius: 999px;
-  padding: 9px 14px;
+
   font-size: 12px;
   letter-spacing: 0.12em;
   text-transform: uppercase;
-  border: 1px solid var(--line-soft);
+
+  box-shadow:
+    inset 0 -1px 0 rgba(255,255,255,0.06),
+    0 10px 24px rgba(0,0,0,0.55);
+
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.16s ease,
+    transform 0.08s ease;
 }
 
-.ghost.subtle {
-  font-size: 11px;
-  padding-inline: 10px;
+/* --- Hover -------------------------------------------------- */
+button:hover {
+  background: rgba(255,255,255,0.05);
+  color: var(--accent-strong);
 }
 
-/* ===================== STATUS ===================== */
-.status-msg {
-  min-height: 16px;
-  margin-top: 6px;
-  font-size: 12px;
+/* --- Active (tactile press) -------------------------------- */
+button:active {
+  transform: translateY(1px) scale(0.97);
+  box-shadow:
+    inset 0 2px 6px rgba(0,0,0,0.25),
+    0 6px 16px rgba(0,0,0,0.5);
+}
+
+/* --- Primary ------------------------------------------------ */
+button.primary {
+  background: linear-gradient(180deg, #f5f5f7, #d6dae4);
+  color: #050507;
+  border: none;
+  font-weight: 600;
+
+  box-shadow:
+    inset 0 -1px 0 rgba(0,0,0,0.35),
+    0 10px 22px rgba(0,0,0,0.55);
+}
+
+button.primary:hover {
+  background: #ffffff;
+}
+
+/* --- Ghost -------------------------------------------------- */
+button.ghost {
+  background: rgba(10,12,18,0.9);
+  border-color: rgba(255,255,255,0.06);
   color: var(--accent-soft);
 }
 
-.status-msg.error {
-  color: #ff5268;
+button.ghost:hover {
+  background: rgba(255,255,255,0.06);
+  color: var(--accent-strong);
 }
 
-/* ===================== ADMIN MONITOR ===================== */
+
+/* ============================================================
+   09 · TRANSPORT CONTROLS (LOCKED)
+   Scope: Play / Stop / Prev / Next
+   Rule: Hardware feel, instant intent
+============================================================ */
+
+/* ============================================================
+   PATCH · TRANSPORT ROW — CANONICAL
+   Scope: Playback control only
+============================================================ */
+
+.transport-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+/* Transport buttons */
+.transport-row button {
+  width: 46px;
+  height: 46px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 15px;
+  letter-spacing: 0;
+  text-transform: none;
+
+  box-shadow:
+    inset 0 -1px 0 rgba(255,255,255,0.05),
+    0 8px 18px rgba(0,0,0,0.6);
+}
+
+/* ============================================================
+   10 · MONITOR · COVER & META (LOCKED)
+   Scope: Live track representation
+   Rule: Artist first, track second
+============================================================ */
+
 .monitor-row {
   display: flex;
   align-items: center;
   gap: 14px;
-  margin-top: 12px;
+  justify-content: center;
 }
 
-.monitor-cover {
-  width: 64px;
-  height: 64px;
-  border-radius: 6px;
-  background: #111;
-  background-size: cover;
-  background-position: center;
-}
+/* ============================================================
+   PATCH 18.8.2 · CENTER CURRENT PLAYBACK META STACK
+   Reason: Align Artist/Track/Contributor stack to card center
+   Scope: Monitor meta only
+============================================================ */
 
-.monitor-track {
-  font-size: 13px;
-}
-
-.monitor-artist {
-  font-size: 12px;
-  color: var(--accent-soft);
-}
-
-/* ===================== PROGRESS ===================== */
-.time-row {
+.monitor-row .monitor-meta,
+.monitor-row .monitor-text,
+.monitor-row .monitor-info {
   display: flex;
-  justify-content: space-between;
-  font-size: 11px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.monitor-row #admin-track-artist,
+.monitor-row #admin-track-title,
+.monitor-row #admin-track-contributor,
+.monitor-row .monitor-artist,
+.monitor-row .monitor-track {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+/* --- Meta text ---------------------------------------------- */
+
+/* ARTIST — primary identifier */
+#admin-track-artist,
+.monitor-artist {
+  font-size: 14.5px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+}
+
+/* TRACK — secondary */
+#admin-track-title,
+.monitor-track {
+  margin-top: 2px;
+  font-size: 12.5px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
   color: var(--accent-soft);
 }
 
+/* CONTRIBUTOR — tertiary */
+#admin-track-contributor {
+  margin-top: 6px;
+  font-size: 10.5px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  opacity: 0.7;
+}
+
+#admin-track-contributor:empty {
+  display: none;
+}
+
+/* ============================================================
+   PATCH 20 · LIVE MONITOR COMPACT MODE
+   Reason: Reduce vertical bloat, align with playlist density
+   Scope: Live monitor readability only
+============================================================ */
+
+/* ============================================================
+   PATCH 21 · LIVE MONITOR OPTICAL REBALANCE
+   Reason: Match playlist density + modern console feel
+   Scope: Live monitor only
+============================================================ */
+
+/* Card breathing — slightly tighter */
+.monitor-card .card-body {
+  padding-top: 10px;
+  padding-bottom: 12px;
+}
+
+/* ARTIST — closer to playlist hierarchy */
+#admin-track-artist {
+  font-size: 13px;
+  letter-spacing: 0.05em;
+}
+
+/* TRACK — lighter presence */
+#admin-track-title {
+  font-size: 12px;
+  opacity: 0.85;
+}
+
+/* CONTRIBUTOR — more discreet */
+#admin-track-contributor {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  opacity: 0.55;
+}
+
+/* Progress bar — slimmer, more elegant */
+.progress-bar {
+  height: 8px;
+}
+
+/* Progress container — tighter vertical rhythm */
+.monitor-progress {
+  margin-top: 6px;
+}
+
+/* Timecode — console style */
+#admin-elapsed {
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  opacity: 0.7;
+}
+
+
+/* Compact vertical rhythm */
+.monitor-card .card-body {
+  gap: 8px;
+}
+
+/* Remove explicit labels (Artist / Track / Contributor) */
+.monitor-card .label-small {
+  display: none;
+}
+
+/* ARTIST — primary */
+#admin-track-artist {
+  font-size: 13.5px;
+  letter-spacing: 0.06em;
+}
+
+/* TRACK — secondary */
+#admin-track-title {
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* CONTRIBUTOR — tertiary */
+#admin-track-contributor {
+  margin-top: 4px;
+  font-size: 10px;
+  opacity: 0.65;
+}
+
+/* Progress block tightening */
+.monitor-progress {
+  margin-top: 8px;
+}
+
+/* Timecode refinement */
+.monitor-progress #admin-elapsed {
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  opacity: 0.75;
+}
+
+/* ============================================================
+   11 · PROGRESS & TIME (LOCKED)
+   Scope: Playback progress & timecode
+   Rule: Glance-readable, no illusion
+============================================================ */
+
+/* --- Progress container ------------------------------------ */
+.monitor-progress {
+  width: 100%;
+  max-width: 640px;
+  margin: 6px auto 0;
+}
+
+/* --- Track -------------------------------------------------- */
 .progress-bar {
   width: 100%;
-  height: 6px;
-  border-radius: 5px;
-  background: #1b1b1f;
-  margin-top: 6px;
+  height: 12px; 
+
+  border-radius: 999px;
   overflow: hidden;
-}
 
-.progress-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #f5f5f7, #c9cedf);
-}
-
-/* ===================== PLAYLIST ===================== */
-#admin-playlist {
-  margin-top: 8px;
-  list-style: none;
-  padding: 4px 0;
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.09);
-  background: radial-gradient(
-    circle at 0 0,
-    rgba(255,255,255,0.02),
-    rgba(4,6,11,0.96)
+  background: linear-gradient(
+    180deg,
+    #1b1b1f,
+    #15171c
   );
 }
 
-/* ===================== PREVIEW IFRAME ===================== */
-.admin-preview-frame {
-  width: 0;
-  height: 0;
-  opacity: 0;
-  pointer-events: none;
-  border: 0;
-}
-.monitor-sync {
-  text-align: center;
-  margin-top: 12px;
-}
-.actions-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 14px;
-}
-.mode-toggle {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  margin-top: 8px;
-  text-align: center;
-}
-#admin-new-url {
-  text-align: center;
-}
-.add-card .field {
-  margin-inline: auto;
-  text-align: center;
-}
-.playlist-list {
-  margin-inline: auto;
-  text-align: center;
-}
-.admin-mix-row {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
-  align-items: center;
-  gap: 12px;
-  justify-items: center;
-}
-.playlist-list.numbered {
-  counter-reset: mix;
+/* --- Fill --------------------------------------------------- */
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+
+  background: linear-gradient(
+    90deg,
+    #f5f5f7,
+    #dfe3ee
+  );
+
+  transition: width 1s linear;
+  will-change: width;
 }
 
-.playlist-list.numbered .admin-mix-row::before {
-  counter-increment: mix;
-  content: counter(mix, decimal-leading-zero);
-  opacity: 0.5;
+/* --- Live emphasis ----------------------------------------- */
+body.mode-live .progress-fill {
+  box-shadow: 0 0 14px rgba(245,245,247,0.55);
+}
+
+/* --- Finishing / transition -------------------------------- */
+body.is-finishing .progress-fill {
+  opacity: 0.55;
+  filter: saturate(0.8);
+  transition: none;
+}
+
+body.is-finishing .progress-bar {
+  background: linear-gradient(
+    90deg,
+    #1b1b1f,
+    #202228,
+    #1b1b1f
+  );
+}
+
+/* --- Timecode ---------------------------------------------- */
+#admin-elapsed {
   font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+  opacity: 0.85;
 }
 /* ============================================================
-   RESONANT ADMIN — PREMIUM BROADCAST COMPILED
-   Scope: Visual polish only · No layout changes
+   12 · ADMIN TOOLS (LOCKED)
+   Scope: Secondary actions (save, import, reset, export)
+   Rule: Visible, restrained, state-aware
 ============================================================ */
 
-/* ------------------------------------------------------------
-   BUTTON SYSTEM — CONSOLE FEEL
------------------------------------------------------------- */
-button {
-  border-radius: 14px;
-  border: 1px solid rgba(255,255,255,0.08);
-  background: rgba(12,14,20,0.92);
-  color: var(--accent-soft);
-  transition:
-    background 0.2s ease,
-    border-color 0.2s ease,
-    color 0.2s ease;
-}
-
-button:hover {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.16);
-  color: var(--accent-strong);
-}
-
-button:active {
-  background: rgba(255,255,255,0.08);
-}
-
-/* ------------------------------------------------------------
-   TRANSPORT CONTROLS — HARDWARE CHARACTER
------------------------------------------------------------- */
-.actions-row button {
-  width: 40px;
-  height: 40px;
-  padding: 0;
-  font-size: 14px;
-  letter-spacing: 0;
-  text-transform: none;
-}
-
-.actions-row button.primary {
-  background: linear-gradient(180deg, #f5f5f7, #d6dae4);
-  color: #050507;
-  border: none;
-}
-
-.actions-row button.primary:hover {
-  background: #ffffff;
-}
-
-/* ------------------------------------------------------------
-   PLAYLIST ROW — BROADCAST STATE (CLEAN)
------------------------------------------------------------- */
-.admin-mix-row {
-  position: relative;
-  opacity: 0.7;
-  transition: background 0.2s ease, opacity 0.2s ease;
-}
-
-.admin-mix-row:hover {
-  opacity: 1;
-  background: rgba(255,255,255,0.03);
-}
-
-.admin-mix-row.active {
-  opacity: 1;
-  background: rgba(255,255,255,0.02);
-}
-
-/* LEFT INDICATOR — DOES NOT AFFECT GRID OR COUNTER */
-.admin-mix-row.active::after {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 8px;
-  bottom: 8px;
-  width: 2px;
-  background: var(--accent-pill);
-  border-radius: 1px;
-}
-
-/* ------------------------------------------------------------
-   PLAYLIST ACTION BUTTONS — EDITORIAL
------------------------------------------------------------- */
-.admin-mix-row button {
-  background: transparent;
-  border: none;
-  color: var(--accent-soft);
-  padding: 4px 6px;
-}
-
-.admin-mix-row button:hover {
-  color: var(--accent-strong);
-}
-/* ============================================================
-   ADMIN TOOLS — FINAL ALIGNMENT POLISH
-============================================================ */
-
-/* Center Reset / Shuffle / Export buttons */
 .admin-tools {
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 10px;         
+  flex-wrap: wrap;
+  margin-top: 16px;
 }
 
-/* Center Import / Export label text */
-.field span {
+/* --- Observer mode exceptions ------------------------------- */
+body.mode-observer #admin-save-btn,
+body.mode-observer #admin-import-playlist-btn,
+body.mode-observer #admin-reset-btn,
+body.mode-observer #admin-shuffle-btn,
+body.mode-observer #admin-export-btn {
+  pointer-events: auto;
+  opacity: 1;
+}
+
+/* Transport stays locked in observer (only real buttons) */
+body.mode-observer #admin-stop-btn,
+body.mode-observer #admin-next-btn {
+  opacity: 0.35;
+  pointer-events: none;
+}
+
+/* ============================================================
+   13 · SYSTEM STATUS & MESSAGES (LOCKED)
+   Scope: Feedback, errors, confirmations
+   Rule: Silent by default, clear when active
+============================================================ */
+
+.status-msg {
+  min-height: 16px;
+  margin-top: 6px;
+
+  font-size: 12px;
+  text-align: center;
+  color: var(--accent-soft);
+}
+
+/* --- Error -------------------------------------------------- */
+.status-msg.error {
+  color: #ff5268;
+}
+
+/* --- Flash (ephemeral feedback) ----------------------------- */
+.status-msg.flash {
+  color: var(--accent-strong);
+  animation: flash 0.6s ease;
+}
+/* ============================================================
+   14 · HEALTH PANEL (LOCKED)
+   Scope: Authority, mode, lease, heartbeat
+   Rule: Diagnostic clarity over layout tricks
+============================================================ */
+
+.admin-health-card .card-head {
   text-align: center;
 }
 
-/* Center textarea placeholder + text */
-#admin-io-text {
-  text-align: center;
+/* --- Grid --------------------------------------------------- */
+.admin-health-card .card-body {
+  display: grid;
+  grid-template-columns: auto auto;
+  justify-content: center;
+
+  column-gap: 96px;
+  row-gap: 14px;
+
+  margin-top: 20px;
 }
 
-#admin-io-text::placeholder {
-  text-align: center;
+/* Left column: MODE / OWNER */
+.admin-health-card .card-body > div:nth-child(1),
+.admin-health-card .card-body > div:nth-child(2) {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
 }
+
+/* Right column: LEASE / HEARTBEAT */
+.admin-health-card .card-body > div:nth-child(3),
+.admin-health-card .card-body > div:nth-child(4) {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-start;
+}
+
+/* --- Status footer ----------------------------------------- */
+.admin-health-card .health-status {
+  grid-column: 1 / -1;
+
+  margin-top: 18px;
+  padding-top: 14px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+
+  border-top: 1px solid var(--line-soft);
+
+  font-size: 13px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+/* --- Labels & values --------------------------------------- */
+.admin-health-card span {
+  color: var(--accent-soft);
+}
+
+.admin-health-card strong {
+  color: var(--accent-strong);
+  font-weight: 500;
+}
+/* ============================================================
+   15 · PLAYLIST CONTAINER (LOCKED)
+   Scope: Track list viewport
+   Rule: Long-session readability
+============================================================ */
+
+#admin-playlist {
+  margin-top: 8px;
+  padding: 4px 0;
+
+  list-style: none;
+
+  max-height: 420px;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(255,255,255,0.09);
+
+  background:
+    radial-gradient(
+      circle at 0 0,
+      rgba(255,255,255,0.02),
+      rgba(4,6,11,0.96)
+    );
+
+  counter-reset: playlist-index;
+
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,0.25) transparent;
+
+  overscroll-behavior: contain;
+}
+
+/* --- Scrollbar (WebKit) ------------------------------------- */
+#admin-playlist::-webkit-scrollbar {
+  width: 6px;
+}
+
+#admin-playlist::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.25);
+  border-radius: 6px;
+}
+
+#admin-playlist .admin-mix-row {
+  position: relative;
+
+  display: grid;
+  grid-template-columns:
+  28px          
+  1fr           
+  auto;         
+
+
+  align-items: center;
+  column-gap: 12px;
+
+  padding: 8px 12px 7px; 
+
+  width: 100%;
+  counter-increment: playlist-index;
+  opacity: 1;
+}
+
+
+/* --- Index -------------------------------------------------- */
+
+
+#admin-playlist .row-index {
+  display: none !important;
+}
+
+
+#admin-playlist .admin-mix-row::before {
+  content: counter(playlist-index);
+
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+
+  font-size: 9.5px;          
+  letter-spacing: 0.12em;    
+
+  color: var(--accent-soft);
+  opacity: 0.22;             
+}
+
+
+/* --- Title / meta ------------------------------------------ */
+
+/* ============================================================
+   PATCH 04 · OPTICAL CENTER ALIGNMENT
+   Reason: Center text optically between index and actions
+   Scope: Playlist readability only
+============================================================ */
+
+/* ============================================================
+   PATCH 05 — PLAYLIST LAYOUT LUPA
+   Reason: Corrección fina de artista / título / contributor
+============================================================ */
+
+#admin-playlist .mix-title {
+  display: flex;
+  flex-direction: column;       
+  gap: 2px;                     
+  justify-content: flex-start;
+  align-items: flex-start;
+  min-width: 0;
+
+  line-height: 1.25;            
+  letter-spacing: 0.015em;
+
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+#admin-playlist .row-artist {
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-strong);
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#admin-playlist .row-title {
+  font-size: 12.5px;            
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  color: var(--accent-soft);
+  opacity: 0.9;                  
+  
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#admin-playlist .row-contributor {
+  font-size: 11px;                /* un pelín más grande para mejor lectura */
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+  opacity: 0.7;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;               /* más separación con el título */
+}
+
+/* --- Row actions ------------------------------------------- */
+
+#admin-playlist .row-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: flex-end;
+}
+
+#admin-playlist .row-actions button {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: transparent;
+  border: none;
+
+  color: var(--accent-soft);
+  opacity: 1;
+
+  transition:
+    opacity 0.12s ease,
+    color 0.12s ease,
+    transform 0.08s ease;
+}
+
+#admin-playlist .row-actions button:active {
+  transform: scale(0.96);
+}
+
+#admin-playlist .row-actions button[data-remove]:hover {
+  color: #ff5268;
+}
+/* ============================================================
+   PLAYLIST · STATE AUTHORITY (CANONICAL)
+   Scope: hover / active / playing / global playing
+============================================================ */
+
+#admin-playlist .admin-mix-row:hover {
+  background: rgba(255,255,255,0.028);
+}
+
+#admin-playlist .admin-mix-row:hover::before {
+  opacity: 0.35;
+}
+
+/* ACTIVE = UI selection */
+#admin-playlist .admin-mix-row.active {
+  background: rgba(255,255,255,0.045);
+  box-shadow:
+    inset 2px 0 0 rgba(245,245,247,0.6),
+    inset 0 0 0 1px rgba(255,255,255,0.06);
+}
+
+#admin-playlist .admin-mix-row.active::before {
+  color: var(--accent-strong);
+  opacity: 0.85;
+}
+
+/* PLAYING = LIVE authority */
+#admin-playlist .admin-mix-row.playing {
+  background: rgba(255,255,255,0.08);
+  box-shadow:
+    inset 3px 0 0 rgba(125,255,179,0.95),
+    inset 0 0 0 1px rgba(255,255,255,0.1);
+}
+
+/* PLAYING index emphasis */
+#admin-playlist .admin-mix-row.playing::before {
+  color: #7dffb3;
+  opacity: 1;
+}
+
+
+/* ============================================================
+   PATCH 10 · LIVE BADGE INLINE (NO OVERLAY)
+   Reason: Broadcast-safe, no control overlap
+============================================================ */
+
+#admin-playlist .admin-mix-row.playing .row-actions::before {
+  content: "LIVE";
+  margin-right: 6px;
+  font-size: 9.5px;
+  letter-spacing: 0.16em;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: #7dffb3;
+  opacity: 0.85;
+  pointer-events: none;
+}
+
+/* ============================================================
+   18 · AUTHORITY STATES (LOCKED)
+   Scope: Operator / Observer / Live / Transition
+   Rule: State overrides intent
+============================================================ */
+
+.admin-preview-frame {
+  position: fixed;
+  bottom: 0;
+  right: 0;
+
+  width: 1px;
+  height: 1px;
+
+  opacity: 0.01;
+  pointer-events: none;
+
+  border: none;
+  z-index: -1;
+}
+
+/* --- Playlist lock: structural edits only ------------------ */
+#admin-playlist.locked {
+  pointer-events: auto;
+}
+
+/* Block reorder & delete ONLY when locked */
+#admin-playlist.locked
+.row-actions button[data-action="up"],
+#admin-playlist.locked
+.row-actions button[data-action="down"],
+#admin-playlist.locked
+.row-actions button[data-action="delete"] {
+  pointer-events: none;
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+/* Play is ALWAYS allowed (even during lock) */
+#admin-playlist.locked
+.row-actions button[data-action="play"] {
+  pointer-events: auto;
+  opacity: 1;
+  cursor: pointer;
+}
+
+/* Non-active rows remain readable */
+#admin-playlist.locked .admin-mix-row {
+  opacity: 0.65;
+}
+
+#admin-playlist.locked .admin-mix-row.playing {
+  opacity: 1;
+}
+
+
+/* --- Visibility -------------------------------------------- */
+.hidden {
+  display: none !important;
+}
+
+/* --- Loading / waiting ------------------------------------- */
+.spinner {
+  margin-top: 12px;
+  font-size: 0.85rem;
+  opacity: 0.7;
+}
+
+/* --- Non-interactive layers -------------------------------- */
 .fx-noise,
 .fx-gradient-top,
 .fx-gradient-bottom {
   pointer-events: none;
 }
+/* ============================================================
+   20 · KEYFRAMES & SYSTEM ANIMATIONS (LOCKED)
+   Scope: UI feedback only
+   Rule: No decorative motion
+============================================================ */
+
+/* --- Flash: ephemeral confirmation ------------------------- */
+@keyframes flash {
+  0%   { opacity: 0; transform: translateY(2px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Fade in: structural entrance -------------------------- */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Shake: authentication error --------------------------- */
+@keyframes shake {
+  0%   { transform: translateX(0); }
+  25%  { transform: translateX(-3px); }
+  50%  { transform: translateX(3px); }
+  75%  { transform: translateX(-2px); }
+  100% { transform: translateX(0); }
+}
+
+/* --- Curated feedback -------------------------------------- */
+
+.playback-options {
+  display: flex;
+  justify-content: center;
+  margin-top: 8px;
+}
+
+.playback-options label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+
+  gap: 8px;
+  padding-left: 2px; /* optical correction */
+
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-soft);
+
+  cursor: pointer;
+}
+
+
+/* Native checkbox normalization */
+.playback-options input[type="checkbox"] {
+  appearance: none;
+  -webkit-appearance: none;
+
+  width: 14px;
+  height: 14px;
+
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.25);
+
+  background: rgba(12,14,20,0.9);
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4);
+
+  display: inline-block;
+  vertical-align: middle;
+
+  margin: 0;  transform: translateY(-0.5px); /* optical centering */
+}
+
+/* Checked state */
+.playback-options input[type="checkbox"]:checked {
+  background: linear-gradient(180deg, #f5f5f7, #d6dae4);
+  border-color: #f5f5f7;
+}
+
+/* --- Transition / finishing (visual only, no global locks) --- */
+body.is-finishing {
+  cursor: wait;
+}
+
+/* ============================================================
+   🔒 FREEZE BOUNDARY — DO NOT MODIFY
+   FILE: style.admin.css
+   STATUS: SEALED · BROADCAST GRADE
+
+   Any change below this line requires:
+   - Version bump
+   - Explicit justification
+   - Visual regression check
+
+   This CSS is a control surface, not a design experiment.
+============================================================ */

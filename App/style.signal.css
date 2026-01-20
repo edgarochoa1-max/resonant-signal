@@ -331,33 +331,58 @@ body {
 /* MAIN + TABS ========================================= */
 
 .main {
+  position: relative;        /* 🔑 crea stacking context */
   flex: 1;
   min-height: 0;
-  padding: 14px;
-  display: flex;
-  flex-direction: column;
+  padding: 10px 14px 8px;
+
+  display: block;            /* 🔑 rompe el bug flex */
   max-width: 900px;
   margin: 0 auto;
+
   overflow-y: auto;
   overflow-x: hidden;
 }
 
+/* ============================================================
+   SCROLLBAR — INVISIBLE / CLEAN (SIGNAL)
+============================================================ */
+
+/* Chrome, Safari, Edge */
+.main::-webkit-scrollbar {
+  width: 0px;
+  height: 0px;
+}
+
+/* Firefox */
+.main {
+  scrollbar-width: none;
+}
+
+/* Legacy / Edge viejo */
+.main {
+  -ms-overflow-style: none;
+}
+
+/* TABS =============================================== */
 .tab {
   display: none;
+  width: 100%;
+
+  /* 🔒 evita residuos de layout */
+  position: relative;
 }
 
 .tab.active {
   display: block;
 }
 
-#tab-radio {
-  display: block;
-}
+/* PLAYER STACK ======================================= */
 
 .player-stack {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 /* MODE TOGGLE ========================================= */
@@ -385,6 +410,7 @@ body {
 }
 
 /* PLAYER CARD — SINGLE VIEW LOCK */
+
 .player-card {
   width: 100%;
   max-width: 720px;
@@ -404,14 +430,23 @@ body {
 
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* 🔑 CLAVE */
+  justify-content: flex-start; /* ⬅ CLAVE */
 
   /* 🔑 CLAVES */
   flex: 0 0 auto;   /* ← CLAVE */
   max-height: none;
   min-height: 0;
-  gap: 8px;
+  gap: 6px;                    /* ⬅ sweet spot */
 }
+
+.player-card > *:first-child {
+  margin-top: 0 !important;
+}
+
+.player-card > *:last-child {
+  margin-bottom: 0 !important;
+}
+
 
 /* COVER =============================================== */
 
@@ -419,7 +454,7 @@ body {
   position: relative;
   width: 100%;
   max-width: 420px;
-  margin: 0 auto;
+  margin: 4px auto 2px; /* ⬅ controla eje vertical */
 
   aspect-ratio: 1 / 1;        /* 🔑 AUTORIDAD TOTAL */
   border-radius: 18px;
@@ -435,91 +470,140 @@ body {
   background-position: center;
 }
 
-/* LIKE ================================================ */
-
+/* LIKE BUTTON — MEJORADO PARA RETROALIMENTACIÓN */
 .like-btn {
   position: absolute;
   right: 10px;
   bottom: 10px;
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.45);
-  background: rgba(5,5,9,0.85);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  background: rgba(5, 5, 9, 0.88);
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-}
-
-/* Fondo del botón en su estado normal (sin cambios) */
-.like-btn {
-  background: rgba(5,5,9,0.85);  /* Fondo original (sin cambios) */
-}
-
-.heart {
-  font-size: 18px;
-  line-height: 1;
-  font-weight: 700;
-
   color: transparent;
-  -webkit-text-stroke: 1.4px #ffffff;
-  text-shadow: 0 0 6px rgba(255,255,255,0.45);
 
-  width: 18px;
-  height: 18px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.like-btn:active {
+  transform: scale(0.9);
+  box-shadow: 0 0 12px rgba(229, 58, 92, 0.6);
+}
+
+.like-btn:focus {
+  outline: none;
+}
+
+.like-btn:focus-visible {
+  box-shadow: 0 0 0 2px rgba(229, 58, 92, 0.4);
+}
+
+/* Botón "like" cuando se selecciona (liked) */
+
+.like-btn.liked {
+  background: rgba(5, 5, 9, 0.88); /* 🔒 fondo negro SIEMPRE */
+  border-color: rgba(229, 58, 92, 0.65);
+
+  box-shadow:
+    0 0 10px rgba(229, 58, 92, 0.55),
+    0 0 22px rgba(229, 58, 92, 0.35);
+}
+
+/* Corazón base — NO liked */
+.heart {
+  font-size: 20px;
+  line-height: 1;
+  font-weight: 400;
+
+  color: rgba(255,255,255,0.6);
+  -webkit-text-stroke: 1.4px rgba(255,255,255,0.55);
+
+  text-shadow: none;
+
+  width: 20px;
+  height: 20px;
 
   display: inline-flex;
   align-items: center;
   justify-content: center;
 
   transition:
+    color 0.18s ease,
     -webkit-text-stroke 0.18s ease,
-    text-shadow 0.18s ease;
+    text-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
+/* Corazón cuando está liked — ÚNICA fuente del rojo */
 .like-btn.liked .heart {
-  color: transparent;
-  -webkit-text-stroke: 1.4px var(--accent-pill);
-  text-shadow:
-    0 0 4px rgba(229,58,92,0.6),
-    0 0 10px rgba(229,58,92,0.35);
+  color: #e53a5c;
+  -webkit-text-stroke: 1.4px #e53a5c;
+  text-shadow: 0 0 10px rgba(229, 58, 92, 0.6);
 }
 
-
-/* ACTIONS ============================================= */
-.actions-row {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 4px;
+/* Animación de clic */
+.like-btn:active .heart {
+  transform: scale(0.95);
 }
 
+/* BUTTONS GENERALES — ACCIONES PRIMARIAS Y GHOST */
 .primary {
   background: linear-gradient(135deg, #f5f5f7, #d6dae4);
   color: #050509;
   border-radius: 999px;
-  padding: 10px 18px;
-  font-size: 13px;
+  padding: 12px 20px;
+  font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: var(--trk-xxs);
   box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.primary:hover {
+  background: linear-gradient(135deg, #e8e8e8, #c3c7d1);
+  transform: translateY(-2px);
+}
+
+.primary:active {
+  transform: scale(0.95);
 }
 
 .ghost {
   background: rgba(11,14,20,0.96);
   color: var(--accent-soft);
   border-radius: 999px;
-  padding: 9px 14px;
-  font-size: 12px;
+  padding: 10px 16px;
+  font-size: 13px;
   letter-spacing: var(--trk-xxs);
   border: 1px solid var(--line-soft);
+  transition: transform 0.2s ease;
 }
 
-/* PROGRESS ============================================ */
-.progress-wrap {
+.ghost:hover {
+  background: rgba(11,14,20,0.88);
+  transform: scale(1.05);
+}
+
+.ghost:active {
+  transform: scale(0.95);
+}
+
+/* ACTIONS ============================================= */
+.actions-row {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
   margin-top: 6px;
+}
+
+/* PROGRESS BAR — MEJORADO PARA VISUALIZACIÓN */
+.progress-wrap {
+  margin-top: 4px;
   display: flex;
   flex-direction: column;
   gap: 6px;
@@ -532,39 +616,24 @@ body {
   color: var(--accent-soft);
 }
 
-.bar {
-  width: 100%;
-  height: 4px;
-  border-radius: 999px;
-  background: rgba(255,255,255,0.05);
-  overflow: hidden;
-  transition: background .25s ease;
-}
-
 .bar:hover {
-  background: rgba(255,255,255,0.09);
+  background: rgba(255,255,255,0.15); /* Resaltar la barra cuando se pase por encima */
 }
 
-.bar-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #f5f5f7, #c9cedf);
-  transition: width .18s linear;
-}
+
 
 .player-footer-note {
   text-align: center;
   width: 100%;
-  margin-top: auto; /* 🔑 */
+  margin-top: 6px;
 }
-
 
 .player-footer-note p {
   margin-left: auto;
   margin-right: auto;
   font-size: 11px;
   color: var(--accent-soft);
-  letter-spacing: var(--trk-xs);
+  letter-spacing: var(--trk-xxs);
 }
 
 /* CARDS ============================================== */
@@ -707,7 +776,35 @@ input {
 .sync-screen {
   display: none !important;
 }
+/* ---------------------------------------------
+   INVITE BUTTON FEEDBACK
+--------------------------------------------- */
+#invite-btn.copied {
+  opacity: 0.85;
+  transform: scale(0.96);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
 
+#invite-btn.copied::after {
+  content: " ✓";
+  font-weight: 600;
+  margin-left: 4px;
+  opacity: 0.9;
+}
+
+
+#invite-btn {
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+  touch-action: manipulation;
+
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+
+  transition: transform 0.18s ease, opacity 0.18s ease;
+
+}
 /* ============================================================
    DONATIONS — HUMAN / EDITORIAL FINISH
 ============================================================ */
@@ -787,80 +884,13 @@ input {
   }
 }
 
-
 /* 5️⃣ SEGURIDAD — NAV NO CLIPA */
 .bottom-nav {
   flex-shrink: 0;
 }
 
 /* ============================================================
-   TAB INTERACTION FIX — RELEASE POINTER EVENTS
-   Scope: UI only · Engine untouched
-============================================================ */
-
-/* Cuando NO estamos en radio:
-   - el player no existe visualmente
-   - ni puede capturar clicks
-*/
-body[data-active-tab]:not([data-active-tab="radio"]) .player-card {
-  display: none !important;
-  pointer-events: none !important;
-}
-
-/* Asegurar que el tab activo recibe interacción */
-.tab.active {
-  pointer-events: auto;
-}
-
-/* Asegurar que la navegación siempre es clickeable */
-.bottom-nav,
-.bottom-nav * {
-  pointer-events: auto;
-}
-
-/* ARTISTA - Protagonista, pero sin robar la atención */
-.artist-primary {
-  font-size: 1.35rem;  /* Un tamaño más reducido */
-  font-weight: 700;    /* Peso seminegrita */
-  letter-spacing: 0.03em;
-  margin: 4px 0;
-}
-
-/* TÍTULO DEL SET - Atractivo pero con jerarquía */
-.title-secondary {
-  font-size: 1.1rem;  /* Reducido, para balancear */
-  opacity: 0.85;
-  letter-spacing: 0.04em;
-  margin: 0;
-  text-transform: none;
-  font-weight: 500; /* Ligeramente más fino para no quitar protagonismo */
-}
-
-/* ============================================================
-   RESONANT · SUPPORT THE ARTIST — ARTIST HIERARCHY (FINAL)
-============================================================ */
-
-/* Label: "Current artist" */
-.label-small {
-  font-size: 12px;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  opacity: 0.6;
-  margin-bottom: 6px;
-}
-
-/* 👑 ARTIST NAME — PROTAGONISTA */
-.catalog-artist-name {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.04em;
-  color: var(--accent-strong);
-  margin: 6px 0 16px;
-  line-height: 1.25;
-  text-transform: none;
-}
-/* ============================================================
-   RESONANT · META HIERARCHY — FINAL AUTHORITY
+   META — SINGLE SOURCE OF TRUTH (CANON · REFINED)
 ============================================================ */
 
 .meta {
@@ -868,81 +898,244 @@ body[data-active-tab]:not([data-active-tab="radio"]) .player-card {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 6px;
-  margin-top: 14px;
+
+  gap: 0;
+  margin-top: 3px;                 /* ↓ 4 → 3 (micro win real) */
+
+  transition: transform 0.25s ease, opacity 0.25s ease;
+  transform: none;
+
 }
 
-/* EYEBROW — "Now transmitting" */
+/* EYEBROW — CONTEXTO */
+
 .meta .eyebrow {
-  font-size: 12px;
-  letter-spacing: 0.14em;
+  order: 1;
+
+  font-size: 12px;                 /* ↓ de 13 → 12 */
+  font-weight: 500;
+  letter-spacing: 0.15em;          /* ↓ 0.16 → 0.15 (menos ruido) */
   text-transform: uppercase;
-  opacity: 0.65;
-  margin-bottom: 4px;
-}
 
-/* ARTIST — PROTAGONISTA */
-.meta .artist {
-  font-size: 22px;
-  font-weight: 600;
-  letter-spacing: 0.045em;
-  line-height: 1.25;
-  color: var(--accent-strong);
-  margin: 0;
-  margin-top: 2px;
-
-}
-
-/* SESSION TITLE */
-.meta .title {
-  font-size: 15.5px;
-  font-weight: 400;
-  letter-spacing: 0.025em;
+  opacity: 0.75;
   line-height: 1.35;
-  opacity: 0.74;
-  color: var(--accent-soft);
-  margin: 0;
-  margin-top: 2px;
-
+  margin-bottom: 4px;              /* ↓ 5 → 4 */
 }
-/* ---------------------------------------------
-   INVITE BUTTON — CLEAN FEEDBACK (FINAL)
---------------------------------------------- */
 
-#invite-btn {
-  user-select: none;
-  -webkit-user-select: none;
-  -webkit-touch-callout: none;
-  touch-action: manipulation;
+/* ARTIST — ANCLA */
+
+.meta .artist {
+  order: 2;
+
+  font-size: 23px;                 /* ↓ 24 → 23 (sweet editorial) */
+  font-weight: 550;                /* ↓ de 600 → 550 */
+  letter-spacing: 0.05em;          /* ↓ micro tighten */
+
+  color: var(--accent-strong);
+  text-transform: none;
+  text-shadow: 0 1px 1px rgba(0,0,0,0.28); /* sombra más fina */
+
+  margin-bottom: 3px;              /* ↓ 4 → 3 */
 
   position: relative;
-  min-width: 160px;            /* 🔒 evita cambio de tamaño */
+  top: -3px;                       /* ↓ -4 → -3 */
+}
+
+/* TITLE — SECUNDARIO */
+
+.meta .title {
+  order: 3;
+
+  font-size: 17px;                 /* ↓ 18 → 17 */
+  font-weight: 500;
+  letter-spacing: 0.045em;
+
+  color: var(--accent-soft);
+  opacity: 0.82;                   /* ↓ 0.85 → 0.82 */
+
+  margin-bottom: 12px;             /* ↓ 14 → 12 */
+}
+
+.meta .title:hover {
+  color: var(--accent-strong);
+  opacity: 1;
+}
+
+/* MICRO INTERACTION */
+
+.player-card:hover .meta {
+  transform: translateY(-1px);
+}
+
+/* ============================================================
+   MOBILE — META REFINED (SAFE)
+============================================================ */
+
+@media (max-width: 480px) {
+  .meta {
+    margin-top: 4px;
+  }
+
+  .meta .eyebrow {
+    font-size: 12px;
+    margin-bottom: 5px;
+  }
+
+  .meta .artist {
+    font-size: 16px;
+    margin-bottom: 5px;
+  }
+
+  .meta .title {
+    font-size: 14px;
+  }
+
+  /* BOTTOM NAV */
+  .bottom-nav {
+    padding: 8px 5px;
+  }
+
+  .nav-btn {
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+
+  .brand-text h1 {
+    font-size: 13px;
+  }
+
+  .brand-mark {
+    font-size: 12px;
+  }
+}
+
+/* ============================================================
+   SUPPORT SECTION — FINAL EDITORIAL TOUCH
+============================================================ */
+   
+
+/* Estilo general */
+.support-section {
+  padding: 30px 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  background: rgba(5, 5, 7, 0.8);
+  border-radius: 16px;
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.6);
+  color: #fff;
+}
+
+.support-section h2 {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.support-section p {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 20px;
+}
+
+.support-button {
+  background: #ff3355;
+  color: #fff;
+  font-size: 1.2rem;
+  padding: 15px 30px;
+  border-radius: 50px;
   text-align: center;
-
-  cursor: pointer;
-  -webkit-tap-highlight-color: transparent;
-
-  transition:
-    opacity 0.18s ease,
-    transform 0.18s ease;
+  width: 100%;
+  margin-bottom: 30px;
+  transition: all 0.3s ease;
 }
 
-/* Estado “copied” — feedback humano */
-#invite-btn.copied {
-  opacity: 0.85;
-  transform: scale(0.98);
+.support-button:hover {
+  background: #e42948;
+  transform: scale(1.05);  /* Efecto de hover */
 }
 
-/* Blindar estados feos del navegador */
-#invite-btn:focus,
-#invite-btn:focus-visible,
-#invite-btn:active {
+/* Espaciado adicional para que "Any amount is appreciated..." respire más */
+.support-note {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  margin-top: 20px;
+}
+
+.status-msg.hidden {
+  display: none;
+}
+
+/* ============================================================
+   POINTER SAFETY — SINGLE SOURCE
+============================================================ */
+
+.tab.active {
+  pointer-events: auto;
+}
+
+.bottom-nav,
+.bottom-nav * {
+  pointer-events: auto;
+}
+
+#offair-screen,
+#offair-banner {
+  pointer-events: none;
+}
+
+:focus-visible {
   outline: none;
-  box-shadow: none;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
+}
+/* ============================================================
+   TIME NUMERALS — DISABLED (EDITORIAL DECISION)
+   Scope: UI only · Engine untouched
+============================================================ */
+
+.time-row {
+  display: none;
 }
 
-/* Feedback físico al tap */
-#invite-btn:active {
-  transform: scale(0.97);
-  opacity: 0.9;
+
+/* ============================================================
+   PROGRESS BAR — EDITORIAL SIGNAL (CANON)
+   Visual only · No logic · No animation
+============================================================ */
+
+/* Pista — base suave, editorial */
+.bar {
+  height: 6px;
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,0.10),
+      rgba(255,255,255,0.06)
+    );
+
+  box-shadow:
+    inset 0 1px 2px rgba(0,0,0,0.45),
+    0 1px 1px rgba(255,255,255,0.04);
+}
+
+/* Progreso — sólido, preciso, premium */
+.bar-fill {
+  height: 100%;
+  border-radius: 999px;
+
+  background:
+    linear-gradient(
+      90deg,
+      rgba(245,245,247,0.98),
+      rgba(220,224,238,0.95)
+    );
+
+  box-shadow:
+    inset 0 -1px 1px rgba(0,0,0,0.18),
+    0 0 0.5px rgba(255,255,255,0.45);
+
+  /* ÚNICO timelapse permitido (ya definido antes) */
+  transition: width 0.12s linear;
 }

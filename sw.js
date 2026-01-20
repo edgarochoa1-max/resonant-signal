@@ -1,23 +1,27 @@
 /* ============================================================
-   RESONANT · SERVICE WORKER — V16 FINAL (COMPILED)
-   UI Shell Cache · Network First HTML
+   RESONANT · SERVICE WORKER — V16 FINAL FREEZE
+   UI Shell Cache · Network-first HTML
    NO AUDIO CACHE · NO SC CACHE
+   ------------------------------------------------------------
+   STATUS: FROZEN · BROADCAST GRADE · PRODUCTION READY
+   CHANGE POLICY:
+   - UI file change  → bump CACHE_VERSION
+   - Logic change    → MAJOR VERSION ONLY
    ============================================================ */
 
-const CACHE_VERSION = "resonant-v16-shell-v3";
+const CACHE_VERSION = "resonant-v16-shell-v5-freeze";
 
 /* ------------------------------------------------------------
    UI SHELL (PUBLIC APP ONLY)
+   ONLY FILES THAT ACTUALLY EXIST
 ------------------------------------------------------------ */
 const SHELL_CACHE = [
   "/",
-  "/style.index.css",
   "/manifest.webmanifest",
 
-  // Public App
+  // Public Listener App
   "/App/signal.html",
   "/App/app.js",
-  "/App/playlist.official.js",
   "/App/style.signal.css"
 ];
 
@@ -52,6 +56,10 @@ self.addEventListener("activate", event => {
 ------------------------------------------------------------ */
 self.addEventListener("fetch", event => {
   const req = event.request;
+
+  // ⛔ Only handle GET requests
+  if (req.method !== "GET") return;
+
   const url = new URL(req.url);
 
   /* ------------------------------------------
@@ -82,7 +90,7 @@ self.addEventListener("fetch", event => {
      HTML → NETWORK FIRST (PUBLIC APP ONLY)
   ------------------------------------------ */
   if (req.mode === "navigate") {
-    if (url.pathname.startsWith("/App") || url.pathname === "/") {
+    if (url.pathname === "/" || url.pathname.startsWith("/App")) {
       event.respondWith(
         fetch(req).catch(() => caches.match(req))
       );
@@ -93,12 +101,11 @@ self.addEventListener("fetch", event => {
   }
 
   /* ------------------------------------------
-     CSS / JS / IMAGES → CACHE FIRST
+     CSS / JS → CACHE FIRST
   ------------------------------------------ */
   if (
     req.destination === "style" ||
-    req.destination === "script" ||
-    req.destination === "image"
+    req.destination === "script"
   ) {
     event.respondWith(
       caches.match(req).then(cached => {
@@ -117,7 +124,12 @@ self.addEventListener("fetch", event => {
   }
 
   /* ------------------------------------------
-     DEFAULT → NETWORK
+     DEFAULT → NETWORK ONLY
   ------------------------------------------ */
   event.respondWith(fetch(req));
 });
+
+/* ============================================================
+   END OF FILE — SERVICE WORKER
+   FREEZE CONFIRMED
+============================================================ */

@@ -1,78 +1,33 @@
-<!-- ============================================================
-RESONANT · SIGNAL — UI SHELL (FINAL LOCK)
-===============================================================
-
-STATUS
-• Production-ready
-• Single-screen UI (no scroll)
-• Tab-based absolute layout
-• CSS V2.2 FINAL LOCK compatible
-
-ROLE
-• Passive UI Shell
-• No business logic
-• No state authority
-• No layout decisions
-
-LOGIC AUTHORITY
-• app.js (exclusive)
-• HTML must never control behavior
-
-LAYOUT CONTRACT (DO NOT BREAK)
-• Single viewport only
-• No scroll containers
-• Tabs are absolute layers
-• Content adapts — layout does not
-• bottom-nav always visible
-
-CHANGE POLICY
-• No structural refactors
-• No wrappers added to tabs
-• No overflow rules introduced
-• Any layout change requires a new major tag
-
-
-LOCATION
-• /App/signal.html
-
-TAG
-• v16.2.2-signal-html-final
-
-=============================================================== -->
+<!--
+RESONANT · SIGNAL
+UI SHELL — RESTORED EDITORIAL VERSION
+ROLE: Passive UI Shell
+LOGIC AUTHORITY: app.js (exclusive)
+LOCATION: /App/signal.html
+-->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  
   <meta charset="UTF-8" />
+<title>Resonant · The Underground Music Signal</title>
 
-  <title>Resonant · The Underground Music Signal</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="theme-color" content="#050507" />
+<meta name="description" content="Resonant is an invite-only underground transmission. Curated DJ sets synchronized with a global clock." />
 
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#050507" />
-  <meta
-    name="description"
-    content="Resonant is an invite-only underground transmission. Curated DJ sets synchronized with a global clock."
-  />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- SOCIAL -->
-  <meta property="og:title" content="Resonant · The Underground Music Signal" />
-  <meta property="og:description" content="Invite-only underground transmissions. Curated DJ sets synchronized with a global clock." />
-  <meta property="og:type" content="website" />
-  <meta property="og:image" content="../icons/cover-share.png" />
-  <meta name="twitter:card" content="summary_large_image" />
+<meta property="og:title" content="Resonant · The Underground Music Signal" />
+<meta property="og:description" content="Invite-only underground transmissions. Curated DJ sets synchronized with a global clock." />
+<meta property="og:type" content="website" />
 
-  <!-- PWA / APPLE -->
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <link rel="apple-touch-icon" href="../icons/icon-192.png" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<link rel="stylesheet" href="./style.signal.css" />
 
-  <!-- ICON -->
-  <link rel="icon" href="../icons/favicon.png" />
-
-  <!-- MANIFEST & STYLES -->
-  <link rel="manifest" href="../manifest.webmanifest" />
-  <link rel="stylesheet" href="../style.index.css" />
-  <link rel="stylesheet" href="./style.signal.css" />
 </head>
 
 <body
@@ -145,17 +100,15 @@ TAG
             <div class="cover-wrap">
               <div class="cover" id="cover"></div>
               <button class="like-btn" id="like-btn">
-                <span class="heart" id="heart">♡</span>
+<span class="heart" id="heart">♡</span>
               </button>
             </div>
 
             <div class="meta">
-  <p class="eyebrow">Now transmitting</p>
-
-  <p class="artist" id="artist-name"></p>
-
-  <h2 class="title" id="title">Loading mix…</h2>
-</div>
+              <p class="eyebrow">Now transmitting</p>
+              <h2 class="title" id="title">Loading mix…</h2>
+              <p class="artist" id="artist-name"></p>
+            </div>
 
             <div class="actions-row">
               <button class="primary" id="play-btn">▶ Play</button>
