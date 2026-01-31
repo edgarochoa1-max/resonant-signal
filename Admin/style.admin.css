@@ -1,7 +1,7 @@
 /* ============================================================
    RESONANT · ADMIN CONSOLE — CSS MASTER FREEZE
    FILE: style.admin.css
-   VERSION: v18.8.2-freeze-alignment-fix
+   VERSION: v18.8.4-playlist-final-polish
    STATUS: SEALED · BROADCAST GRADE
 
    ROLE
@@ -163,9 +163,7 @@ body.admin-body {
 /* --- App root ------------------------------------------------ */
 .app-root {
   width: 100%;
-  max-width: 960px;
-  min-height: 100vh;
-
+max-width: 760px; /* PATCH 31 — broadcast console width */  min-height: 100vh;
   display: flex;
   flex-direction: column;
 
@@ -182,18 +180,19 @@ body.admin-body {
 }
 
 /* --- Main content -------------------------------------------- */
+
 .main {
   flex: 1;
   padding: 24px;
 
   width: 100%;
-  max-width: 720px;
-  margin: 0 auto;
+max-width: 720px; /* PATCH 31 — admin console canonical width */  margin: 0 auto;
 
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 
 /* ============================================================
    04 · TOP BAR / SIGNAL HEADER (LOCKED)
@@ -219,7 +218,7 @@ body.admin-body {
   backdrop-filter: blur(18px);
 }
 
-/* ON AIR — LIVE (GREEN) */
+/* ON AIR — LIVE (GREEN override in mode-live) */
 .top-status .pill.on {
   background: rgba(40,180,99,0.15);
   border-color: rgba(40,180,99,0.6);
@@ -299,6 +298,12 @@ body.mode-live .top-status .pill.on {
   background: rgba(255,51,85,0.12);
   border-color: rgba(255,51,85,0.45);
   color: #ff9aa8;
+}
+
+.top-status .pill.warn {
+  background: rgba(255,193,7,0.15);
+  border-color: rgba(255,193,7,0.55);
+  color: #ffe082;
 }
 
 body.mode-live .top-status .pill.off {
@@ -421,15 +426,14 @@ p,
 .row-contributor {
   font-size: 11px;
   letter-spacing: 0.14em;
-  text-transform: uppercase;
 }
 
 /* --- Numeric clarity ---------------------------------------- */
-.timecode,
-#admin-elapsed {
+.timecode {
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.06em;
 }
+
 
 /* --- Text smoothing ----------------------------------------- */
 body {
@@ -441,6 +445,28 @@ body {
    Scope: Data entry & authentication
    Rule: Neutral, centered, distraction-free
 ============================================================ */
+
+/* PATCH STEP 1.1 — ADD MIX CARD OPTICAL CENTER */
+.add-card .card-body {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.add-card .field,
+.add-card button {
+  width: 100%;
+}
+/* PATCH STEP 1.1 — ADD MIX BUTTON WIDTH CLAMP (REAL DOM)
+   Reason: Button was full-width due to .add-card button rule
+   Scope: Admin Add Mix (SoundCloud URL)
+*/
+.add-card #admin-add-mix-btn {
+  width: auto;
+  max-width: fit-content;
+  display: inline-flex;
+  align-self: center;
+}
+
 
 /* --- Field wrapper ------------------------------------------ */
 .field {
@@ -570,6 +596,21 @@ button.ghost:hover {
   color: var(--accent-strong);
 }
 
+/* PATCH 23.1 — DISABLED STATE CLARITY
+   Reason: Prevent false affordance on locked controls
+   Scope: All admin buttons
+*/
+button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+button:disabled:hover {
+  background: rgba(12,14,20,0.92);
+  color: var(--accent-soft);
+}
+
 
 /* ============================================================
    09 · TRANSPORT CONTROLS (LOCKED)
@@ -610,80 +651,6 @@ button.ghost:hover {
 }
 
 /* ============================================================
-   10 · MONITOR · COVER & META (LOCKED)
-   Scope: Live track representation
-   Rule: Artist first, track second
-============================================================ */
-
-.monitor-row {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  justify-content: center;
-}
-
-/* ============================================================
-   PATCH 18.8.2 · CENTER CURRENT PLAYBACK META STACK
-   Reason: Align Artist/Track/Contributor stack to card center
-   Scope: Monitor meta only
-============================================================ */
-
-.monitor-row .monitor-meta,
-.monitor-row .monitor-text,
-.monitor-row .monitor-info {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.monitor-row #admin-track-artist,
-.monitor-row #admin-track-title,
-.monitor-row #admin-track-contributor,
-.monitor-row .monitor-artist,
-.monitor-row .monitor-track {
-  display: block;
-  width: 100%;
-  text-align: center;
-}
-
-/* --- Meta text ---------------------------------------------- */
-
-/* ARTIST — primary identifier */
-#admin-track-artist,
-.monitor-artist {
-  font-size: 14.5px;
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--accent-strong);
-}
-
-/* TRACK — secondary */
-#admin-track-title,
-.monitor-track {
-  margin-top: 2px;
-  font-size: 12.5px;
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  color: var(--accent-soft);
-}
-
-/* CONTRIBUTOR — tertiary */
-#admin-track-contributor {
-  margin-top: 6px;
-  font-size: 10.5px;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--accent-soft);
-  opacity: 0.7;
-}
-
-#admin-track-contributor:empty {
-  display: none;
-}
-
-/* ============================================================
    PATCH 20 · LIVE MONITOR COMPACT MODE
    Reason: Reduce vertical bloat, align with playlist density
    Scope: Live monitor readability only
@@ -695,48 +662,15 @@ button.ghost:hover {
    Scope: Live monitor only
 ============================================================ */
 
-/* Card breathing — slightly tighter */
-.monitor-card .card-body {
-  padding-top: 10px;
-  padding-bottom: 12px;
-}
-
-/* ARTIST — closer to playlist hierarchy */
-#admin-track-artist {
-  font-size: 13px;
-  letter-spacing: 0.05em;
-}
-
-/* TRACK — lighter presence */
-#admin-track-title {
-  font-size: 12px;
-  opacity: 0.85;
-}
-
-/* CONTRIBUTOR — more discreet */
-#admin-track-contributor {
-  font-size: 9.5px;
-  letter-spacing: 0.14em;
-  opacity: 0.55;
-}
-
-/* Progress bar — slimmer, more elegant */
-.progress-bar {
-  height: 8px;
-}
-
-/* Progress container — tighter vertical rhythm */
-.monitor-progress {
-  margin-top: 6px;
-}
-
-/* Timecode — console style */
 #admin-elapsed {
-  font-size: 10.5px;
-  letter-spacing: 0.08em;
-  opacity: 0.7;
-}
+  display: block;
+  margin-bottom: 4px;
+  font-size: 11px;
+  opacity: 0.75;
 
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.06em;
+}
 
 /* Compact vertical rhythm */
 .monitor-card .card-body {
@@ -747,6 +681,13 @@ button.ghost:hover {
 .monitor-card .label-small {
   display: none;
 }
+
+/* PATCH STEP 1.2 — FORCE LIVE MONITOR CENTER STACK */
+.monitor-card .card-body {
+  align-items: center;
+  text-align: center;
+}
+
 
 /* ARTIST — primary */
 #admin-track-artist {
@@ -765,19 +706,6 @@ button.ghost:hover {
   margin-top: 4px;
   font-size: 10px;
   opacity: 0.65;
-}
-
-/* Progress block tightening */
-.monitor-progress {
-  margin-top: 8px;
-}
-
-/* Timecode refinement */
-.monitor-progress #admin-elapsed {
-  display: block;
-  margin-bottom: 4px;
-  font-size: 11px;
-  opacity: 0.75;
 }
 
 /* ============================================================
@@ -842,13 +770,6 @@ body.is-finishing .progress-bar {
     #202228,
     #1b1b1f
   );
-}
-
-/* --- Timecode ---------------------------------------------- */
-#admin-elapsed {
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.06em;
-  opacity: 0.85;
 }
 /* ============================================================
    12 · ADMIN TOOLS (LOCKED)
@@ -972,6 +893,24 @@ body.mode-observer #admin-next-btn {
   color: var(--accent-strong);
   font-weight: 500;
 }
+/* PATCH 24 · HEALTH GRID NORMALIZATION
+   Reason: Align Heartbeat with System Health Notice
+   Scope: Admin health diagnostics only
+   Type: Readability + alignment fix
+*/
+
+/* Force Heartbeat to full-width row, centered */
+.admin-health-card .card-body > div:nth-child(5) {
+  grid-column: 1 / -1;
+  justify-content: center;
+}
+
+/* Optional: tighten vertical rhythm */
+.admin-health-card .card-body > div:nth-child(5) span,
+.admin-health-card .card-body > div:nth-child(5) strong {
+  text-align: center;
+}
+
 /* ============================================================
    15 · PLAYLIST CONTAINER (LOCKED)
    Scope: Track list viewport
@@ -979,6 +918,10 @@ body.mode-observer #admin-next-btn {
 ============================================================ */
 
 #admin-playlist {
+
+  width: 100%;
+  max-width: 1100px; /* PATCH 6 — Stingray desktop width */
+
   margin-top: 8px;
   padding: 4px 0;
 
@@ -1006,6 +949,14 @@ body.mode-observer #admin-next-btn {
   overscroll-behavior: contain;
 }
 
+/* PATCH 7 — Ultra-wide desktop refinement (Stingray level) */
+@media (min-width: 1400px) {
+  #admin-playlist {
+    max-width: 1280px;
+  }
+}
+
+
 /* --- Scrollbar (WebKit) ------------------------------------- */
 #admin-playlist::-webkit-scrollbar {
   width: 6px;
@@ -1021,21 +972,19 @@ body.mode-observer #admin-next-btn {
 
   display: grid;
   grid-template-columns:
-  28px          
-  1fr           
-  auto;         
-
+  28px
+  minmax(240px, 1fr)
+  auto;
 
   align-items: center;
-  column-gap: 12px;
+  column-gap: 10px;
 
-  padding: 8px 12px 7px; 
+  padding: 3px 10px;
 
   width: 100%;
   counter-increment: playlist-index;
   opacity: 1;
 }
-
 
 /* --- Index -------------------------------------------------- */
 
@@ -1051,13 +1000,13 @@ body.mode-observer #admin-next-btn {
   text-align: right;
   font-variant-numeric: tabular-nums;
 
-  font-size: 9.5px;          
-  letter-spacing: 0.12em;    
+  font-size: 9px;
+  letter-spacing: 0.14em;
+  line-height: 1;
 
   color: var(--accent-soft);
-  opacity: 0.22;             
+  opacity: 0.28;
 }
-
 
 /* --- Title / meta ------------------------------------------ */
 
@@ -1074,59 +1023,106 @@ body.mode-observer #admin-next-btn {
 
 #admin-playlist .mix-title {
   display: flex;
-  flex-direction: column;       
-  gap: 2px;                     
-  justify-content: flex-start;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
+  justify-content: center;
+  align-items: center;
   min-width: 0;
 
-  line-height: 1.25;            
+  line-height: 1.25;
   letter-spacing: 0.015em;
 
-  text-align: left;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  text-align: center;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  padding-top: 1px;
 }
 
-
 #admin-playlist .row-artist {
-  font-size: 13px;
+
+  font-size: 11.25px;
+  line-height: 1.2;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+  letter-spacing: 0.035em;
   color: var(--accent-strong);
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 #admin-playlist .row-title {
-  font-size: 12.5px;            
+  font-size: 10.75px;
+  line-height: 1.2;
   font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--accent-soft);
-  opacity: 0.9;                  
-  
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  opacity: 0.9;
+
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
 }
 
 #admin-playlist .row-contributor {
-  font-size: 11px;                /* un pelín más grande para mejor lectura */
+  font-size: 9.25px;
+  line-height: 1.15;
   font-weight: 400;
   letter-spacing: 0.12em;
-  text-transform: uppercase;
   color: var(--accent-soft);
   opacity: 0.7;
 
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 2px;               /* más separación con el título */
+  white-space: normal;
+  overflow: visible;
+  text-overflow: unset;
+  margin-top: 0;
 }
+
+/* PATCH 2 FIX — :empty invalid for <input>
+   Reason: row-contributor is now an input element
+   Empty value ≠ empty node
+*/
+/*
+#admin-playlist .row-contributor:empty {
+  display: none;
+}
+*/
+
+/* ============================================================
+   PATCH V1.1 · PLAYLIST INPUTS AS TEXT
+   Reason: Recover refined look while keeping inline editing
+   Scope: #admin-playlist only
+============================================================ */
+
+#admin-playlist .mix-title input {
+  width: 100%;
+  max-width: none;
+
+  background: transparent;
+  border: none;
+  box-shadow: none;
+
+  padding: 0;
+  margin: 0;
+
+  font-size: inherit;
+  letter-spacing: normal;
+
+  height: auto;
+  line-height: 1.2;
+
+  text-align: left;
+}
+
+/* Focus affordance only when editing (subtle) */
+#admin-playlist .mix-title input:focus {
+  outline: none;
+  background: rgba(255,255,255,0.025);
+  padding: 1px 3px;
+  border-radius: 4px;
+}
+
 
 /* --- Row actions ------------------------------------------- */
 
@@ -1150,12 +1146,16 @@ body.mode-observer #admin-next-btn {
   border: none;
 
   color: var(--accent-soft);
-  opacity: 1;
+  opacity: 0.65;
 
   transition:
     opacity 0.12s ease,
     color 0.12s ease,
     transform 0.08s ease;
+}
+
+#admin-playlist .row-actions button:hover {
+  opacity: 1;
 }
 
 #admin-playlist .row-actions button:active {
@@ -1171,7 +1171,7 @@ body.mode-observer #admin-next-btn {
 ============================================================ */
 
 #admin-playlist .admin-mix-row:hover {
-  background: rgba(255,255,255,0.028);
+background: rgba(255,255,255,0.018);
 }
 
 #admin-playlist .admin-mix-row:hover::before {
@@ -1180,7 +1180,7 @@ body.mode-observer #admin-next-btn {
 
 /* ACTIVE = UI selection */
 #admin-playlist .admin-mix-row.active {
-  background: rgba(255,255,255,0.045);
+background: rgba(255,255,255,0.035);
   box-shadow:
     inset 2px 0 0 rgba(245,245,247,0.6),
     inset 0 0 0 1px rgba(255,255,255,0.06);
@@ -1192,11 +1192,12 @@ body.mode-observer #admin-next-btn {
 }
 
 /* PLAYING = LIVE authority */
+
 #admin-playlist .admin-mix-row.playing {
   background: rgba(255,255,255,0.08);
   box-shadow:
-    inset 3px 0 0 rgba(125,255,179,0.95),
-    inset 0 0 0 1px rgba(255,255,255,0.1);
+    inset 4px 0 0 rgba(125,255,179,0.95),
+    inset 0 0 0 1px rgba(255,255,255,0.12);
 }
 
 /* PLAYING index emphasis */
@@ -1205,6 +1206,31 @@ body.mode-observer #admin-next-btn {
   opacity: 1;
 }
 
+/* ============================================================
+   PATCH 22 · LIVE ROW SOFT LOCK
+   Reason: Prevent accidental edits on current live track
+   Scope: Visual feedback only (logic handled in JS)
+   Type: Accessibility & state clarity
+============================================================ */
+
+#admin-playlist .admin-mix-row.live-active {
+  opacity: 0.65;
+}
+
+/* Inputs on live track */
+#admin-playlist .admin-mix-row.live-active input {
+  pointer-events: none;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* Destructive actions disabled on live track */
+#admin-playlist
+.admin-mix-row.live-active
+.row-actions button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
 
 /* ============================================================
    PATCH 10 · LIVE BADGE INLINE (NO OVERLAY)
@@ -1219,7 +1245,7 @@ body.mode-observer #admin-next-btn {
   font-weight: 600;
   text-transform: uppercase;
   color: #7dffb3;
-  opacity: 0.85;
+  opacity: 0.65;
   pointer-events: none;
 }
 
@@ -1278,9 +1304,10 @@ body.mode-observer #admin-next-btn {
   opacity: 1;
 }
 
-
-/* --- Visibility -------------------------------------------- */
-.hidden {
+/* PATCH 23.2 — HTML [hidden] NORMALIZATION
+   Reason: Align native hidden attribute with CSS contract
+*/
+[hidden] {
   display: none !important;
 }
 
@@ -1324,60 +1351,75 @@ body.mode-observer #admin-next-btn {
   100% { transform: translateX(0); }
 }
 
-/* --- Curated feedback -------------------------------------- */
+/* ============================================================
+   PATCH 8 · PLAYLIST DENSITY MODES
+   Reason: Operator preference (Normal / Compact)
+   Scope: #admin-playlist only
+   Type: Optical only — no layout refactor
+============================================================ */
 
-.playback-options {
-  display: flex;
-  justify-content: center;
-  margin-top: 8px;
+/* DEFAULT = NORMAL (no class needed) */
+
+/* COMPACT MODE */
+body.playlist-compact #admin-playlist .admin-mix-row {
+  padding: 2px 10px;
 }
 
-.playback-options label {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
+body.playlist-compact #admin-playlist .mix-title {
+  gap: 1px;
+}
 
-  gap: 8px;
-  padding-left: 2px; /* optical correction */
+body.playlist-compact #admin-playlist .row-artist {
+  font-size: 10.75px;
+  letter-spacing: 0.03em;
+}
 
-  font-size: 11px;
+body.playlist-compact #admin-playlist .row-title {
+  font-size: 10.25px;
+}
+
+body.playlist-compact #admin-playlist .row-contributor {
+  font-size: 8.75px;
   letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--accent-soft);
-
-  cursor: pointer;
+  opacity: 0.6;
 }
 
-
-/* Native checkbox normalization */
-.playback-options input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
-
-  width: 14px;
-  height: 14px;
-
-  border-radius: 4px;
-  border: 1px solid rgba(255,255,255,0.25);
-
-  background: rgba(12,14,20,0.9);
-  box-shadow: inset 0 0 0 1px rgba(0,0,0,0.4);
-
-  display: inline-block;
-  vertical-align: middle;
-
-  margin: 0;  transform: translateY(-0.5px); /* optical centering */
+body.playlist-compact #admin-playlist .row-actions button {
+  width: 20px;
+  height: 20px;
 }
 
-/* Checked state */
-.playback-options input[type="checkbox"]:checked {
-  background: linear-gradient(180deg, #f5f5f7, #d6dae4);
-  border-color: #f5f5f7;
+/* PATCH STEP 1.3 — LOGIN HARD ISOLATION */
+body:not(.admin-ui-ready) #admin-panel {
+  display: none !important;
 }
 
-/* --- Transition / finishing (visual only, no global locks) --- */
-body.is-finishing {
-  cursor: wait;
+/* =========================================================
+   USER GESTURE NEEDED — PLAY PULSE
+   LISTENER UI ONLY · NO LOGIC
+========================================================= */
+
+/* System-required motion: user gesture needed
+   Not decorative — indicates blocked autoplay */
+
+
+body[data-phase="syncing"] .play-btn.is-play {
+  animation: playPulse 1.2s ease-in-out infinite;
+}
+
+@keyframes playPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
 }
 
 /* ============================================================

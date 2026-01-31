@@ -1,8 +1,8 @@
 /* ============================================================
    RESONANT · ADMIN CORE
    FILE: admin.core.js
-   VERSION: 20.3.2-CORE-STABLE-FREEZE
-   STATUS: AUTHORITY SEALED · BROADCAST GRADE
+   VERSION: 20.4.2-CORE-CANON-FINAL
+   STATUS: AUTHORITY SEALED · BROADCAST GRADE · 24/7 READY
 ============================================================ */
 
 "use strict";
@@ -12,50 +12,52 @@
 ============================================================ */
 
 const PLAYLIST_KEY  = "resonant_admin_playlist_v1";
-const SESSION_KEY   = "resonant_admin_session_v1";
-const BROADCAST_KEY = "resonant_broadcast_state_v2";
+const BROADCAST_KEY = "resonant_broadcast_state_v3";
 const SNAPSHOT_KEY  = "resonant_broadcast_snapshot_v1";
 
 const EVENT_LOG_LIMIT = 300;
-const SESSION_TTL = 1000 * 60 * 60 * 6;
 const LEASE_MS = 30 * 1000;
+
+const ADMIN_INSTANCE_ID =
+  sessionStorage.getItem("resonant_admin_id") ||
+  crypto.randomUUID();
+
+sessionStorage.setItem("resonant_admin_id", ADMIN_INSTANCE_ID);
 
 /* ============================================================
    METADATA
 ============================================================ */
 
-export const CORE_VERSION = "20.3.2-CORE-STABLE-FREEZE";
+export const CORE_VERSION = "20.4.2-CORE-CANON-FINAL";
 
 /* ============================================================
    GLOBAL STATE (SSOT)
 ============================================================ */
 
-export const STATE = Object.seal({
-
-  /* ADMIN */
+const STATE = {
   adminBooted: false,
   adminMode: "idle",
   adminId: null,
   adminSessionStartedAt: null,
 
-  /* PLAYLIST */
   playlist: [],
   currentIndex: null,
   currentTrackId: null,
+  anchorIndexAtStart: null,
   randomMode: false,
 
-  /* LIVE */
   startedAt: null,
   currentMeta: null,
 
-  /* LOCKS */
   finishing: false,
 
-  /* CONTROL */
   manualPlayIssued: false,
   lastAdvanceReason: null,
 
-  /* HEALTH */
+  // 🔹 LISTENERS (PATCH 7.3)
+  listeners: 0,
+  listenersMap: Object.create(null),
+
   health: {
     owner: null,
     leaseUntil: null,
@@ -63,12 +65,10 @@ export const STATE = Object.seal({
     status: "idle"
   },
 
-  /* DEBUG */
   eventLog: [],
-
-  /* UNDO */
-  playlistUndo: null
-});
+  playlistUndo: null,
+  lastAdvanceAt: null,
+};
 
 /* ============================================================
    EVENT BUS
@@ -77,14 +77,194 @@ export const STATE = Object.seal({
 const listeners = {};
 
 export function on(event, fn) {
-  if (!listeners[event]) listeners[event] = [];
-  listeners[event].push(fn);
+  (listeners[event] ||= []).push(fn);
 }
 
 function emit(event, payload) {
   (listeners[event] || []).forEach(fn => {
     try { fn(payload, getState()); } catch {}
   });
+}
+/* ============================================================
+   LISTENERS — HEARTBEAT AUTHORITY
+   PATCH 7.3
+============================================================ */
+
+const LISTENER_TTL = 20_000;
+
+export function reportListenerPing(id) {
+  if (!id || !STATE.adminBooted) return;
+
+  STATE.listenersMap[id] = Date.now();
+  cleanupListeners();
+}
+
+
+function cleanupListeners() {
+  const now = Date.now();
+  let count = 0;
+
+  for (const id in STATE.listenersMap) {
+    if (now - STATE.listenersMap[id] > LISTENER_TTL) {
+      delete STATE.listenersMap[id];
+    } else {
+      count++;
+    }
+  }
+
+  if (STATE.listeners !== count) {
+  setState(
+    { listeners: count },
+    "listeners-update"
+  );
+}
+
+}
+
+/* ============================================================
+   STATE ACCESS
+============================================================ */
+
+export function getState() {
+  return {
+    ...STATE,
+    playlist: [...STATE.playlist],
+    health: { ...STATE.health }
+  };
+}
+
+// ============================================================
+// STEP 1 CANON — OPERATOR AUTHORITY
+// Rule: If admin explicitly booted, operator CAN operate.
+// Lease & health are informational only in STEP 1.
+// ============================================================
+
+export const canOperate = () => {
+  return STATE.adminBooted === true;
+};
+
+export const canAdvance = () =>
+  canOperate() && !STATE.finishing;
+
+/* ============================================================
+   LEASE — AUTHORITY CONTROL (CANON)
+============================================================ */
+
+export function hasLease() {
+  return (
+    STATE.health.owner === ADMIN_INSTANCE_ID &&
+    typeof STATE.health.leaseUntil === "number" &&
+    STATE.health.leaseUntil > Date.now()
+  );
+}
+
+export function acquireLease() {
+  const now = Date.now();
+
+  if (
+    !STATE.health.owner ||
+    STATE.health.leaseUntil === null ||
+    STATE.health.leaseUntil < now
+  ) {
+    setState(
+      {
+        health: {
+          ...STATE.health,
+          owner: ADMIN_INSTANCE_ID,
+          leaseUntil: now + LEASE_MS,
+          lastHeartbeatAt: now,
+          status: "ok"
+        }
+      },
+      "lease-acquire"
+    );
+    return true;
+  }
+
+  return STATE.health.owner === ADMIN_INSTANCE_ID;
+}
+
+export function renewLease() {
+  if (!hasLease()) return false;
+
+  setState(
+    {
+      health: {
+        ...STATE.health,
+        leaseUntil: Date.now() + LEASE_MS,
+        lastHeartbeatAt: Date.now(),
+        status: "ok"
+      }
+    },
+    "lease-renew"
+  );
+
+  return true;
+}
+
+/* ============================================================
+   STATE MUTATOR (ATOMIC)
+============================================================ */
+
+export function setState(patch = {}, reason = "unknown") {
+  if (!patch || typeof patch !== "object") return;
+
+  if (
+    STATE.adminBooted &&
+    Object.prototype.hasOwnProperty.call(patch, "adminMode")
+  ) {
+    delete patch.adminMode;
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(patch, "startedAt") &&
+    !["play-start", "advance-start", "stop"].includes(reason)
+  ) {
+    delete patch.startedAt;
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(patch, "currentMeta") &&
+    !["play-start", "advance-start", "stop"].includes(reason)
+  ) {
+    delete patch.currentMeta;
+  }
+
+  if (
+    Object.prototype.hasOwnProperty.call(patch, "finishing") &&
+    !reason.startsWith("begin:") &&
+    !reason.startsWith("end:")
+  ) {
+    delete patch.finishing;
+  }
+
+  if (!STATE.adminBooted && reason !== "admin-init") return;
+
+  const next = {};
+  let playlistTouched = false;
+  let playlistUndoExplicit = false;
+
+  for (const k of Object.keys(patch)) {
+    if (k in STATE) {
+      next[k] = patch[k];
+      if (k === "playlist") playlistTouched = true;
+      if (k === "playlistUndo") playlistUndoExplicit = true;
+    }
+  }
+
+  if (playlistTouched && !playlistUndoExplicit && !STATE.finishing) {
+    STATE.playlistUndo = structuredClone(STATE.playlist);
+  }
+
+  Object.assign(STATE, next);
+
+  if (playlistTouched && STATE.currentTrackId) {
+    const idx = STATE.playlist.findIndex(t => t?.id === STATE.currentTrackId);
+    if (idx >= 0) STATE.currentIndex = idx;
+  }
+
+  logEvent(reason, next);
+  emit("state", { reason, patch: next });
 }
 
 /* ============================================================
@@ -95,50 +275,16 @@ function logEvent(reason, patch) {
   STATE.eventLog.push({
     ts: Date.now(),
     reason,
-    keys: Object.keys(patch || {})
+    keys: Object.keys(patch || {}),
+    trackId: STATE.currentTrackId,
+    index: STATE.currentIndex,
+    status: STATE.startedAt ? "live" : "offair"
   });
 
   if (STATE.eventLog.length > EVENT_LOG_LIMIT) {
     STATE.eventLog.shift();
   }
 }
-
-/* ============================================================
-   STATE MUTATOR (ATOMIC)
-============================================================ */
-
-export function setState(patch = {}, reason = "unknown") {
-  if (!patch || typeof patch !== "object") return;
-
-  if (!STATE.adminBooted && reason !== "admin-init") return;
-
-  const next = {};
-  for (const k of Object.keys(patch)) {
-    if (k in STATE) next[k] = patch[k];
-  }
-
-  if (next.playlist && !STATE.finishing) {
-    STATE.playlistUndo = JSON.parse(JSON.stringify(STATE.playlist));
-  }
-
-  Object.assign(STATE, next);
-
-  if (next.playlist && STATE.currentTrackId && !STATE.finishing) {
-    const idx = STATE.playlist.findIndex(t => t.id === STATE.currentTrackId);
-    STATE.currentIndex = idx !== -1 ? idx : null;
-  }
-
-  logEvent(reason, next);
-  emit("state", { reason, patch: next });
-}
-
-/* ============================================================
-   GETTERS
-============================================================ */
-
-export const getState = () => structuredClone(STATE);
-export const canOperate = () => STATE.adminBooted && STATE.adminMode === "operator";
-export const canAdvance = () => canOperate() && !STATE.finishing;
 
 /* ============================================================
    SESSION
@@ -154,39 +300,32 @@ export function initAdminSession(id = "ADMIN", mode = "operator") {
   }, "admin-init");
 
   loadPlaylist();
+  rehydrateFromBroadcast();
 }
 
 /* ============================================================
-   PLAYLIST
+   PLAYLIST LOAD / SAVE
 ============================================================ */
 
-export function loadPlaylist() {
+function loadPlaylist() {
   if (STATE.startedAt) return;
 
   try {
     const raw = localStorage.getItem(PLAYLIST_KEY);
     const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed) && parsed.length) {
-      setState({
-        playlist: parsed,
-        currentIndex: null,
-        currentTrackId: null,
-        currentMeta: null
-      }, "playlist-load-local");
+    if (Array.isArray(parsed)) {
+      setState({ playlist: parsed.map(normalizeTrack) }, "playlist-load-local");
       return;
     }
   } catch {}
 
-  if (!Array.isArray(window.PLAYLIST)) return;
-
-  setState({
-    playlist: structuredClone(window.PLAYLIST),
-    currentIndex: null,
-    currentTrackId: null,
-    currentMeta: null
-  }, "playlist-seed-official");
-
-  savePlaylist();
+  if (Array.isArray(window.PLAYLIST)) {
+    setState(
+      { playlist: structuredClone(window.PLAYLIST).map(normalizeTrack) },
+      "playlist-seed-official"
+    );
+    savePlaylist();
+  }
 }
 
 export function savePlaylist() {
@@ -196,50 +335,105 @@ export function savePlaylist() {
 }
 
 /* ============================================================
-   TRANSITIONS
+   PLAYLIST UNDO
 ============================================================ */
 
-function begin(reason) {
-  if (STATE.finishing) return false;
+export function undoPlaylist(reason = "undo") {
+  if (!canOperate() || STATE.finishing || !STATE.playlistUndo) return false;
+
+  const prev = structuredClone(STATE.playlistUndo);
 
   setState(
-    { finishing: true },
-    `begin:${reason}`
+    {
+      playlist: prev,
+      playlistUndo: null
+    },
+    `playlist-undo:${reason}`
   );
 
+  savePlaylist();
   return true;
 }
 
-function end(reason) {
-  setState(
-    { finishing: false },
-    `end:${reason}`
-  );
+/* ============================================================
+   TRACK UPDATE
+============================================================ */
+
+export function updateTrackField(index, path, value) {
+  if (!canOperate() || STATE.finishing) return false;
+
+  const track = STATE.playlist[index];
+  if (!track) return false;
+
+  const next = structuredClone(track);
+  const parts = path.split(".");
+  let ref = next;
+
+  while (parts.length > 1) {
+    const k = parts.shift();
+    ref[k] ||= {};
+    ref = ref[k];
+  }
+
+  ref[parts[0]] = value;
+
+  const playlist = [...STATE.playlist];
+  playlist[index] = normalizeTrack(next);
+
+  setState({ playlist }, "playlist-edit-field");
+  savePlaylist();
+  return true;
 }
 
+/* ============================================================
+   TRACK NORMALIZATION
+============================================================ */
+
+export function normalizeTrack(raw = {}) {
+  const s = v => (typeof v === "string" ? v.trim() : "");
+
+  const contributorName = s(raw.contributor?.name || raw.contributor);
+
+  return {
+    id: raw.id || crypto.randomUUID(),
+    title: s(raw.title),
+    artist: { name: s(raw.artist?.name || raw.artist) },
+    contributor: contributorName ? { name: contributorName } : null,
+    artwork: raw.artwork || null,
+    source:
+      typeof raw.source === "object" && raw.source !== null
+        ? raw.source
+        : typeof raw.source === "string"
+          ? { platform: "url", url: raw.source }
+          : null,
+    duration: Number.isFinite(raw.duration) ? raw.duration : 0,
+    meta: {
+      inferredContributor: !!raw.meta?.inferredContributor
+    }
+  };
+}
 
 /* ============================================================
-   PLAYBACK (GUARDED)
+   PLAYBACK CORE
 ============================================================ */
 
 function setCurrentIndex(index) {
-  if (typeof index !== "number") return false;
-  if (index < 0 || index >= STATE.playlist.length) return false;
-
   const track = STATE.playlist[index];
   if (!track) return false;
 
   STATE.currentIndex = index;
   STATE.currentTrackId = track.id;
+  STATE.anchorIndexAtStart = index;
+
   STATE.currentMeta = {
     title: track.title || "Untitled",
-    artist: track.artist || { name: "Unknown Artist" },
+    artist: track.artist || { name: "Unknown" },
     contributor: track.contributor || null,
     artwork: track.artwork || null,
     source: track.source || null,
     duration:
       Number.isFinite(track.duration) && track.duration > 0
-        ? track.duration * 1000
+        ? (track.duration > 1000 ? track.duration : track.duration * 1000)
         : 60 * 60 * 1000
   };
 
@@ -247,51 +441,105 @@ function setCurrentIndex(index) {
 }
 
 export function playIndex(index, reason = "manual") {
-  if (!canAdvance()) return false;
-  if (!begin("play-index")) return false;
+  if (!canOperate() || STATE.finishing) return false;
+
+
+  const track = STATE.playlist[index];
+  if (!track || !track.source) return false;
+
+  if (!begin("play")) return false;
 
   try {
     if (!setCurrentIndex(index)) return false;
 
-    setState({
-      startedAt: Date.now(),
-      manualPlayIssued: reason === "manual"
-    }, "play-start");
+  setState(
+  {
+    startedAt: Date.now(),
+    manualPlayIssued: true,
+    lastAdvanceReason: "manual"
+  },
+  "play-start"
+);
 
-    persistBroadcast();
+// 🔒 resetear cooldown en play manual
+STATE.lastAdvanceAt = null;
 
-    return true;
+persistBroadcast();
+return true;
+
+
   } finally {
-    end("play-index-exit");
+    end("play-exit");
   }
 }
 
+function resolveNextIndex() {
+  if (!STATE.playlist.length) return null;
+  if (
+    STATE.currentIndex === null ||
+    !Number.isFinite(STATE.currentIndex) ||
+    STATE.currentIndex >= STATE.playlist.length - 1
+  ) return 0;
+
+  return STATE.currentIndex + 1;
+}
+
 export function safeAdvance(reason = "auto") {
-  if (!canAdvance()) return false;
-  if (!STATE.playlist.length) return false;
+  if (!canAdvance() || !STATE.playlist.length) return false;
+
+  const now = Date.now();
+  if (STATE.lastAdvanceAt && now - STATE.lastAdvanceAt < 1500) {
+    return false; // ⛔ cooldown duro
+  }
+
   if (!begin("advance")) return false;
 
   try {
     const next = STATE.randomMode
       ? Math.floor(Math.random() * STATE.playlist.length)
-      : (STATE.currentIndex ?? -1) + 1;
+      : resolveNextIndex();
 
-    if (!setCurrentIndex(next >= STATE.playlist.length ? 0 : next)) return false;
+    if (next === null) return false;
+    if (!setCurrentIndex(next)) return false;
 
     setState({
-      startedAt: Date.now(),
-      manualPlayIssued: false
-    }, "advance-start");
+  startedAt: Date.now(),
+  manualPlayIssued: false,
+  lastAdvanceReason: reason
+}, "advance-start");
 
-    persistBroadcast();
-    return true;
+// ⛔ marcar avance para cooldown
+STATE.lastAdvanceAt = Date.now();
+
+persistBroadcast();
+return true;
+
   } finally {
     end("advance-exit");
   }
 }
 
+export function watchdogAdvance() {
+  return false;
+}
+
+
 /* ============================================================
-   EMERGENCY
+   TRANSITION LOCKS
+============================================================ */
+
+function begin(reason) {
+  if (STATE.finishing) return false;
+  setState({ finishing: true }, `begin:${reason}`);
+  return true;
+}
+
+function end(reason) {
+  setState({ finishing: false }, `end:${reason}`);
+}
+
+/* ============================================================
+   EMERGENCY STOP
 ============================================================ */
 
 export function emergencyStop(reason = "stop") {
@@ -302,12 +550,37 @@ export function emergencyStop(reason = "stop") {
     currentIndex: null,
     currentTrackId: null,
     currentMeta: null,
-    manualPlayIssued: false
+    anchorIndexAtStart: null,
+    manualPlayIssued: false,
+    lastAdvanceReason: reason
   }, "stop");
 
   try {
-    localStorage.removeItem(BROADCAST_KEY);
+    localStorage.setItem(
+      BROADCAST_KEY,
+      JSON.stringify({
+        version: 3,
+        owner: STATE.adminId,
+        status: "offair",
+        trackId: null,
+        url: null,
+        startedAt: null,
+        duration: null,
+        meta: null,
+        leaseUntil: Date.now() + LEASE_MS,
+        updatedAt: Date.now()
+      })
+    );
+
     localStorage.removeItem(SNAPSHOT_KEY);
+window.dispatchEvent(
+  new CustomEvent("resonant:broadcast", {
+    detail: {
+      version: 3,
+      updatedAt: Date.now()
+    }
+  })
+);
   } catch {}
 
   end("emergency-exit");
@@ -315,19 +588,40 @@ export function emergencyStop(reason = "stop") {
 }
 
 /* ============================================================
-   BROADCAST PERSIST
+   BROADCAST PERSIST / HEALTH
 ============================================================ */
 
 function persistBroadcast() {
+  const now = Date.now();
+  if (STATE.startedAt && !STATE.currentMeta?.source) return;
+
   try {
-    const now = Date.now();
     localStorage.setItem(
       BROADCAST_KEY,
       JSON.stringify({
+        version: 3,
         owner: STATE.adminId,
-        startedAt: STATE.startedAt,
-        currentIndex: STATE.currentIndex,
-        randomMode: STATE.randomMode,
+        status: STATE.startedAt ? "live" : "offair",
+        trackId: STATE.currentTrackId || null,
+        url: STATE.currentMeta?.source || null,
+        startedAt: STATE.startedAt || null,
+        duration: Number.isFinite(STATE.currentMeta?.duration)
+          ? STATE.currentMeta.duration
+          : null,
+        meta: STATE.currentMeta
+          ? {
+              title: STATE.currentMeta.title || "",
+              artist:
+                typeof STATE.currentMeta.artist === "string"
+                  ? STATE.currentMeta.artist
+                  : STATE.currentMeta.artist?.name || "",
+              contributor:
+                typeof STATE.currentMeta.contributor === "string"
+                  ? STATE.currentMeta.contributor
+                  : STATE.currentMeta.contributor?.name || null,
+              artwork: STATE.currentMeta.artwork || null
+            }
+          : null,
         leaseUntil: now + LEASE_MS,
         updatedAt: now
       })
@@ -335,19 +629,19 @@ function persistBroadcast() {
 
     localStorage.setItem(
       SNAPSHOT_KEY,
-      JSON.stringify({
-        startedAt: STATE.startedAt,
-        currentIndex: STATE.currentIndex,
-        trackId: STATE.currentTrackId,
-        currentMeta: STATE.currentMeta
-      })
+      JSON.stringify(getBroadcastSnapshot())
     );
+
+window.dispatchEvent(
+  new CustomEvent("resonant:broadcast", {
+    detail: {
+      version: 3,
+      updatedAt: now
+    }
+  })
+);
   } catch {}
 }
-
-/* ============================================================
-   HEALTH (CORE ONLY)
-============================================================ */
 
 export function syncHealthFromBroadcast() {
   try {
@@ -357,14 +651,23 @@ export function syncHealthFromBroadcast() {
     const b = JSON.parse(raw);
     const now = Date.now();
 
-    setState({
-      health: {
-        owner: b.owner ?? null,
-        leaseUntil: b.leaseUntil ?? null,
-        lastHeartbeatAt: b.updatedAt ?? null,
-        status: b.leaseUntil < now ? "degraded" : "ok"
-      }
-    }, "health-sync");
+    let status = "ok";
+    if (!b.updatedAt) status = "degraded";
+    else if (b.leaseUntil && b.leaseUntil < now) status = "degraded";
+    else if (b.status === "offair") status = "idle";
+
+    // 🔒 Do not override local lease owner
+if (b.owner && b.owner !== ADMIN_INSTANCE_ID) return;
+
+setState({
+  health: {
+    owner: ADMIN_INSTANCE_ID,
+    leaseUntil: b.leaseUntil || null,
+    lastHeartbeatAt: b.updatedAt || null,
+    status
+  }
+}, "health-sync");
+
   } catch {
     setState({
       health: {
@@ -377,38 +680,34 @@ export function syncHealthFromBroadcast() {
   }
 }
 
-setInterval(() => {
-  if (!STATE.adminBooted) return;
-  syncHealthFromBroadcast();
-}, 1000);
-
 /* ============================================================
-   UNDO / RESET
+   REHYDRATION (BOOT RECOVERY)
 ============================================================ */
 
-export function undoPlaylist() {
-  if (!STATE.playlistUndo || STATE.finishing) return false;
-  setState({ playlist: STATE.playlistUndo }, "playlist-undo");
-  STATE.playlistUndo = null;
-  return true;
+function rehydrateFromBroadcast() {
+  try {
+    if (!STATE.adminBooted) return;
+
+    const raw = localStorage.getItem(BROADCAST_KEY);
+    if (!raw) return;
+
+    const b = JSON.parse(raw);
+    if (b.status !== "live" || !b.trackId) return;
+
+    const idx = STATE.playlist.findIndex(t => t.id === b.trackId);
+    if (idx < 0) return;
+
+    // SOLO sincronizar índice, NO arrancar playback
+    STATE.currentIndex = idx;
+    STATE.currentTrackId = b.trackId;
+    STATE.currentMeta = b.meta;
+    STATE.anchorIndexAtStart = idx;
+  } catch {}
 }
 
-export function resetPlaylistToCanonical() {
-  if (STATE.startedAt) return false;
-  if (!Array.isArray(window.PLAYLIST)) return false;
 
-  setState({
-    playlist: structuredClone(window.PLAYLIST),
-    currentIndex: null,
-    currentTrackId: null,
-    currentMeta: null
-  }, "playlist-reset");
-
-  savePlaylist();
-  return true;
-}
 /* ============================================================
-   SNAPSHOT (UI READ-ONLY)
+   SNAPSHOT
 ============================================================ */
 
 export function getBroadcastSnapshot() {
@@ -419,17 +718,43 @@ export function getBroadcastSnapshot() {
     index: STATE.currentIndex,
     track: {
       id: STATE.currentTrackId,
-      title: STATE.currentMeta.title,
-      artist: STATE.currentMeta.artist,
-      contributor: STATE.currentMeta.contributor,
-      artwork: STATE.currentMeta.artwork,
-      source: STATE.currentMeta.source,
-      duration: STATE.currentMeta.duration
+      ...STATE.currentMeta
     }
   };
 }
 
+/* ============================================================
+   PLAYLIST OPS API
+============================================================ */
+
+export function replacePlaylist(playlist, reason = "playlist-replace") {
+  if (!canOperate() || STATE.finishing || !Array.isArray(playlist)) return false;
+
+  setState(
+    { playlist: playlist.map(normalizeTrack) },
+    reason
+  );
+
+  savePlaylist();
+  return true;
+}
 
 /* ============================================================
-   END admin.core.js
+   BACKGROUND TASKS
+============================================================ */
+
+setInterval(() => {
+  if (STATE.adminBooted) syncHealthFromBroadcast();
+}, 1000);
+
+setInterval(() => {
+  if (STATE.adminBooted && hasLease()) renewLease();
+}, LEASE_MS / 2);
+setInterval(() => {
+  
+  if (STATE.adminBooted) cleanupListeners();
+}, 5_000);
+
+/* ============================================================
+   END admin.core.js · CANON SEALED
 ============================================================ */

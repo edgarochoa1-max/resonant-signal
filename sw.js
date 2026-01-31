@@ -9,7 +9,7 @@
    - Logic change    → MAJOR VERSION ONLY
    ============================================================ */
 
-const CACHE_VERSION = "resonant-v16-shell-v5-freeze";
+const CACHE_VERSION = "resonant-v16-shell-v6-dev-fix";
 
 /* ------------------------------------------------------------
    UI SHELL (PUBLIC APP ONLY)
@@ -19,10 +19,14 @@ const SHELL_CACHE = [
   "/",
   "/manifest.webmanifest",
 
-  // Public Listener App
   "/App/signal.html",
-  "/App/app.js",
-  "/App/style.signal.css"
+
+  // Listener core
+  "/App/signal/app.boot.js",
+  "/App/signal/app.core.js",
+  "/App/signal/app.ui.js",
+  "/App/signal/engine.router.js",
+  "/App/signal/style.signal.css"
 ];
 
 /* ------------------------------------------------------------

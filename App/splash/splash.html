@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  />
+
+  <title>Resonant</title>
+
+  <meta name="theme-color" content="#050507" />
+  <meta name="color-scheme" content="dark" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  <meta name="robots" content="noindex, nofollow" />
+
+  <link rel="stylesheet" href="./style.splash.css" />
+</head>
+
+<body>
+  <main class="splash-root" role="presentation" aria-hidden="true">
+    <div class="splash-bg" aria-hidden="true"></div>
+
+    <div class="splash-center">
+      <div class="splash-logo" aria-hidden="true">
+        <span class="mark">⟁</span>
+      </div>
+
+      <div class="splash-title">Resonant</div>
+      <div class="splash-subtitle">The Underground Music Signal</div>
+
+      <div class="splash-meter" aria-hidden="true">
+        <span class="meter-dot"></span>
+        <span class="meter-dot"></span>
+        <span class="meter-dot"></span>
+      </div>
+
+      <noscript>
+        <div class="splash-noscript">
+          JavaScript is required to continue.
+          <a href="../signal.html">Open Signal</a>
+        </div>
+      </noscript>
+    </div>
+  </main>
+
+  <script>
+    const root = document.querySelector(".splash-root");
+
+    const prefersReducedMotion =
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    const visibleMs = prefersReducedMotion ? 200 : 2600;
+    const exitMs = prefersReducedMotion ? 0 : 600;
+
+    setTimeout(() => {
+  if (!prefersReducedMotion) {
+    root?.classList.add("splash-exit");
+  }
+
+  setTimeout(() => {
+    window.location.replace("./signal.html");
+  }, exitMs);
+}, visibleMs);
+
+  </script>
+</body>
+</html>

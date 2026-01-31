@@ -1,8 +1,16 @@
 /* ============================================================
    RESONANT · ADMIN BOOT
    FILE: admin.boot.js
-   VERSION: 20.3.4-BOOT-STABLE-FREEZE
-   STATUS: ORCHESTRATOR ONLY · SEALED
+   ADMIN SIDE
+   STATUS: 🔒 SEALED · CANON · BROADCAST-GRADE
+   VERSION: 20.4.2
+
+
+   ROLE
+   - Single entry point
+   - Defines READY state explicitly
+   - Orchestrates CORE / UI / ENGINE
+   - No UI ambiguity
 ============================================================ */
 
 "use strict";
@@ -11,13 +19,12 @@ import * as CORE from "./admin.core.js";
 import * as ENGINE from "./admin.engine.js";
 import * as UI from "./admin.ui.js";
 
-
 /* ============================================================
    INTERNAL STATE
 ============================================================ */
 
 let loginInProgress = false;
-let shortcutsBound = false;
+let bootCompleted = false;
 
 /* ============================================================
    ENV DETECTION
@@ -38,75 +45,72 @@ function requireEl(id) {
 }
 
 /* ============================================================
-   FINAL BOOT (SINGLE ENTRY POINT)
+   FINALIZE BOOT — SINGLE SOURCE OF TRUTH
 ============================================================ */
 
 function finalizeBoot() {
-  // Siempre entramos limpios
-  CORE.emergencyStop("boot-clean");
+  if (bootCompleted) return;
 
-  // Inicializa sesión (carga playlist)
+  bootCompleted = true;
+  loginInProgress = false;
+
+  // ============================================================
+  // 1. AUTHORITATIVE SESSION INIT
+  // ============================================================
   CORE.initAdminSession("ADMIN", "operator");
 
-  // Mostrar UI (UI maneja heartbeat internamente)
+  // ============================================================
+  // 2. AUTHORITATIVE LEASE ACQUIRE
+  // ============================================================
+  CORE.acquireLease();
+
+  // Failsafe: lease MUST exist
+  if (!CORE.hasLease()) {
+    console.warn("[ADMIN BOOT] Lease missing — forcing reacquire");
+    CORE.acquireLease();
+  }
+
+  // ============================================================
+  // 3. UI UNLOCK
+  // ============================================================
   UI.showAdminUI();
 
-  bindAdminShortcuts();
+const loginCard = document.getElementById("admin-login");
+if (loginCard) loginCard.style.display = "none";
 
-  console.info("🟢 ADMIN BOOT — READY");
+// ⏳ Asegurar DOM + UI antes de engine handshake
+requestAnimationFrame(() => {
+  ENGINE.onAdminReady();
+});
+
+
+  // ============================================================
+  // 4. FINAL ASSERT
+  // ============================================================
+  console.info("[ADMIN BOOT] READY", {
+  mode: CORE.getState().adminMode,
+  lease: CORE.hasLease(),
+  playlist: CORE.getState().playlist.length,
+  live: !!CORE.getState().startedAt
+});
+
 }
 
 /* ============================================================
-   SHORTCUTS (OPERATOR ONLY)
+   LOGIN (DEV / PROD EXPLICIT)
 ============================================================ */
 
-function bindAdminShortcuts() {
-  if (shortcutsBound) return;
-  shortcutsBound = true;
-
-  window.addEventListener("keydown", (e) => {
-    if (e.repeat) return;
-
-    const t = e.target;
-    const tag = (t?.tagName || "").toLowerCase();
-    if (tag === "input" || tag === "textarea" || t?.isContentEditable) return;
-
-    if (!CORE.canOperate()) return;
-    if (CORE.getState().finishing) return;
-
-    const key = e.key.toLowerCase();
-    const shift = e.shiftKey;
-    const meta = e.metaKey;
-
-    if (shift && !meta && key === "n") {
-      e.preventDefault();
-      ENGINE.safeAdvance("kbd-next");
-    }
-
-    if (shift && !meta && key === "k") {
-      e.preventDefault();
-      ENGINE.emergencyStop("kbd-stop");
-    }
-
-    if (shift && meta && key === "k") {
-      e.preventDefault();
-      ENGINE.killSwitch("kbd-kill");
-    }
-  });
-}
-
-/* ============================================================
-   LOGIN (DEV SAFE)
-============================================================ */
+const DEV_LOGIN =
+  location.hostname === "localhost" ||
+  location.hostname === "127.0.0.1";
 
 async function handleLogin(e) {
   e?.preventDefault();
-  if (loginInProgress) return;
+  if (loginInProgress || bootCompleted) return;
 
-  const input   = requireEl("admin-pin");
-  const msg     = requireEl("admin-login-msg");
-  const btn     = requireEl("admin-login-btn");
-  const spinner = document.getElementById("loading-spinner");
+  const input = requireEl("admin-pin");
+  const msg   = requireEl("admin-login-msg");
+  const btn   = requireEl("admin-login-btn");
 
   const password = (input.value || "").trim();
 
@@ -119,28 +123,25 @@ async function handleLogin(e) {
   loginInProgress = true;
   btn.disabled = true;
   msg.classList.add("hidden");
-  spinner?.classList.remove("hidden");
 
   try {
-    // DEV MODE
-    if (!IS_SECURE_CONTEXT) {
-      console.warn("⚠️ DEV MODE LOGIN (NO CRYPTO)");
+    if (DEV_LOGIN) {
+      console.warn("⚠️ ADMIN LOGIN — DEV BYPASS ENABLED");
       finalizeBoot();
       return;
     }
 
-    // PROD MODE (pendiente)
-    msg.textContent = "Secure login required";
-    msg.classList.remove("hidden");
+    throw new Error("PROD login not implemented");
 
   } catch (err) {
     console.error("LOGIN ERROR", err);
     msg.textContent = "Login error";
     msg.classList.remove("hidden");
   } finally {
-    loginInProgress = false;
-    btn.disabled = false;
-    spinner?.classList.add("hidden");
+    if (!bootCompleted) {
+      loginInProgress = false;
+      btn.disabled = false;
+    }
   }
 }
 
@@ -149,16 +150,24 @@ async function handleLogin(e) {
 ============================================================ */
 
 function bootAdmin() {
+  // 1. Cache DOM una sola vez
   UI.cacheAdminDOM();
+
+  // 2. UI entra en modo login puro
   UI.showLoginOnly();
 
+  // 3. Bind login controls
   const loginBtn   = requireEl("admin-login-btn");
   const loginInput = requireEl("admin-pin");
 
   loginBtn.addEventListener("click", handleLogin);
-  loginInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handleLogin(e);
-  });
+  loginInput.addEventListener("keydown", e => {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    handleLogin(e);
+  }
+});
+
 
   loginInput.focus();
 }
@@ -170,5 +179,5 @@ function bootAdmin() {
 document.addEventListener("DOMContentLoaded", bootAdmin);
 
 /* ============================================================
-   END admin.boot.js
+   END admin.boot.js · CANON SEALED
 ============================================================ */

@@ -1,5 +1,7 @@
 /* ============================================================
-   RESONANT · SIGNAL CSS CLEAN BUILD V2.2 — FINAL COMPILADO
+RESONANT · SIGNAL CSS
+VERSION: v2.3.1 — CANON
+STATUS: FROZEN · BROADCAST READY
 ============================================================ */
 
 /* ROOT VARIABLES ===================================== */
@@ -9,10 +11,10 @@
   --bg-card: #101219;
 
   --accent: #f5f5f7;
-  --accent-soft: #b0b4c4;
+  --accent-soft: rgba(190,194,214,0.85);
   --accent-strong: #ffffff;
 
-  --line-soft: rgba(255, 255, 255, 0.06);
+  --line-soft: rgba(255, 255, 255, 0.045);
 
   --accent-pill: #e53a5c;
   --accent-pill-soft: rgba(255, 51, 85, 0.16);
@@ -26,6 +28,14 @@
   --trk-xxs: 0.12em;
   --trk-xs: 0.16em;
   --trk-s: 0.22em;
+
+  /* 🔑 TEXT SCALE — CANON */
+  --text-xs: 0.72rem;
+  --text-sm: 0.82rem;
+  --text-md: 0.95rem;
+  --text-lg: 1.15rem;
+  --text-xl: 1.45rem;
+  --text-xxl: 1.9rem;
 
   --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text", "Inter", sans-serif;
 }
@@ -70,13 +80,14 @@ body {
     transparent
   );
 
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity .45s ease-out, transform .45s ease-out;
+  opacity: 1;
+  transform: none;
 
   box-shadow:
     var(--shadow-soft),
     0 0 0 1px rgba(255,255,255,0.02);
+      
+    position: relative; 
 }
 
 
@@ -96,87 +107,104 @@ body {
   display: none !important;
 }
 
-/* SPLASH ============================================== */
-.splash-screen {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: radial-gradient(circle at 20% 0%, #1a1d27 0, #050507 65%);
-  z-index: 9999;
-  opacity: 1;
-  transition: opacity .7s ease-out, transform .7s ease-out, filter .7s ease-out;
-}
 
-.splash-screen.splash-hide {
-  opacity: 0;
-  transform: translateY(-10px);
-  filter: blur(6px);
-  pointer-events: none;
-}
-
-.splash-inner {
-  display: flex;
-  flex-direction: column;
-  align-items: center !important;
-  justify-content: center !important;
-  text-align: center !important;
-  gap: 14px;
-  animation: splashFadeIn 0.8s ease-out forwards;
-}
-
-.splash-mark {
-  width: 64px;
-  height: 64px;
-  font-size: 26px;
-  letter-spacing: var(--trk-xs);
-  border: 1px solid rgba(255,255,255,0.18);
-  border-radius: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: radial-gradient(circle at 0 0, rgba(255,255,255,0.14), rgba(5,7,10,0.92));
-  box-shadow: 0 22px 55px rgba(0,0,0,0.8);
-}
-
-.splash-title {
-  margin: 0;
-  font-size: 15px;
-  letter-spacing: var(--trk-s);
-  text-transform: uppercase;
-}
-
-.splash-tagline {
-  margin: 4px 0 0;
-  font-size: 12px;
-  color: rgba(198,202,222,0.88);
-}
-
-@keyframes splashFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
 
 /* ============================================================
-   OFF AIR / OFFLINE SCREEN — EDITORIAL
+   OFF AIR OVERLAY (CANON · UI ONLY)
+   Single source of truth
+   Controlled ONLY by body[data-phase]
 ============================================================ */
 
 .offair-screen {
   position: fixed;
   inset: 0;
-  z-index: 9998;
+  z-index: 9999;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(circle at 20% 0%, #1a1d27 0, #050507 65%);
+
+  background: radial-gradient(
+    circle at 20% 0%,
+    rgba(26,29,39,0.88),
+    rgba(5,7,10,0.97)
+  );
+
+  /* 🔒 DEFAULT STATE — hidden */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
 }
+
+/* ONLY visible when phase = offair */
+body[data-phase="offair"] .offair-screen {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+/* Person view ALWAYS wins */
+body[data-view="person"] .offair-screen {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/* Person view → navigation disabled */
+body[data-view="person"] .bottom-nav {
+  opacity: 0;
+  pointer-events: none;
+}
+/* ============================================================
+   PERSON VIEW OVERLAY — CANON
+   Scope: Artist / Contributor
+   UI-only · No engine · No routing
+============================================================ */
+
+.person-view {
+  position: fixed;
+  inset: 0;
+  z-index: 10001; /* ⬅️ mayor que offair (9999) */
+
+  background: var(--bg, #050507);
+  color: var(--accent, #ffffff);
+
+  display: flex;
+  flex-direction: column;
+
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  
+}
+
+/* Hidden state */
+.person-view.hidden {
+  display: none;
+}
+
+/* Ensure person view ALWAYS wins */
+body[data-view="person"] .person-view {
+  display: flex;
+}
+
+/* While person view is open */
+body[data-view="person"] .main {
+  pointer-events: none;
+}
+
+body[data-view="person"] .player-card {
+  pointer-events: none;
+}
+
+/* ============================================================
+   OFF AIR CONTENT
+============================================================ */
 
 .offair-inner {
   text-align: center;
   max-width: 320px;
   padding: 24px;
-  animation: offairFadeIn .6s ease-out forwards;
+  animation: offairFadeIn 0.6s ease-out forwards;
 }
 
 .offair-mark {
@@ -185,12 +213,20 @@ body {
   margin: 0 auto 16px;
   border-radius: 22px;
   border: 1px solid rgba(255,255,255,0.18);
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   font-size: 26px;
   letter-spacing: 0.14em;
-  background: radial-gradient(circle at 0 0, rgba(255,255,255,0.14), rgba(5,7,10,0.92));
+
+  background: radial-gradient(
+    circle at 0 0,
+    rgba(255,255,255,0.14),
+    rgba(5,7,10,0.92)
+  );
+
   box-shadow: 0 22px 55px rgba(0,0,0,0.8);
 }
 
@@ -204,16 +240,26 @@ body {
 .offair-copy {
   margin-top: 8px;
   font-size: 12px;
-  color: rgba(198,202,222,0.85);
   line-height: 1.5;
+  color: rgba(198,202,222,0.85);
 }
+
+/* ============================================================
+   OFF AIR ANIMATION
+============================================================ */
 
 @keyframes offairFadeIn {
-  from { opacity: 0; transform: translateY(6px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* SOUNDLOUD FRAME (HIDDEN) ============================ */
+/* SOUNDCLOUD FRAME (HIDDEN) =========================== */
 
 .sc-frame-wrap {
   position: absolute;
@@ -269,44 +315,23 @@ body {
   color: var(--accent-soft);
 }
 
-/* LANG TOGGLE ========================================= */
-.lang-toggle {
-  display: inline-flex;
-  border-radius: 999px;
-  padding: 2px;
-  background: rgba(255,255,255,0.04);
-  border: 1px solid rgba(255,255,255,0.1);
-}
-
-.lang-btn {
-  border: none;
-  background: transparent;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 11px;
-  letter-spacing: var(--trk-xxs);
-  color: var(--accent-soft);
-}
-
-.lang-btn.active {
-  background: var(--accent-soft);
-  color: #050507;
-}
 
 /* LIVE PILL =========================================== */
+
 .live-pill {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
   border-radius: 999px;
-  border: 1px solid rgba(255,255,255,0.14);
-  background: radial-gradient(circle at 10% 0%, rgba(255,51,85,0.22), rgba(11,13,17,0.94));
+  border: 1px solid rgba(255,255,255,0.12);
+  background: rgba(12,14,20,0.85);
   font-size: 10px;
-  color: var(--accent-soft);
-  letter-spacing: var(--trk-xs);
+  color: rgba(220,224,240,0.85);
+  letter-spacing: 0.14em;
   text-transform: uppercase;
 }
+
 
 .live-pill .dot {
   width: 8px;
@@ -314,13 +339,16 @@ body {
   border-radius: 999px;
   background: var(--accent-pill);
   box-shadow: 0 0 8px rgba(255,51,85,0.55);
-  animation: pulse 1.3s infinite ease-in-out;
+  animation: pulse 2.2s infinite ease-in-out;
 }
 
-.live-pill.off .dot {
-  opacity: .45;
-  animation: none;
+
+@keyframes pulse-sync {
+  0%   { transform: scale(1); opacity: 0.9; }
+  50%  { transform: scale(1.25); opacity: 0.6; }
+  100% { transform: scale(1); opacity: 0.9; }
 }
+
 
 @keyframes pulse {
   0% { transform: scale(1); opacity: 1; }
@@ -328,20 +356,30 @@ body {
   100% { transform: scale(1); opacity: 1; }
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .live-pill .dot {
+    animation: none;
+  }
+
+  body[data-phase="syncing"] .live-pill .dot {
+    opacity: 0.85;
+    box-shadow: 0 0 6px rgba(245,196,81,0.6);
+  }
+}
+
+
+
 /* MAIN + TABS ========================================= */
 
 .main {
-  position: relative;        /* 🔑 crea stacking context */
+  position: relative;
   flex: 1;
   min-height: 0;
   padding: 10px 14px 8px;
-
-  display: block;            /* 🔑 rompe el bug flex */
-  max-width: 900px;
-  margin: 0 auto;
-
+  display: block;
   overflow-y: auto;
   overflow-x: hidden;
+  -webkit-overflow-scrolling: touch; /* 🎯 iOS polish */
 }
 
 /* ============================================================
@@ -377,14 +415,6 @@ body {
   display: block;
 }
 
-/* PLAYER STACK ======================================= */
-
-.player-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
 /* MODE TOGGLE ========================================= */
 .mode-toggle {
   display: flex;
@@ -402,7 +432,9 @@ body {
   letter-spacing: var(--trk-xs);
   color: var(--accent-soft);
   text-transform: uppercase;
+  cursor: pointer;
 }
+
 
 .mode-btn.active {
   background: linear-gradient(135deg, #ff3355, #ff6b8a);
@@ -430,14 +462,29 @@ body {
 
   display: flex;
   flex-direction: column;
-  justify-content: flex-start; /* ⬅ CLAVE */
+  justify-content: flex-start;
 
-  /* 🔑 CLAVES */
-  flex: 0 0 auto;   /* ← CLAVE */
+  flex: 0 0 auto;
   max-height: none;
   min-height: 0;
-  gap: 6px;                    /* ⬅ sweet spot */
+  gap: 8px;
+
+  position: relative;
+  z-index: 8;
 }
+
+/* OFF AIR — enforce visual mass (prevents card collapse) */
+
+body[data-phase="offair"] .player-card {
+  min-height: 420px;
+}
+
+@media (min-height: 900px) {
+  body[data-phase="offair"] .player-card {
+    min-height: 480px;
+  }
+}
+
 
 .player-card > *:first-child {
   margin-top: 0 !important;
@@ -462,12 +509,52 @@ body {
 
 }
 
+/* ============================================================
+   COVER — CANON (single authority)
+   UI-only · Phase-driven · Engine-safe
+============================================================ */
+
 .cover {
   width: 100%;
   height: 100%;
 
+  background-image: none;
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+
+  background-color: var(--bg-elevated);
+
+  /* anti-flash */
+  opacity: 0;
+  transition: opacity 320ms ease;
+}
+
+/* Fallback cuando NO hay artwork */
+.cover:not([style*="url("]) {
+  background:
+    radial-gradient(
+      circle at 30% 20%,
+      rgba(255,255,255,0.08),
+      rgba(5,7,10,0.95)
+    );
+  opacity: 1;
+}
+
+/* Artwork presente → esperar phase */
+.cover[style*="url("] {
+  opacity: 0;
+}
+
+/* Mostrar artwork solo en fases válidas */
+body[data-phase="live"] .cover[style*="url("],
+body[data-phase="syncing"] .cover[style*="url("] {
+  opacity: 1;
+}
+
+
+body[data-phase="offair"] .cover {
+  opacity: 1;
 }
 
 /* LIKE BUTTON — MEJORADO PARA RETROALIMENTACIÓN */
@@ -551,22 +638,23 @@ body {
 }
 
 /* BUTTONS GENERALES — ACCIONES PRIMARIAS Y GHOST */
+
 .primary {
-  background: linear-gradient(135deg, #f5f5f7, #d6dae4);
+  background: #f5f5f7;
   color: #050509;
   border-radius: 999px;
-  padding: 12px 20px;
-  font-size: 14px;
+  padding: 12px 22px;
+  font-size: 13px;
   font-weight: 600;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
-  letter-spacing: var(--trk-xxs);
-  box-shadow: 0 12px 30px rgba(0,0,0,0.7);
-  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 10px 24px rgba(0,0,0,0.65);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
 }
 
 .primary:hover {
   background: linear-gradient(135deg, #e8e8e8, #c3c7d1);
-  transform: translateY(-2px);
+  transform: translateY(-1px);
 }
 
 .primary:active {
@@ -593,33 +681,54 @@ body {
   transform: scale(0.95);
 }
 
-/* ACTIONS ============================================= */
-.actions-row {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 6px;
+/* Baseline authority */
+.primary,
+.ghost {
+  line-height: 1;
 }
 
-/* PROGRESS BAR — MEJORADO PARA VISUALIZACIÓN */
+/* ============================================================
+   PATCH CSS-05 — Button Canon Clamp
+   Ensures compact, typographic buttons (NO stretch)
+============================================================ */
+
+.primary,
+.ghost {
+  width: auto;
+  min-width: unset;
+  max-width: fit-content;
+  white-space: nowrap;
+  align-self: center;
+}
+
+/* ============================================================
+   PATCH CSS-06 — Actions Baseline Alignment (CANON)
+============================================================ */
+
+.actions-row {
+  display: inline-flex;
+  justify-content: center;
+  align-items: baseline;
+  gap: 10px;
+  margin: 6px auto;
+  width: auto;
+}
+
+
+/* Ensure buttons NEVER stretch */
+.actions-row > * {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: unset;
+  max-width: none;
+}
+
 .progress-wrap {
-  margin-top: 4px;
+  margin-top: 6px;
   display: flex;
   flex-direction: column;
   gap: 6px;
 }
-
-.time-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 11px;
-  color: var(--accent-soft);
-}
-
-.bar:hover {
-  background: rgba(255,255,255,0.15); /* Resaltar la barra cuando se pase por encima */
-}
-
 
 
 .player-footer-note {
@@ -696,9 +805,11 @@ input {
   );
   border-top: 1px solid var(--line-soft);
   backdrop-filter: blur(20px);
-  z-index: 5;
-}
+  z-index: 8;
 
+  flex-shrink: 0; 
+
+}
 
 .nav-btn {
   flex: 1;
@@ -772,28 +883,24 @@ input {
   color: var(--accent-soft);
   opacity: 0.7;
 }
-/* Disable cinematic sync screen (editorial decision) */
-.sync-screen {
-  display: none !important;
-}
+
 /* ---------------------------------------------
    INVITE BUTTON FEEDBACK
 --------------------------------------------- */
-#invite-btn.copied {
+#share-btn.copied {
   opacity: 0.85;
   transform: scale(0.96);
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-#invite-btn.copied::after {
+#share-btn.copied::after {
   content: " ✓";
   font-weight: 600;
   margin-left: 4px;
   opacity: 0.9;
 }
 
-
-#invite-btn {
+#share-btn {
   user-select: none;
   -webkit-user-select: none;
   -webkit-touch-callout: none;
@@ -803,8 +910,8 @@ input {
   -webkit-tap-highlight-color: transparent;
 
   transition: transform 0.18s ease, opacity 0.18s ease;
-
 }
+
 /* ============================================================
    DONATIONS — HUMAN / EDITORIAL FINISH
 ============================================================ */
@@ -866,13 +973,10 @@ input {
    OPTIONAL POLISH — SHADOW CONSISTENCY
    Scope: Visual only · Safe override
 ============================================================ */
-
-.splash-mark,
 .offair-mark,
 .cover-wrap {
   box-shadow: var(--shadow-soft);
 }
-
 /* ============================================================
    DESKTOP TALL SCREENS — CENTER SOFT ADJUST
 ============================================================ */
@@ -883,14 +987,8 @@ input {
     padding-top: 6vh;
   }
 }
-
-/* 5️⃣ SEGURIDAD — NAV NO CLIPA */
-.bottom-nav {
-  flex-shrink: 0;
-}
-
 /* ============================================================
-   META — SINGLE SOURCE OF TRUTH (CANON · REFINED)
+   META — SINGLE SOURCE OF TRUTH (CANON)
 ============================================================ */
 
 .meta {
@@ -900,72 +998,33 @@ input {
   text-align: center;
 
   gap: 0;
-  margin-top: 3px;                 /* ↓ 4 → 3 (micro win real) */
+  margin-top: 3px;
+  margin-bottom: 6px;
 
-  transition: transform 0.25s ease, opacity 0.25s ease;
   transform: none;
-
 }
 
-/* EYEBROW — CONTEXTO */
+/* ============================================================
+   PATCH CSS-09 — Clickable Meta (Artist / Contributor)
+   UI-only · No logic · Accessibility safe
+============================================================ */
 
-.meta .eyebrow {
-  order: 1;
-
-  font-size: 12px;                 /* ↓ de 13 → 12 */
-  font-weight: 500;
-  letter-spacing: 0.15em;          /* ↓ 0.16 → 0.15 (menos ruido) */
-  text-transform: uppercase;
-
-  opacity: 0.75;
-  line-height: 1.35;
-  margin-bottom: 4px;              /* ↓ 5 → 4 */
-}
-
-/* ARTIST — ANCLA */
-
-.meta .artist {
-  order: 2;
-
-  font-size: 23px;                 /* ↓ 24 → 23 (sweet editorial) */
-  font-weight: 550;                /* ↓ de 600 → 550 */
-  letter-spacing: 0.05em;          /* ↓ micro tighten */
-
-  color: var(--accent-strong);
-  text-transform: none;
-  text-shadow: 0 1px 1px rgba(0,0,0,0.28); /* sombra más fina */
-
-  margin-bottom: 3px;              /* ↓ 4 → 3 */
-
+.is-clickable {
+  cursor: pointer;
+  text-decoration: none;
   position: relative;
-  top: -3px;                       /* ↓ -4 → -3 */
 }
 
-/* TITLE — SECUNDARIO */
-
-.meta .title {
-  order: 3;
-
-  font-size: 17px;                 /* ↓ 18 → 17 */
-  font-weight: 500;
-  letter-spacing: 0.045em;
-
-  color: var(--accent-soft);
-  opacity: 0.82;                   /* ↓ 0.85 → 0.82 */
-
-  margin-bottom: 12px;             /* ↓ 14 → 12 */
+.is-clickable:hover {
+  text-decoration: underline;
 }
 
-.meta .title:hover {
-  color: var(--accent-strong);
-  opacity: 1;
+.is-clickable:focus-visible {
+  outline: none;
+  text-decoration: underline;
+  box-shadow: 0 0 0 2px rgba(255,255,255,0.22);
 }
 
-/* MICRO INTERACTION */
-
-.player-card:hover .meta {
-  transform: translateY(-1px);
-}
 
 /* ============================================================
    MOBILE — META REFINED (SAFE)
@@ -990,6 +1049,12 @@ input {
     font-size: 14px;
   }
 
+  .meta .contributor {
+    font-size: 11px;
+    margin-top: -4px;
+    margin-bottom: 8px;
+  }
+  
   /* BOTTOM NAV */
   .bottom-nav {
     padding: 8px 5px;
@@ -1010,94 +1075,13 @@ input {
 }
 
 /* ============================================================
-   SUPPORT SECTION — FINAL EDITORIAL TOUCH
-============================================================ */
-   
-
-/* Estilo general */
-.support-section {
-  padding: 30px 20px;
-  max-width: 600px;
-  margin: 0 auto;
-  background: rgba(5, 5, 7, 0.8);
-  border-radius: 16px;
-  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.6);
-  color: #fff;
-}
-
-.support-section h2 {
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 20px;
-}
-
-.support-section p {
-  font-size: 1.1rem;
-  line-height: 1.8;
-  margin-bottom: 20px;
-}
-
-.support-button {
-  background: #ff3355;
-  color: #fff;
-  font-size: 1.2rem;
-  padding: 15px 30px;
-  border-radius: 50px;
-  text-align: center;
-  width: 100%;
-  margin-bottom: 30px;
-  transition: all 0.3s ease;
-}
-
-.support-button:hover {
-  background: #e42948;
-  transform: scale(1.05);  /* Efecto de hover */
-}
-
-/* Espaciado adicional para que "Any amount is appreciated..." respire más */
-.support-note {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.6);
-  text-align: center;
-  margin-top: 20px;
-}
-
-.status-msg.hidden {
-  display: none;
-}
-
-/* ============================================================
    POINTER SAFETY — SINGLE SOURCE
 ============================================================ */
-
-.tab.active {
-  pointer-events: auto;
-}
-
-.bottom-nav,
-.bottom-nav * {
-  pointer-events: auto;
-}
-
-#offair-screen,
-#offair-banner {
-  pointer-events: none;
-}
 
 :focus-visible {
   outline: none;
   box-shadow: 0 0 0 2px rgba(255,255,255,0.18);
 }
-/* ============================================================
-   TIME NUMERALS — DISABLED (EDITORIAL DECISION)
-   Scope: UI only · Engine untouched
-============================================================ */
-
-.time-row {
-  display: none;
-}
-
-
 /* ============================================================
    PROGRESS BAR — EDITORIAL SIGNAL (CANON)
    Visual only · No logic · No animation
@@ -1137,5 +1121,185 @@ input {
     0 0 0.5px rgba(255,255,255,0.45);
 
   /* ÚNICO timelapse permitido (ya definido antes) */
-  transition: width 0.12s linear;
+  transition: width 0.18s linear;
+}
+
+.mode-btn:disabled {
+  opacity: 0.4;
+  pointer-events: none;
+}
+/* ============================================================
+   FIX 2 — Progress bar visibility (LIVE only)
+   UI-only · Phase-driven · Engine-safe
+============================================================ */
+
+body[data-phase="offair"] .progress-wrap,
+body[data-phase="syncing"] .progress-wrap {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body[data-phase="live"] .progress-wrap {
+  opacity: 1;
+  pointer-events: auto;
+}
+/* ============================================================
+   FIX 4 — Play button visual guards
+   UI-only · No logic · Engine-safe
+============================================================ */
+
+/* OFF AIR → botón visualmente inactivo */
+body[data-phase="offair"] #play-btn {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+/* LIVE + audio activo (mute state desde aria) */
+#play-btn[aria-pressed="true"] [data-label-play] {
+  display: none;
+}
+
+#play-btn[aria-pressed="true"] [data-label-stop] {
+  display: inline;
+}
+
+body[data-phase="offair"] #play-btn[aria-pressed="true"] {
+  opacity: 0.5;
+}
+
+#play-btn {
+  cursor: pointer;
+}
+
+
+/* NOTE:
+   All legacy .state-* selectors have been removed.
+   Phase authority is exclusively driven by body[data-phase].
+*/
+
+/* ============================================================
+   FIX 6 — Meta visibility guard
+   UI-only · Phase-driven · Engine-safe
+============================================================ */
+
+body[data-phase="offair"] .meta {
+  opacity: 1;
+  pointer-events: none;
+}
+
+body[data-phase="syncing"] .meta {
+  opacity: 0;
+  pointer-events: none;
+}
+
+body[data-phase="live"] .meta {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ============================================================
+   FIX 7 — Live Pill phase authority
+   UI-only · CSS-driven · Canon
+============================================================ */
+
+/* OFF AIR */
+body[data-phase="offair"] .live-pill {
+  opacity: 0.55;
+}
+
+body[data-phase="offair"] .live-pill .dot {
+  opacity: 0.4;
+  animation: none;
+}
+
+/* LIVE */
+body[data-phase="live"] .live-pill {
+  opacity: 1;
+}
+
+body[data-phase="live"] .live-pill .dot {
+  animation: pulse 2.2s infinite ease-in-out;
+}
+
+/* SYNCING */
+body[data-phase="syncing"] .live-pill {
+  opacity: 1;
+}
+
+body[data-phase="syncing"] .live-pill {
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+body[data-phase="syncing"] .live-pill .dot {
+  background: #f5c451;
+  box-shadow: 0 0 10px rgba(245, 196, 81, 0.65);
+  animation: pulse-sync 1.2s infinite ease-in-out !important;
+}
+/* ============================================================
+   FIX 8 — Bottom nav guard by phase
+   UI-only · Phase-driven · Engine-safe
+============================================================ */
+
+body[data-phase="offair"] .bottom-nav {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+
+/* SYNCING → navegación inactiva */
+body[data-phase="syncing"] .bottom-nav {
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+/* LIVE → navegación activa */
+body[data-phase="live"] .bottom-nav {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+
+
+/* ============================================================
+   FIX — OFF AIR BLUR SCOPE (STINGRAY-GRADE)
+   Blur ONLY player + nav, NEVER overlay
+============================================================ */
+
+body[data-phase="offair"] .player-card,
+body[data-phase="offair"] .top-bar,
+body[data-phase="offair"] .bottom-nav,
+body[data-phase="offair"] .main {
+  filter: blur(2px) brightness(0.7);
+}
+
+.offair-screen {
+  isolation: isolate;
+  filter: none !important;
+  backdrop-filter: none !important;
+}
+
+/* ============================================================
+   PATCH CSS-02 — Neutral phase (pre-JS bootstrap)
+   Permite interacción antes de que JS setee el phase
+============================================================ */
+
+body:not([data-phase]) .bottom-nav,
+body[data-phase=""] .bottom-nav {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body:not([data-phase]) #play-btn,
+body[data-phase=""] #play-btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+body:not([data-phase]) .progress-wrap,
+body[data-phase=""] .progress-wrap {
+  opacity: 0;
+  pointer-events: none;
+}
+#play-btn:not([aria-pressed]) [data-label-stop] {
+  display: none;
 }

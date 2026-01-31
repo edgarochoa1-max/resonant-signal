@@ -1,88 +1,96 @@
 <!--
+============================================================
 RESONANT · SIGNAL
-UI SHELL — RESTORED EDITORIAL VERSION
-ROLE: Passive UI Shell
-LOGIC AUTHORITY: app.js (exclusive)
-LOCATION: /App/signal.html
+ROLE: UI SHELL (PASSIVE)
+
+AUTHORITY:
+- State: app.core.js
+- Audio / sync: app.engine.js
+- UI reflection: app.ui.js
+- Boot: app.boot.js
+- View routing: signal.router.js
+- Styling: style.signal.css
+
+RULES:
+- No business logic
+- No state decisions
+- No audio logic
+- Markup only
+
+STATUS:
+- CANON
+- UI SHELL
+- LISTENER SIDE
+============================================================
 -->
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  
   <meta charset="UTF-8" />
-<title>Resonant · The Underground Music Signal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="theme-color" content="#050507" />
-<meta name="description" content="Resonant is an invite-only underground transmission. Curated DJ sets synchronized with a global clock." />
+  <title>Resonant · The Underground Music Signal</title>
 
-<meta name="mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="theme-color" content="#050507" />
+  <meta name="color-scheme" content="dark" />
 
-<meta property="og:title" content="Resonant · The Underground Music Signal" />
-<meta property="og:description" content="Invite-only underground transmissions. Curated DJ sets synchronized with a global clock." />
-<meta property="og:type" content="website" />
+  <meta
+    name="description"
+    content="Resonant is an invite-only underground transmission. Curated DJ sets synchronized with a global clock."
+  />
 
-<link rel="manifest" href="/manifest.webmanifest" />
-<link rel="stylesheet" href="./style.signal.css" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
+  <meta property="og:title" content="Resonant · The Underground Music Signal" />
+  <meta
+    property="og:description"
+    content="Invite-only underground transmissions. Curated DJ sets synchronized with a global clock."
+  />
+  <meta property="og:type" content="website" />
+
+  <link rel="manifest" href="./manifest.webmanifest" />
+  <link rel="stylesheet" href="./signal/style.signal.css" />
 </head>
 
-<body
-  data-app-state="boot"
-  data-broadcast-state="unknown"
-  data-audio-state="idle"
->
-
-  <!-- SPLASH -->
-  <section id="splash-screen" class="splash-screen">
-    <div class="splash-inner">
-      <div class="splash-mark">⟁</div>
-      <p class="splash-title">RESONANT</p>
-      <p class="splash-tagline">The Underground Music Signal</p>
-    </div>
-  </section>
-
-  <!-- SYNC (HIDDEN STATE) -->
-<section id="sync-screen" class="sync-screen hidden"></section>
-
-<!-- OFF AIR -->
-  <section id="offair-screen" class="offair-screen hidden">
-    <div class="offair-inner">
-      <div class="offair-mark">⟁</div>
-      <h2 class="offair-title">Off Air</h2>
-      <p class="offair-copy">
-        The signal is currently unavailable.<br />
-        Please check back later.
-      </p>
-    </div>
-  </section>
-
-<!-- OFF AIR BANNER (EDITORIAL) -->
-<div id="offair-banner" class="offair-banner hidden"></div>
+<body data-view="radio">
 
   <!-- APP ROOT -->
   <div class="app-root">
     <div id="app-view" class="view">
 
+      <!-- OFF AIR OVERLAY (PHASE-DRIVEN · UI ONLY) -->
+      <div class="offair-screen" aria-hidden="false">
+        <div class="offair-inner">
+          <div class="offair-mark">⟁</div>
+          <h2 class="offair-title">The signal is resting</h2>
+          <p class="offair-copy">
+            We’ll be back soon.
+          </p>
+        </div>
+      </div>
+
       <!-- TOP BAR -->
-      <header class="top-bar shared-width">
+      <header class="top-bar">
         <div class="brand">
           <span class="brand-mark">⟁</span>
           <div class="brand-text">
-            <h1 id="brand-title">Resonant</h1>
-            <p id="brand-tagline">The Underground Music Signal</p>
+            <h1>Resonant</h1>
+            <p>The Underground Music Signal</p>
           </div>
         </div>
 
-        <!-- LIVE PILL -->
-        <div class="top-right">
-          <div class="live-pill off" id="live-pill">
-            <span class="dot"></span>
-            <span class="label">LIVE</span>
-          </div>
+        <div
+          id="live-pill"
+          class="live-pill"
+          role="status"
+          aria-live="polite"
+          aria-label="Broadcast status"
+        >
+          <span class="dot" aria-hidden="true"></span>
+          <span class="live-label">LIVE</span>
         </div>
       </header>
 
@@ -90,44 +98,67 @@ LOCATION: /App/signal.html
       <main class="main">
 
         <!-- RADIO -->
-        <section id="tab-radio" class="tab active unified-card">
-          <div class="mode-toggle shared-width">
+        <section id="tab-radio" class="tab active">
+
+          <div class="mode-toggle">
             <button class="mode-btn active" id="mode-sets-btn">DJ sets</button>
-            <button class="mode-btn soon" id="mode-tracks-btn">Tracks · soon</button>
+            <button class="mode-btn" id="mode-tracks-btn" disabled>
+              Tracks · soon
+            </button>
           </div>
 
-          <section class="player-card shared-width" data-module="player">
+          <section class="player-card">
+
             <div class="cover-wrap">
               <div class="cover" id="cover"></div>
-              <button class="like-btn" id="like-btn">
-<span class="heart" id="heart">♡</span>
+
+              <button
+                class="like-btn"
+                id="like-btn"
+                aria-label="Like current mix"
+                aria-pressed="false"
+              >
+                <span class="heart">♡</span>
               </button>
             </div>
 
             <div class="meta">
-              <p class="eyebrow">Now transmitting</p>
-              <h2 class="title" id="title">Loading mix…</h2>
+              <p class="eyebrow" id="signal-status-label"></p>
               <p class="artist" id="artist-name"></p>
+              <h2 class="title" id="title">—</h2>
+              <p class="contributor" id="contributor-name"></p>
             </div>
 
             <div class="actions-row">
-              <button class="primary" id="play-btn">▶ Play</button>
-              <button class="ghost subtle" id="invite-btn">Invite friends</button>
+              <button
+                class="primary"
+                id="play-btn"
+                aria-label="Toggle audio"
+                aria-pressed="false"
+              >
+                <span data-label-play>Unmute</span>
+                <span data-label-stop hidden>Mute</span>
+              </button>
+
+              <button
+                class="ghost"
+                id="share-btn"
+                aria-label="Share signal link"
+                type="button"
+              >
+                Share signal
+              </button>
             </div>
 
             <div class="progress-wrap">
-              <div class="time-row">
-                <span id="elapsed">0:00</span>
-                <span id="remaining">-0:00</span>
-              </div>
-              <div class="bar" id="bar">
+              <div class="bar">
                 <div class="bar-fill" id="bar-fill"></div>
               </div>
             </div>
 
             <div class="player-footer-note">
-              <p>Promotional use only. Please support the artist.</p>
-              <p class="sub">Own the sound. Support the underground.</p>
+              <p>Broadcasted for promotional use.</p>
+              <p class="sub">Support the artist. Support the underground.</p>
             </div>
 
             <div class="sc-frame-wrap">
@@ -135,15 +166,15 @@ LOCATION: /App/signal.html
                 id="sc-frame"
                 class="sc-frame"
                 allow="autoplay; encrypted-media"
-                src=""
               ></iframe>
             </div>
+
           </section>
         </section>
 
         <!-- SUPPORT THE ARTIST -->
         <section id="tab-catalog" class="tab">
-          <section class="card shared-width">
+          <section class="card">
 
             <header class="card-head">
               <p class="eyebrow">Support the Artist</p>
@@ -151,16 +182,14 @@ LOCATION: /App/signal.html
             </header>
 
             <p class="card-copy">
-              Resonant highlights the artists and labels behind the sound of the station.
-              Every mix and track exists to support the original creator.
-              This space connects you directly with the artist currently transmitting.
+              Resonant highlights the artists and labels behind the sound of the signal.
+              This space connects you directly with the artist currently transmitting,
+              encouraging discovery, support, and deeper listening.
             </p>
-
+            
             <div class="catalog-artist">
               <p class="label-small">Current artist</p>
-              <p class="catalog-artist-name" id="catalog-artist-name">
-                Loading artist…
-              </p>
+              <p class="catalog-artist-name" id="catalog-artist-name">—</p>
             </div>
 
             <p class="label-small">Explore this artist on</p>
@@ -175,8 +204,8 @@ LOCATION: /App/signal.html
             </div>
 
             <p class="card-copy small">
-              All rights belong to the artists and labels.
-              Resonant exists to amplify underground culture and the people who create it.
+              All rights belong to the respective artists and labels.
+              Resonant exists to amplify underground culture and the people who sustain it.
             </p>
 
           </section>
@@ -184,17 +213,18 @@ LOCATION: /App/signal.html
 
         <!-- FEEDBACK -->
         <section id="tab-feedback" class="tab">
-          <section class="card shared-width">
-
+          <section class="card">
             <header class="card-head">
               <p class="eyebrow">Feedback & submissions</p>
               <h2>Help shape the signal.</h2>
             </header>
 
             <p class="card-copy">
-              Resonant is built through listening.
-              Ideas, critiques, artist suggestions, mixes, or labels are always welcome.
-              Every message is read and considered carefully.
+              Feedback, ideas, critiques, artist suggestions, mixes, and labels are always welcome.
+            </p>
+
+            <p class="card-copy">
+              Every message is read and considered as part of the ongoing evolution of the signal.
             </p>
 
             <label class="field">
@@ -203,43 +233,34 @@ LOCATION: /App/signal.html
             </label>
 
             <label class="field">
-              <span>Optional link (mix, artist, label)</span>
-              <input id="feedback-link" type="url" placeholder="https://soundcloud.com/" />
-            </label>
+  <span>Share a link (optional)</span>
+  <input id="feedback-link" type="url" />
+</label>
 
-            <button id="btn-feedback-send" class="primary wide">Send feedback</button>
+            <button id="btn-feedback-send" class="primary wide">
+              Send signal
+            </button>
+
             <p id="feedback-status" class="status-msg"></p>
-
-            <p class="card-copy small">
-              Resonant evolves with the people who listen to it.
-            </p>
-
           </section>
         </section>
 
         <!-- DONATIONS -->
 <section id="tab-donations" class="tab">
-  <section class="card shared-width">
-
+  <section class="card">
     <header class="card-head">
-      <p class="eyebrow">Support Resonant</p>
+      <p class="eyebrow">Sustain the signal</p>
     </header>
 
     <p class="card-copy">
-      Resonant is an independent project, curated and maintained with intention.
-      It exists to share the music that shaped us and to support underground culture.
+      Resonant is an independent transmission, curated and maintained with intention.
     </p>
 
     <p class="card-copy">
-      If this signal accompanies you, inspires you, or helps you discover new sound,
-      you are welcome to support it in any way you feel comfortable.
+      Your support helps keep the signal alive —
+      sustaining its infrastructure, its independence,
+      and its focus on underground culture.
     </p>
-
-    <p class="card-copy small">
-      Donations are voluntary and help cover infrastructure, development,
-      and the continued growth of the station.
-    </p>
-
     <div class="donations-action">
       <a
         href="https://www.paypal.com/ncp/payment/N5582W7QGJHDC"
@@ -250,20 +271,15 @@ LOCATION: /App/signal.html
         Support Resonant via PayPal
       </a>
     </div>
-
-    <p class="donations-note">
-      Any amount is appreciated. Your support helps keep the signal alive.
-    </p>
-
   </section>
 </section>
 
       </main>
 
-      <!-- NAV -->
-      <nav class="bottom-nav shared-width">
+      <!-- BOTTOM NAV -->
+      <nav class="bottom-nav">
         <button class="nav-btn mode-btn active" data-tab="radio"><span>Signal</span></button>
-        <button class="nav-btn mode-btn" data-tab="catalog"><span>Support the Artist</span></button>
+        <button class="nav-btn mode-btn" data-tab="catalog"><span>Artist Support</span></button>
         <button class="nav-btn mode-btn" data-tab="feedback"><span>Feedback</span></button>
         <button class="nav-btn mode-btn" data-tab="donations"><span>Donations</span></button>
       </nav>
@@ -271,9 +287,52 @@ LOCATION: /App/signal.html
     </div>
   </div>
 
-  <!-- ENGINE -->
-  <script src="https://w.soundcloud.com/player/api.js"></script>
-  <script type="module" src="./app.js"></script>
+  <!-- PERSON VIEW -->
+  <section
+    id="person-view"
+    class="person-view hidden"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="person-name"
+  >
+    <header class="person-header">
+      <button
+        id="person-back"
+        class="person-back"
+        aria-label="Back to signal"
+        type="button"
+      >
+        ← Back
+      </button>
+    </header>
+
+    <div class="person-hero">
+      <img id="person-image" alt="Artist or contributor photo" />
+    </div>
+
+    <div class="person-content">
+      <span id="person-role" class="person-role"></span>
+      <h1 id="person-name" class="person-name"></h1>
+      <p id="person-bio" class="person-bio">Profile coming soon.</p>
+      <ul id="person-links" class="person-links"></ul>
+    </div>
+  </section>
+
+ <!-- ENGINE DEPENDENCY -->
+<script src="https://w.soundcloud.com/player/api.js"></script>
+
+<!-- PEOPLE (READ-ONLY DATA) -->
+<script type="module">
+  import { PEOPLE } from "./data/people.mock.js";
+  window.__RESONANT_PEOPLE__ = PEOPLE;
+</script>
+
+<!-- VIEW ROUTER (APP LEVEL) -->
+<script type="module" src="./signal/signal.router.people.js"></script>
+
+<!-- LISTENER BOOT -->
+<script type="module" src="./signal/app.boot.js"></script>
+
 
 </body>
 </html>
