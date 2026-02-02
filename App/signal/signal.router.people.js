@@ -1,12 +1,12 @@
 /* ============================================================
    SIGNAL · PERSON ROUTER
-   VERSION: 2.0.0 — CANON SEALED
+   VERSION: 2.0.2 — CANON FINAL
 ===============================================================
 
 ROLE
 • Hash-based routing for Person views
-• View coordination only (NO data ownership)
-• Delegates resolution to DATA layer
+• Overlay on top of RADIO view
+• UI coordination only (NO data ownership)
 
 RULES
 • NO global state
@@ -16,10 +16,10 @@ RULES
 
 PAIRING
 • /App/data/people.index.js
+• app.ui.js (implicit via dataset.view)
 
 STATUS
-• CANON
-• ROUTER-LAYER
+• CANON · ROUTER-LAYER · SEALED
 =============================================================== */
 
 "use strict";
@@ -28,9 +28,7 @@ STATUS
    IMPORTS
 ------------------------------------------------------------ */
 
-import {
-  getPersonBySlug
-} from "../data/people.index.js";
+import { getPersonBySlug } from "../data/people.index.js";
 
 /* ------------------------------------------------------------
    CONSTANTS
@@ -60,6 +58,16 @@ const contributorNameEl = document.getElementById("contributor-name");
 let prevPointerEvents = "";
 
 /* ------------------------------------------------------------
+   ACCESSIBILITY (ONCE)
+------------------------------------------------------------ */
+
+if (personView) {
+  personView.setAttribute("role", "dialog");
+  personView.setAttribute("aria-modal", "true");
+  personView.setAttribute("aria-hidden", "true");
+}
+
+/* ------------------------------------------------------------
    MICRO-UX · CLICK + ENTER
 ------------------------------------------------------------ */
 
@@ -74,7 +82,10 @@ function enablePersonNavigation(el, type) {
     const slug = el.dataset.slug;
     if (!slug) return;
 
-    window.location.hash = `/${type}/${encodeURIComponent(slug)}`;
+    const nextHash = `#/${type}/${encodeURIComponent(slug)}`;
+    if (location.hash === nextHash) return;
+
+    window.location.hash = nextHash;
   };
 
   el.addEventListener("click", trigger);
@@ -91,13 +102,13 @@ enablePersonNavigation(contributorNameEl, "contributor");
 ------------------------------------------------------------ */
 
 function renderFromHash() {
-  const raw = (location.hash || "").replace("#", "");
-  if (!raw || raw === "/") return renderRadioView();
+  const raw = (location.hash || "").replace("#/", "");
+  if (!raw) return renderRadioView();
 
   const parts = raw.split("/").filter(Boolean);
   if (parts.length === 2) {
     const [type, slug] = parts;
-    if (type === "artist" || type === "contributor") {
+    if ((type === "artist" || type === "contributor") && slug) {
       return renderPersonView(type, slug);
     }
   }
@@ -113,7 +124,11 @@ function renderPersonView(type, slug) {
 
   document.body.dataset.view = VIEW.PERSON;
 
-  // 🔒 UX lock
+  /* 🔒 SCROLL LOCK */
+  document.documentElement.style.overflow = "hidden";
+  document.body.style.overflow = "hidden";
+
+  /* 🔒 APP LOCK */
   if (appRoot) {
     prevPointerEvents = appRoot.style.pointerEvents || "";
     appRoot.setAttribute("aria-hidden", "true");
@@ -121,6 +136,11 @@ function renderPersonView(type, slug) {
   }
 
   personView.classList.remove("hidden");
+  personView.setAttribute("aria-hidden", "false");
+
+  /* 🎯 FOCUS */
+  personView.setAttribute("tabindex", "-1");
+  personView.focus();
 
   setText(personName, profile.name);
   setText(personRole, type.toUpperCase());
@@ -139,8 +159,7 @@ function renderPersonView(type, slug) {
   if (personLinks) {
     personLinks.innerHTML = "";
     const links = profile.links || {};
-    Object.keys(links).forEach(label => {
-      const url = links[label];
+    Object.entries(links).forEach(([label, url]) => {
       if (!url) return;
       const li = document.createElement("li");
       const a = document.createElement("a");
@@ -156,13 +175,28 @@ function renderPersonView(type, slug) {
 
 function renderRadioView() {
   document.body.dataset.view = VIEW.RADIO;
-  if (personView) personView.classList.add("hidden");
 
-  // 🔓 UX unlock
+  /* 🔓 SCROLL UNLOCK */
+  document.documentElement.style.overflow = "";
+  document.body.style.overflow = "";
+
+  if (personView) {
+    personView.classList.add("hidden");
+    personView.setAttribute("aria-hidden", "true");
+  }
+
+  /* 🔓 APP UNLOCK */
   if (appRoot) {
     appRoot.removeAttribute("aria-hidden");
-    appRoot.style.pointerEvents = prevPointerEvents;
+    if (prevPointerEvents) {
+      appRoot.style.pointerEvents = prevPointerEvents;
+    } else {
+      appRoot.style.removeProperty("pointer-events");
+    }
   }
+
+  /* 🔔 UI RESYNC (IMPORTANT) */
+  document.dispatchEvent(new Event("resonant:ui-resync"));
 }
 
 /* ------------------------------------------------------------
@@ -173,17 +207,14 @@ window.addEventListener("hashchange", renderFromHash);
 
 if (personBack) {
   personBack.addEventListener("click", () => {
-    if (location.hash && location.hash !== "#/") history.back();
-    else window.location.hash = "/";
+    history.back();
   });
 }
 
 document.addEventListener("keydown", e => {
   if (e.key !== "Escape") return;
   if (document.body.dataset.view !== VIEW.PERSON) return;
-
-  if (location.hash && location.hash !== "#/") history.back();
-  else window.location.hash = "/";
+  history.back();
 });
 
 /* ------------------------------------------------------------
@@ -199,3 +230,7 @@ renderFromHash();
 function setText(el, value) {
   if (el) el.textContent = value || "—";
 }
+
+/* ============================================================
+   END · person.router.js
+=============================================================== */

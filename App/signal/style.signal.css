@@ -136,12 +136,13 @@ body {
   pointer-events: none;
 }
 
-/* ONLY visible when phase = offair */
+/* OFF AIR OVERLAY — solo visible cuando el data-phase es "offair" */
 body[data-phase="offair"] .offair-screen {
   opacity: 1;
   visibility: visible;
   pointer-events: auto;
 }
+
 
 /* Person view ALWAYS wins */
 body[data-view="person"] .offair-screen {
@@ -155,6 +156,12 @@ body[data-view="person"] .bottom-nav {
   opacity: 0;
   pointer-events: none;
 }
+
+/* OFFAIR → player totalmente no interactivo */
+body[data-phase="offair"] .player-card {
+  pointer-events: none;
+}
+
 /* ============================================================
    PERSON VIEW OVERLAY — CANON
    Scope: Artist / Contributor
@@ -332,16 +339,14 @@ body[data-view="person"] .player-card {
   text-transform: uppercase;
 }
 
-
 .live-pill .dot {
   width: 8px;
   height: 8px;
   border-radius: 999px;
-  background: var(--accent-pill);
-  box-shadow: 0 0 8px rgba(255,51,85,0.55);
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
   animation: pulse 2.2s infinite ease-in-out;
 }
-
 
 @keyframes pulse-sync {
   0%   { transform: scale(1); opacity: 0.9; }
@@ -370,17 +375,22 @@ body[data-view="person"] .player-card {
 
 
 /* MAIN + TABS ========================================= */
-
 .main {
   position: relative;
-  flex: 1;
+
+  flex: 1 1 auto;
   min-height: 0;
+
   padding: 10px 14px 8px;
-  display: block;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+
   overflow-y: auto;
-  overflow-x: hidden;
-  -webkit-overflow-scrolling: touch; /* 🎯 iOS polish */
+  -webkit-overflow-scrolling: touch;
 }
+
 
 /* ============================================================
    SCROLLBAR — INVISIBLE / CLEAN (SIGNAL)
@@ -540,20 +550,14 @@ body[data-phase="offair"] .player-card {
     );
   opacity: 1;
 }
-
-/* Artwork presente → esperar phase */
+/* ✅ COVER VISIBLE SIEMPRE QUE HAYA URL */
 .cover[style*="url("] {
-  opacity: 0;
+  opacity: 1;
 }
 
 /* Mostrar artwork solo en fases válidas */
 body[data-phase="live"] .cover[style*="url("],
 body[data-phase="syncing"] .cover[style*="url("] {
-  opacity: 1;
-}
-
-
-body[data-phase="offair"] .cover {
   opacity: 1;
 }
 
@@ -868,6 +872,30 @@ input {
   transform: scale(.96);
 }
 
+/* ============================================================
+   PATCH CSS-ARTIST-SUPPORT — Current Artist Highlight
+   UI-only · State-driven · SAFE
+============================================================ */
+
+.artist-support-btn.is-current {
+  border-color: rgba(255,255,255,0.45);
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.06),
+    rgba(22,24,30,0.98)
+  );
+  box-shadow:
+    0 0 0 1px rgba(255,255,255,0.12),
+    0 10px 30px rgba(0,0,0,0.55);
+}
+
+.artist-support-btn.is-current span {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--accent-strong);
+}
+
+
 /* RESPONSIVE ========================================= */
 @media (max-width: 360px) {
   .player-card { padding-inline: 12px; }
@@ -883,6 +911,7 @@ input {
   color: var(--accent-soft);
   opacity: 0.7;
 }
+
 
 /* ---------------------------------------------
    INVITE BUTTON FEEDBACK
@@ -997,11 +1026,26 @@ input {
   align-items: center;
   text-align: center;
 
-  gap: 0;
-  margin-top: 3px;
+  gap: 2px;              /* 🔑 controla respiración interna */
+  margin-top: 2px;
   margin-bottom: 6px;
 
   transform: none;
+}
+
+.now-transmitting {
+  margin-top: 4px;
+  margin-bottom: 4px;
+
+  font-size: 10.5px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+
+  color: rgba(190,194,214,0.65); /* 🔒 editorial neutral */
+  opacity: 0.9;
+
+  pointer-events: none;
 }
 
 /* ============================================================
@@ -1128,21 +1172,24 @@ input {
   opacity: 0.4;
   pointer-events: none;
 }
-/* ============================================================
-   FIX 2 — Progress bar visibility (LIVE only)
-   UI-only · Phase-driven · Engine-safe
-============================================================ */
-
-body[data-phase="offair"] .progress-wrap,
-body[data-phase="syncing"] .progress-wrap {
-  opacity: 0;
+/* OFFAIR → no hay broadcast */
+body[data-phase="offair"] .progress-wrap {
+  opacity: 0.25;
   pointer-events: none;
 }
 
+/* SYNCING → el admin YA manda estado */
+body[data-phase="syncing"] .progress-wrap {
+  opacity: 1;
+  pointer-events: none;
+}
+
+/* LIVE → espejo completo */
 body[data-phase="live"] .progress-wrap {
   opacity: 1;
   pointer-events: auto;
 }
+
 /* ============================================================
    FIX 4 — Play button visual guards
    UI-only · No logic · Engine-safe
@@ -1150,8 +1197,8 @@ body[data-phase="live"] .progress-wrap {
 
 /* OFF AIR → botón visualmente inactivo */
 body[data-phase="offair"] #play-btn {
-  opacity: 0.5;
-  pointer-events: none;
+    opacity: 1;
+  pointer-events: auto;
 }
 
 /* LIVE + audio activo (mute state desde aria) */
@@ -1188,7 +1235,7 @@ body[data-phase="offair"] .meta {
 }
 
 body[data-phase="syncing"] .meta {
-  opacity: 0;
+  opacity: 1;
   pointer-events: none;
 }
 
@@ -1198,51 +1245,58 @@ body[data-phase="live"] .meta {
 }
 
 /* ============================================================
-   FIX 7 — Live Pill phase authority
+   FIX 7 — Live Pill phase authority (FINAL)
    UI-only · CSS-driven · Canon
 ============================================================ */
 
-/* OFF AIR */
+/* BASE (neutral) */
+.live-pill {
+  color: rgba(220,224,240,0.85);
+}
+
+/* OFF AIR → ROJO */
 body[data-phase="offair"] .live-pill {
-  opacity: 0.55;
+  color: #e53a5c;
+  opacity: 0.6;
 }
 
 body[data-phase="offair"] .live-pill .dot {
-  opacity: 0.4;
   animation: none;
+  opacity: 0.4;
+  box-shadow: 0 0 6px rgba(229,58,92,0.45);
 }
 
-/* LIVE */
+/* LIVE → VERDE */
 body[data-phase="live"] .live-pill {
+  color: #3ddc97;
   opacity: 1;
 }
 
 body[data-phase="live"] .live-pill .dot {
   animation: pulse 2.2s infinite ease-in-out;
+  box-shadow: 0 0 10px rgba(61,220,151,0.75);
 }
 
-/* SYNCING */
+/* SYNCING → AMARILLO */
 body[data-phase="syncing"] .live-pill {
+  color: #f5c451;
   opacity: 1;
-}
-
-body[data-phase="syncing"] .live-pill {
   border-color: rgba(255, 255, 255, 0.22);
 }
 
 body[data-phase="syncing"] .live-pill .dot {
-  background: #f5c451;
-  box-shadow: 0 0 10px rgba(245, 196, 81, 0.65);
   animation: pulse-sync 1.2s infinite ease-in-out !important;
+  box-shadow: 0 0 10px rgba(245,196,81,0.65);
 }
+
 /* ============================================================
    FIX 8 — Bottom nav guard by phase
    UI-only · Phase-driven · Engine-safe
 ============================================================ */
 
 body[data-phase="offair"] .bottom-nav {
-  opacity: 0.5;
-  pointer-events: none;
+  opacity: 0.6;
+  pointer-events: auto;
 }
 
 
@@ -1303,3 +1357,43 @@ body[data-phase=""] .progress-wrap {
 #play-btn:not([aria-pressed]) [data-label-stop] {
   display: none;
 }
+/* ============================================================
+   META — CANON TYPOGRAPHY (FINAL · SEALED)
+   Hierarchy: ARTIST → TITLE → CONTRIBUTOR
+============================================================ */
+#artist-name {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  line-height: 1.18;     /* ⬅️ más compacto */
+  letter-spacing: 0.01em;
+  color: var(--accent-strong);
+}
+
+#title {
+  font-size: var(--text-md);
+  font-weight: 500;
+  line-height: 1.28;     /* ⬅️ sube visualmente */
+  opacity: 0.8;
+}
+
+#contributor-name {
+  font-size: var(--text-xs);
+  font-weight: 400;
+  letter-spacing: var(--trk-xxs);
+  opacity: 0.55;
+}
+
+/* ============================================================
+   PATCH CSS — Active Artist Highlight (Support Tab)
+   UI-only · View-driven · Canon safe
+============================================================ */
+
+.is-active-artist {
+  color: var(--accent-strong);
+  text-shadow: 0 0 18px rgba(255,255,255,0.25);
+}
+
+body[data-view="support"] #artist-name {
+  font-size: calc(var(--text-xl) * 1.05);
+}
+

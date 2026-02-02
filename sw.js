@@ -1,31 +1,29 @@
 /* ============================================================
-   RESONANT · SERVICE WORKER — V16 FINAL FREEZE
+   RESONANT · SERVICE WORKER
    UI Shell Cache · Network-first HTML
    NO AUDIO CACHE · NO SC CACHE
    ------------------------------------------------------------
-   STATUS: FROZEN · BROADCAST GRADE · PRODUCTION READY
+   STATUS: STABLE · MEGACORE SAFE · PRODUCTION READY
    CHANGE POLICY:
-   - UI file change  → bump CACHE_VERSION
-   - Logic change    → MAJOR VERSION ONLY
+   - UI / JS change → bump CACHE_VERSION
    ============================================================ */
 
-const CACHE_VERSION = "resonant-v16-shell-v6-dev-fix";
+const CACHE_VERSION = "resonant-v16-shell-v7-megacore";
 
 /* ------------------------------------------------------------
-   UI SHELL (PUBLIC APP ONLY)
-   ONLY FILES THAT ACTUALLY EXIST
+   UI SHELL (ONLY REAL FILES)
 ------------------------------------------------------------ */
 const SHELL_CACHE = [
   "/",
   "/manifest.webmanifest",
 
+  // Listener HTML
   "/App/signal.html",
 
-  // Listener core
-  "/App/signal/app.boot.js",
-  "/App/signal/app.core.js",
-  "/App/signal/app.ui.js",
-  "/App/signal/engine.router.js",
+  // Listener MegaCore
+  "/App/signal/app.js",
+
+  // Styles
   "/App/signal/style.signal.css"
 ];
 
@@ -61,7 +59,7 @@ self.addEventListener("activate", event => {
 self.addEventListener("fetch", event => {
   const req = event.request;
 
-  // ⛔ Only handle GET requests
+  // ⛔ Only GET
   if (req.method !== "GET") return;
 
   const url = new URL(req.url);
@@ -79,7 +77,7 @@ self.addEventListener("fetch", event => {
   }
 
   /* ------------------------------------------
-     🚫 NEVER CACHE CONTROL SURFACES
+     🚫 NEVER CACHE ADMIN / CONTROL
   ------------------------------------------ */
   if (
     url.pathname.startsWith("/Admin") ||
@@ -91,16 +89,12 @@ self.addEventListener("fetch", event => {
   }
 
   /* ------------------------------------------
-     HTML → NETWORK FIRST (PUBLIC APP ONLY)
+     HTML → NETWORK FIRST
   ------------------------------------------ */
   if (req.mode === "navigate") {
-    if (url.pathname === "/" || url.pathname.startsWith("/App")) {
-      event.respondWith(
-        fetch(req).catch(() => caches.match(req))
-      );
-    } else {
-      event.respondWith(fetch(req));
-    }
+    event.respondWith(
+      fetch(req).catch(() => caches.match(req))
+    );
     return;
   }
 
@@ -128,12 +122,12 @@ self.addEventListener("fetch", event => {
   }
 
   /* ------------------------------------------
-     DEFAULT → NETWORK ONLY
+     DEFAULT → NETWORK
   ------------------------------------------ */
   event.respondWith(fetch(req));
 });
 
 /* ============================================================
-   END OF FILE — SERVICE WORKER
-   FREEZE CONFIRMED
+   END SERVICE WORKER
+   MEGACORE COMPATIBLE
 ============================================================ */

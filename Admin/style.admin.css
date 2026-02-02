@@ -300,6 +300,11 @@ body.mode-live .top-status .pill.on {
   color: #ff9aa8;
 }
 
+/* NOTE — RESERVED STATE
+   .pill.warn is intentionally unused in v20.x
+   Reserved for degraded / warning broadcast states (v21+)
+*/
+
 .top-status .pill.warn {
   background: rgba(255,193,7,0.15);
   border-color: rgba(255,193,7,0.55);
@@ -747,7 +752,8 @@ button:disabled:hover {
     #dfe3ee
   );
 
-  transition: width 1s linear;
+  /* PATCH — progress is JS-driven (no CSS easing) */
+  transition: none;
   will-change: width;
 }
 
@@ -893,17 +899,15 @@ body.mode-observer #admin-next-btn {
   color: var(--accent-strong);
   font-weight: 500;
 }
-/* PATCH 24 · HEALTH GRID NORMALIZATION
-   Reason: Align Heartbeat with System Health Notice
+/* PATCH 24.1 · HEALTH STATUS ROW SAFETY
+   Reason: Avoid fragile nth-child dependency
    Scope: Admin health diagnostics only
-   Type: Readability + alignment fix
 */
-
-/* Force Heartbeat to full-width row, centered */
-.admin-health-card .card-body > div:nth-child(5) {
+.admin-health-card .health-status {
   grid-column: 1 / -1;
   justify-content: center;
 }
+
 
 /* Optional: tighten vertical rhythm */
 .admin-health-card .card-body > div:nth-child(5) span,
@@ -1162,9 +1166,10 @@ body.mode-observer #admin-next-btn {
   transform: scale(0.96);
 }
 
-#admin-playlist .row-actions button[data-remove]:hover {
+#admin-playlist .row-actions button[data-action="delete"]:hover {
   color: #ff5268;
 }
+
 /* ============================================================
    PLAYLIST · STATE AUTHORITY (CANONICAL)
    Scope: hover / active / playing / global playing
@@ -1420,6 +1425,28 @@ body[data-phase="syncing"] .play-btn.is-play {
     transform: scale(1);
     opacity: 0.6;
   }
+}
+
+/* ============================================================
+   PATCH 07 · SOFT WATCHDOG VISUAL
+   Purpose: Subtle state awareness without alarm
+   Scope: Admin observer only
+   Type: State clarity (allowed)
+============================================================ */
+
+/* SOFT WARNING — signal may be delayed */
+body[data-watchdog="soft-warning"] .admin-health-card {
+  border-color: rgba(255,193,7,0.35);
+}
+
+/* HOLDING — expected transition state */
+body[data-watchdog="holding"] .admin-health-card {
+  border-color: rgba(255,255,255,0.22);
+}
+
+/* IDLE — system ready, no signal */
+body[data-watchdog="idle"] .admin-health-card {
+  opacity: 0.85;
 }
 
 /* ============================================================
